@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine;
 
-[CustomEditor(typeof(Skill), true)]
+[CustomEditor(typeof(LAMENT.Skill), true)]
 public class SkillEditor : Editor
 {
     public override void OnInspectorGUI()
@@ -14,7 +11,7 @@ public class SkillEditor : Editor
         EditorGUILayout.LabelField("¡÷ºÆ");
 
         EditorGUI.BeginDisabledGroup(true);
-        EditorGUILayout.TextArea(((Skill)target).Comment);
+        EditorGUILayout.TextArea(((LAMENT.Skill)target).Comment);
         EditorGUI.EndDisabledGroup();
     }
 }
