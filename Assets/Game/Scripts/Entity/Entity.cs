@@ -83,12 +83,24 @@ namespace LAMENT
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-
+            if (collision.TryGetComponent(out IDamageable target))
+            {
+                Debug.Log(collision.name);
+                OnHitTarget(target);
+                target.OnDamaged(this);
+            }
         }
 
+        /// <summary> 타격 가능한 대상 타격 시 호출 </summary>
+        public virtual void OnHitTarget(IDamageable target)
+        {
+            Debug.Log("I HIT SOME ASS!");
+        }
+
+        /// <summary> 타격당했을 때 호출 </summary>
         public virtual void OnDamaged(Entity src)
         {
-            Debug.Log("ASS");
+            Debug.Log("SOMEONE HIT MY ASS!");
         }
     }
 }

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 11bb07e22143eaf4a95dd02e1c4db27b, type: 3}
-  m_Name: ISGLeg
+  m_Name: SGLees_Sexy_Leg
   m_EditorClassIdentifier: 
-  id: 
+  id: ISG_LEG
   itemName: 
   icon: {fileID: 21300000, guid: d6fce3cc0159b0844a4240313916dc75, type: 3}
   stackCountMax: 1
