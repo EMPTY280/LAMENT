@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 405212414628615749}
   - component: {fileID: 7137043503351853832}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Effector_Slash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 2121485508358370497}
   - component: {fileID: 8092782078234546788}
   - component: {fileID: 3209867164465312897}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Hitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9203951036382655245}
   - component: {fileID: 2880371843272824903}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Hitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8765154052706416150}
   - component: {fileID: 6116512082875484643}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: First
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -173,7 +173,7 @@ GameObject:
   m_Component:
   - component: {fileID: 458127318143472081}
   - component: {fileID: 7696698682839394537}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Effector_Rise
   m_TagString: Untagged
   m_Icon: {fileID: 7422848464349959988, guid: 0000000000000000d000000000000000, type: 0}
@@ -218,7 +218,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6002640228182988851}
   - component: {fileID: 4539105197600088908}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Hitbox (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
