@@ -43,8 +43,9 @@ namespace LAMENT
         private EMoveState direction = EMoveState.RIGHT;
         private EMoveState moveState = EMoveState.STOP;
 
+        public float HSpeed => hSpeed;
         public EMoveState Direction => direction;
-        public EMoveState MoveState => MoveState;
+        public EMoveState MoveState => moveState;
 
         [Header("벽판정 - 분홍색 박스로 표시됨")]
         [SerializeField]
@@ -91,7 +92,12 @@ namespace LAMENT
             }
 
             TryGetComponent(out sr);
+
+            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+            rb.angularDrag = 0;
             rb.gravityScale = gravityScale;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
 
         protected virtual void Update()
