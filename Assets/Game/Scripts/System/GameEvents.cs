@@ -3,7 +3,7 @@ namespace LAMENT
 {
     public interface IGameEvent { }
 
-    /// <summary> ¿À¹ö·¹ÀÌ(ÀåºñÃ¢ µî) ¿­¸²/´ÝÈû ½ÅÈ£. </summary>
+    /// <summary> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½Ã¢ ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£. </summary>
     public readonly struct GEOnOverlayStateChanged : IGameEvent
     {
         public readonly bool isOpened;
@@ -14,7 +14,7 @@ namespace LAMENT
         }
     }
 
-    /// <summary> ÀåÂø È®Á¤ ½Ã ¹ßÇà (¿¬Ãâ/»ç¿îµå/½ºÅÈÀÌ ±¸µ¶) </summary>
+    /// <summary> ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) </summary>
     public readonly struct GEOnEquipmentEquipped : IGameEvent
     {
         public EquipmentData Equipped { get; }
@@ -32,10 +32,10 @@ namespace LAMENT
     public readonly struct GEOnEquipmentPreview : IGameEvent
     {
         public EEquipSlotType Slot { get; }   // LeftArm / RightArm / Legs
-        public EquipmentData Current { get; }   // Áß¾Ó
-        public EquipmentData Prev { get; }   // À§/¿Þ(ÀÌÀü)
-        public EquipmentData Next { get; }   // ¾Æ·¡/¿À¸¥(´ÙÀ½)
-        public int Index { get; }   // ÈÄº¸ ¸®½ºÆ® ³» ÇöÀç ÀÎµ¦½º
+        public EquipmentData Current { get; }   // ï¿½ß¾ï¿½
+        public EquipmentData Prev { get; }   // ï¿½ï¿½/ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)
+        public EquipmentData Next { get; }   // ï¿½Æ·ï¿½/ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)
+        public int Index { get; }   // ï¿½Äºï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½
 
         public GEOnEquipmentPreview(
             EEquipSlotType slot,
@@ -52,7 +52,7 @@ namespace LAMENT
         }
     }
 
-    /// <summary> ÀÎº¥Åä¸® ½½·Ô º¯È­ </summary>
+    /// <summary> ï¿½Îºï¿½ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È­ </summary>
     public readonly struct GEOnInventorySlotChanged : IGameEvent
     {
         public int Index { get; }
@@ -65,7 +65,7 @@ namespace LAMENT
         }
     }
 
-    /// <summary> ÀÎº¥Åä¸®¿¡ ¾ÆÀÌÅÛ Ãß°¡ ½Ãµµ °á°ú </summary>
+    /// <summary> ï¿½Îºï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ </summary>
     public readonly struct GEOnInventoryItemAdded : IGameEvent
     {
         public string ItemId { get; }
@@ -89,4 +89,58 @@ namespace LAMENT
             Slot = slot;
         }
     }
+
+     public readonly struct GEOnPlayerHealthChanged : IGameEvent
+    {
+        public int CurrentHp { get; }
+        public int CurrentMaxHp { get; }
+        public int InitialMaxHp { get; }
+
+        public GEOnPlayerHealthChanged(int currentHp, int currentMaxHp, int initialMaxHp)
+        {
+            CurrentHp = currentHp;
+            CurrentMaxHp = currentMaxHp;
+            InitialMaxHp = initialMaxHp;
+        }
+    }
+
+    public readonly struct GEOnStomachGaugeChanged : IGameEvent
+    {
+        public int Current { get; }
+        public int Max { get; }
+
+        public GEOnStomachGaugeChanged(int current, int max)
+        {
+            Current = current;
+            Max = max;
+        }
+    }
+
+    public readonly struct GEOnPlayerRevived : IGameEvent
+    {
+        public int CurrentHp { get; }
+        public int CurrentMaxHp { get; }
+
+        public GEOnPlayerRevived(int currentHp, int currentMaxHp)
+        {
+            CurrentHp = currentHp;
+            CurrentMaxHp = currentMaxHp;
+        }
+    }
+
+    public readonly struct GEOnPlayerDied : IGameEvent
+    {
+        public int RemainingMaxHp { get; }
+
+        public GEOnPlayerDied(int remainingMaxHp)
+        {
+            RemainingMaxHp = remainingMaxHp;
+        }
+    }
+
+    public readonly struct GEOnPlayerGameOver : IGameEvent
+    {
+        
+    }
+
 }

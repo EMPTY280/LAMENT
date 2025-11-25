@@ -5,13 +5,14 @@ namespace LAMENT
 {
     public class Player : Entity
     {
-        [Header("Àåºñ")]
+        [Header("ï¿½ï¿½ï¿½")]
         [SerializeField] private EquipSlot leftArmSlot;
         [SerializeField] private EquipSlot rightArmSlot;
         [SerializeField] private EquipSlot legSlot;
 
-        private EquipSlot lastUsedEquipment; // ¸¶Áö¸·À¸·Î »ç¿ëÇÑ Àåºñ ½½·Ô
-
+        private EquipSlot lastUsedEquipment; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        
+        private PlayerHealth health;
         public EquipSlot LeftArmSlot => leftArmSlot;
         public EquipSlot RightArmSlot => rightArmSlot;
         public EquipSlot LegSlot => legSlot;
@@ -22,7 +23,8 @@ namespace LAMENT
         {
             base.Awake();
 
-            // ÀÌ¹Ì ¹èÁ¤µÈ Àåºñ°¡ ÀÖ´Ù¸é ÀÌÆåÅÍ »ı¼º ÈÄ µî·Ï
+            // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½
+            health = GetComponent<PlayerHealth>();
             TryCreateEffector(leftArmSlot.Equipment, true);
             TryCreateEffector(rightArmSlot.Equipment, true);
             TryCreateEffector(legSlot.Equipment);
@@ -30,7 +32,7 @@ namespace LAMENT
 
         private void Start()
         {
-            // TODO: ÀÎº¥°ú ¿¬°èµÇ°Ô ¼öÁ¤ÇÒ°Í
+            // TODO: ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò°ï¿½
 
             GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(
                 leftArmSlot.Equipment,
@@ -60,9 +62,9 @@ namespace LAMENT
                 legSlot.UpdateCooldown(Time.deltaTime);
         }
 
-        #region Àåºñ
+        #region ï¿½ï¿½ï¿½
 
-        /// <summary> Àåºñ »ç¿ë ½Ãµµ </summary>
+        /// <summary> ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ãµï¿½ </summary>
         public bool TryUseEquipment(EquipSlot slot, Skill skill, Action cbOnSkillEnd = null, bool isBurst = false)
         {
             if (!slot.IsReady() && !isBurst)
@@ -71,10 +73,10 @@ namespace LAMENT
             lastUsedEquipment = slot;
             StartSkill(skill, cbOnSkillEnd);
 
-            // ÆøÆÄ ½ºÅ³ÀÌ¸é Áï½Ã Àåºñ ÆÄ±«
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ä±ï¿½
             if (isBurst)
             {
-                Debug.Log("³ªÁß¿¡ Àåºñ ÆÄ±« ±¸Çö"); // TODO
+                Debug.Log("ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½ ï¿½Ä±ï¿½ ï¿½ï¿½ï¿½ï¿½"); // TODO
                 // slot.Equipment = null;
                 // OnEquipmentChanged.Notify(slot);
             }
@@ -82,19 +84,19 @@ namespace LAMENT
             return true;
         }
 
-        /// <summary> ½ºÅ³ »ç¿ë Á¾·á </summary>
+        /// <summary> ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ </summary>
         public void FinishSkill()
         {
             TrySetCooldown();
         }
 
-        /// <summary> ¸¶Áö¸·À¸·Î »ç¿ëÇÑ Àåºñ¿¡ Äğ´Ù¿î Àû¿ë ÈÄ null </summary>
+        /// <summary> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Ù¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ null </summary>
         protected bool TrySetCooldown()
         {
             if (lastUsedEquipment == null)
                 return false;
 
-            // ÆøÆÄ ½ºÅ³ÀÌ¸é Á¦°ÅµÊ
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½Åµï¿½
             if (!lastUsedEquipment.Equipment)
                 return false;
 
@@ -106,7 +108,7 @@ namespace LAMENT
             return true;
         }
 
-        /// <summary> Àåºñ ÀÌÆåÅÍ »ı¼º ½Ãµµ </summary>
+        /// <summary> ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ãµï¿½ </summary>
         protected bool TryCreateEffector(EquipmentData e, bool isWeapon = false)
         {
             if (!e)
@@ -119,7 +121,7 @@ namespace LAMENT
             {
                 if (!skill)
                 {
-                    GameManager.Logger.LogError("¹èÁ¤µÈ ½ºÅ³ÀÌ ¾ø½À´Ï´Ù.");
+                    GameManager.Logger.LogError("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
                     return;
                 }
 
@@ -132,7 +134,7 @@ namespace LAMENT
                 SkillEffector eff;
                 if (!Instantiate(skill.Effector, transform).TryGetComponent(out eff))
                 {
-                    GameManager.Logger.LogError("ÀÌÆåÅÍ¿¡¼­ ÄÄÆ÷³ÍÆ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+                    GameManager.Logger.LogError("ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
                     return;
                 }
 
@@ -147,6 +149,28 @@ namespace LAMENT
                 TryCreateFromSkill(((Weapon)e).BurstSkill);
 
             return true;
+        }
+
+        public override void OnDamaged(Entity src)
+        {
+            base.OnDamaged(src);
+
+            if (health != null)
+            {
+                // í•œ ë²ˆ ë§ìœ¼ë©´ í•˜íŠ¸ 1ê°œ ê°ì†Œ
+                health.TakeHit(1);
+            }
+        }
+
+         public override void OnHitTarget(IDamageable target)
+        {
+            base.OnHitTarget(target);
+
+            if (health != null)
+            {
+                // ì ì„ ë§ì¶œ ë•Œë§ˆë‹¤ ìœ„ ê²Œì´ì§€ ì¦ê°€
+                health.OnAttackLanded();
+            }
         }
 
         #endregion

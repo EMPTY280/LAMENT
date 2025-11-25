@@ -6,25 +6,28 @@ namespace LAMENT
 {
     public class PlayerInput : MonoBehaviour
     {
-        [Header("ÇÃ·¹ÀÌ¾î")]
+        [Header("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½")]
         [SerializeField] private Player player;
 
-        // ===== ÄŞº¸ =====
+         [Header("í…ŒìŠ¤íŠ¸ìš©")]
+        [SerializeField] private PlayerHealth playerHealth;
 
-        // ÄŞº¸¿¡ ÀúÀåµÉ ¼ö ÀÖ´Â ÀÔ·ÂÀÇ Á¾·ù
+        // ===== ï¿½Şºï¿½ =====
+
+        // ï¿½Şºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
         private ComboNode root;
         private ComboNode currNode;
-        private LinkedList<EComboInputTypes> inputQueue; // ÀÔ·ÂÇÑ Å° ´ë±â¿­, TODO: ´çÀåÀº µğ¹ö±×¿ëÀ¸·Î¹Û¿¡ ¾È¾¸
+        private LinkedList<EComboInputTypes> inputQueue; // ï¿½Ô·ï¿½ï¿½ï¿½ Å° ï¿½ï¿½â¿­, TODO: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½×¿ï¿½ï¿½ï¿½ï¿½Î¹Û¿ï¿½ ï¿½È¾ï¿½
 
-        private EComboInputTypes inputBuffer = EComboInputTypes.NONE; // ¼±ÀÔ·Â ¹öÆÛ
-        private float bufferTime = 0; // ¸¶Áö¸·À¸·Î ¼±ÀÔ·ÂÇÑ ½Ã°£
-        [Header("ÄŞº¸")]
-        [Tooltip("¼±ÀÔ·ÂÀÌ ¸îÃÊ Áö¼ÓµÇ´Â°¡")]
+        private EComboInputTypes inputBuffer = EComboInputTypes.NONE; // ï¿½ï¿½ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½
+        private float bufferTime = 0; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
+        [Header("ï¿½Şºï¿½")]
+        [Tooltip("ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÓµÇ´Â°ï¿½")]
         [SerializeField]
-        private float bufferDuration = 0.2f; // ¼±ÀÔ·Â ÀúÀå ½Ã°£
+        private float bufferDuration = 0.2f; // ï¿½ï¿½ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
 
-        private bool isLocked = false; // ÀÔ·Â Á¤Áö ¿©ºÎ
+        private bool isLocked = false; // ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 #if UNITY_EDITOR
 
@@ -37,7 +40,7 @@ namespace LAMENT
             if (!DEBUG_COMBO_TEXT)
                 return;
 
-            string str = "ÇöÀç ÄŞº¸ { ";
+            string str = "ï¿½ï¿½ï¿½ï¿½ ï¿½Şºï¿½ { ";
 
             if (inputQueue.Count > 0)
             {
@@ -57,11 +60,11 @@ namespace LAMENT
 
             if (Time.time <= bufferTime + bufferDuration)
             {
-                str += "\n\n[¼±ÀÔ·Â]\n" + inputBuffer.ToString() + "\n";
+                str += "\n\n[ï¿½ï¿½ï¿½Ô·ï¿½]\n" + inputBuffer.ToString() + "\n";
                 str += (bufferTime + bufferDuration - Time.time).ToString("F2") + " sec left";
             }
             else
-                str += "\n\n[¼±ÀÔ·Â]\n" + "NONE\n";
+                str += "\n\n[ï¿½ï¿½ï¿½Ô·ï¿½]\n" + "NONE\n";
 
 
             DEBUG_COMBO_TEXT.text = str;
@@ -82,23 +85,51 @@ namespace LAMENT
 
         private void Update()
         {
-            // TODO: InputHandler¸¦ ³ªÁß¿¡ ¹Ù¸£°Ô ±¸ÇöÇÒ °Í.
+            // TODO: InputHandlerï¿½ï¿½ ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½Ù¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½.
 
-            // ÄŞº¸ ÀÔ·Â
+            // ï¿½Şºï¿½ ï¿½Ô·ï¿½
             GetComboKeyBuffer();
             ProcessInput();
 
-            // ÀÌµ¿ ÀÔ·Â
+            // ï¿½Ìµï¿½ ï¿½Ô·ï¿½
             GetMoveInput();
+
+             HandleHealthDebugKeys();
 
 #if UNITY_EDITOR
             PrintCombo();
 #endif
         }
 
-        #region ÀÔ·Â Ã³¸®
+        private void HandleHealthDebugKeys()
+        {
+            if (playerHealth == null)
+                return;
 
-        // ÄŞº¸ ÀÔ·Â ¹Ş±â
+            // 1: ë°ë¯¸ì§€ 1
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                playerHealth.TakeHit(1);
+                Debug.Log($"[DEBUG] Hit: HP = {playerHealth.CurrentHp}/{playerHealth.CurrentMaxHp}");
+            }
+
+            // 2: ì ì—ê²Œ ê³µê²© ì ì¤‘ -> ìœ„ ê²Œì´ì§€ ì†ŒëŸ‰ ì¦ê°€
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                playerHealth.OnAttackLanded();
+                Debug.Log($"[DEBUG] AttackLanded: Stomach = {playerHealth.StomachCurr}");
+            }
+
+            // 3: ì‚¬ì§€ ì„­ì·¨ -> ìœ„ ê²Œì´ì§€ ë§ì´ ì¦ê°€
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                playerHealth.OnLimbConsumed();
+                Debug.Log($"[DEBUG] LimbConsumed: Stomach = {playerHealth.StomachCurr}");
+            }
+        }
+        #region ï¿½Ô·ï¿½ Ã³ï¿½ï¿½
+
+        // ï¿½Şºï¿½ ï¿½Ô·ï¿½ ï¿½Ş±ï¿½
         private EComboInputTypes GetComboKey()
         {
             if (Input.GetKey(KeyCode.LeftShift))
@@ -115,25 +146,25 @@ namespace LAMENT
             return EComboInputTypes.NONE;
         }
 
-        // ÄŞº¸ ¼±ÀÔ·Â ¹Ş±â
+        // ï¿½Şºï¿½ ï¿½ï¿½ï¿½Ô·ï¿½ ï¿½Ş±ï¿½
         private void GetComboKeyBuffer()
         {
-            // ÀÔ·Â Àá±İ == ½ºÅ³ »ç¿ëÁß¿¡¸¸ ¼±ÀÔ·Â »ç¿ë
+            // ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ == ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ß¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½
             if (!isLocked)
                 return;
 
             EComboInputTypes input = GetComboKey();
 
-            // ÀÔ·ÂÀÌ ¾ø´Ù¸é ÆĞ½º
+            // ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½ ï¿½Ğ½ï¿½
             if (input == EComboInputTypes.NONE)
                 return;
 
-            // ÀÔ·ÂµÈ Å°°¡ ÀÖ´Ù¸é ¼±ÀÔ·Â ÀúÀå ÈÄ ½Ã°£ °»½Å
+            // ï¿½Ô·Âµï¿½ Å°ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½
             inputBuffer = input;
             bufferTime = Time.time;
         }
 
-        // ÀÌµ¿ ÀÔ·Â ¹Ş±â
+        // ï¿½Ìµï¿½ ï¿½Ô·ï¿½ ï¿½Ş±ï¿½
         private void GetMoveInput()
         {
             if (isLocked)
@@ -161,15 +192,15 @@ namespace LAMENT
 
         #endregion
 
-        #region ÄŞº¸ ÄÁÅ×ÀÌ³Ê
+        #region ï¿½Şºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½
 
-        // ÄŞº¸ ¸ğµÎ Á¦°Å
+        // ï¿½Şºï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         private void ClearCombo()
         {
             root.ClearChild();
         }
 
-        // ÄŞº¸ Ãß°¡
+        // ï¿½Şºï¿½ ï¿½ß°ï¿½
         public void BuildCombo()
         {
             void BuildFromSlot(EComboInputTypes type, EquipSlot slot, bool isWeapon = false)
@@ -187,9 +218,9 @@ namespace LAMENT
                     ComboNodeInput newNode = new(type);
                     newNode.Set(slot, skills[i]);
 
-                    if (comboRoot == null) // ÃÖÃÊ ³ëµå´Â ·çÆ®·Î
+                    if (comboRoot == null) // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½
                         comboRoot = newNode;
-                    else // ±× ÀÌ¿Ü´Â ¼ø¼­´ë·Î ºÙÀÌ±â
+                    else // ï¿½ï¿½ ï¿½Ì¿Ü´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì±ï¿½
                         prevNode.AddChild(newNode);
 
                     prevNode = newNode;
@@ -198,61 +229,61 @@ namespace LAMENT
                 if (comboRoot != null)
                     root.AddChild(comboRoot);
 
-                // ¹«±â¶ó¸é, ÆøÆÄ ½ºÅ³ Ãß°¡
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ß°ï¿½
                 if (isWeapon)
                 {
-                    ComboNodeInput newNode = new(type + 3); // NOTE: Enum °è»ê ´ëÃæ ÇØ³ùÀ½
+                    ComboNodeInput newNode = new(type + 3); // NOTE: Enum ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø³ï¿½ï¿½ï¿½
                     newNode.Set(slot, ((Weapon)slot.Equipment).BurstSkill, true);
 
                     root.AddChild(newNode);
                 }
             }
 
-            // ÆÈ ÄŞº¸
+            // ï¿½ï¿½ ï¿½Şºï¿½
             BuildFromSlot(EComboInputTypes.LEFT, player.LeftArmSlot, true);
             BuildFromSlot(EComboInputTypes.RIGHT, player.RightArmSlot, true);
 
-            // ´Ù¸® ÄŞº¸
+            // ï¿½Ù¸ï¿½ ï¿½Şºï¿½
             BuildFromSlot(EComboInputTypes.UTILITY, player.LegSlot);
         }
 
         #endregion
 
-        #region ÄŞº¸ Å½»ö
+        #region ï¿½Şºï¿½ Å½ï¿½ï¿½
 
-        // ÄŞº¸ Å½»ö
+        // ï¿½Şºï¿½ Å½ï¿½ï¿½
         private void ProcessInput()
         {
-            // ÀÔ·Â Àá±İ == ½ºÅ³ »ç¿ëÁßÀÌ¸é ½ÇÇà ¾ÈÇÔ
+            // ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ == ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (isLocked)
                 return;
 
-            // ÀÔ·Â ¹Ş±â ===========================================
+            // ï¿½Ô·ï¿½ ï¿½Ş±ï¿½ ===========================================
 
             EComboInputTypes input = EComboInputTypes.NONE;
             if (Time.time <= bufferTime + bufferDuration &&
                 inputBuffer != EComboInputTypes.NONE)
-                input = inputBuffer; // ¼±ÀÔ·ÂÀÌ ÀÖ´Ù¸é ±×°Í »ç¿ë
+                input = inputBuffer; // ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½×°ï¿½ ï¿½ï¿½ï¿½
             else
-                input = GetComboKey(); // ¼±ÀÔ·Â ¾øÀ¸¸é Áï½Ã ÀÔ·Â ½Ãµµ
+                input = GetComboKey(); // ï¿½ï¿½ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½Ãµï¿½
 
-            // ½ºÅ³ Å½»ö ===========================================
+            // ï¿½ï¿½Å³ Å½ï¿½ï¿½ ===========================================
 
-            // ÀÔ·ÂÀÌ ¾ø°Å³ª ÄŞº¸°¡ ³¡³ª¸é Á¾·á
+            // ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å³ï¿½ ï¿½Şºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (input == EComboInputTypes.NONE || currNode.Children.Count == 0)
             {
                 player.FinishSkill();
                 EndComboSearch();
             }
-            else // ÀÔ·ÂÀÌ ÀÖ´Ù¸é Å½»ö ½ÃÀÛ
+            else // ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ Å½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             {
-                // ÇöÀç ³ëµå¿¡¼­ ¿¬°áÇÒ ¼ö ÀÖ´Â ³ëµå È®ÀÎ
+                // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ È®ï¿½ï¿½
                 ComboNodeInput next = (ComboNodeInput)currNode.Children.Find((c) => c.Type == input);
 
-                // ÀÖÀ¸¸é, ±× ³ëµåÀÇ ½ºÅ³À» ½ÇÇà ½Ãµµ
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ãµï¿½
                 if (next != null)
                 {
-                    // ½ÇÇà ¼º°ø ½Ã ³ëµå ÀúÀå ¹× Lock
+                    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Lock
                     if (player.TryUseEquipment(next.Equipment, next.Skill, Unlock, next.IsBurst))
                     {
                         currNode = next;
@@ -266,7 +297,7 @@ namespace LAMENT
                         }
                     }
                 }
-                else // ¾øÀ¸¸é ÄŞº¸ Å½»ö Á¾·á + Äğ´Ù¿î
+                else // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Şºï¿½ Å½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ + ï¿½ï¿½Ù¿ï¿½
                 {
                     player.FinishSkill();
                     EndComboSearch();
