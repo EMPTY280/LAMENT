@@ -77,7 +77,7 @@ namespace LAMENT
                 return EBTState.FAILURE;
 
             if (isAttacking)
-                return EBTState.RUN;
+                return EBTState.SUCCESS;
 
             if (Vector3.Distance(transform.position, target.position) <= attackRadius)
                 return EBTState.SUCCESS;
