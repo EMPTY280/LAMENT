@@ -44,6 +44,7 @@ namespace LAMENT
         private EMoveState moveState = EMoveState.STOP;
 
         public float HSpeed => hSpeed;
+        public float VSpeed => rb.velocity.y;
         public EMoveState Direction => direction;
         public EMoveState MoveState => moveState;
 
@@ -73,6 +74,7 @@ namespace LAMENT
         private float groundDistanceMax = 0.05f;
 
         protected bool isGrounded = false; // 바닥인지 여부
+        public bool IsGrounded => isGrounded;
 
         [Header("점프")]
         [SerializeField]

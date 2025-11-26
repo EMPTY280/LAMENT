@@ -7,6 +7,7 @@ namespace LAMENT
     public abstract class Entity : MonoBehaviour, IDamageable
     {
         private Animator animator;
+        public Animator Animator => animator;
 
         [Header("¿œπ›")]
         [SerializeField]
@@ -59,6 +60,7 @@ namespace LAMENT
             if (skillCurr.Duration <= skillDurationCurr)
             {
                 skillCurr = null;
+                animator.SetBool("UsingSkill", false);
                 if (cbOnSkillEnd != null)
                     cbOnSkillEnd();
             }
@@ -74,7 +76,10 @@ namespace LAMENT
             skillDurationCurr = 0;
 
             if (animator && skill.TriggerName != "")
+            {
+                animator.SetBool("UsingSkill", true);
                 animator.SetTrigger(skill.TriggerName);
+            }
 
             this.cbOnSkillEnd = cbOnSkillEnd;
         }

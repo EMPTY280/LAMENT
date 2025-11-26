@@ -21,12 +21,16 @@ namespace LAMENT
             if (IsTiming(1))
             {
                 owner.MoveComponent.SetMovement(MoveComponent.EMoveState.STOP);
-                GetEffector(owner).SetEnabled(0, true);
+                SkillEffector eff = GetEffector(owner);
+                if (eff)
+                    eff.SetEnabled(0, true);
             }
 
             if (IsTiming(2))
             {
-                GetEffector(owner).SetEnabled(0, false);
+                SkillEffector eff = GetEffector(owner);
+                if (eff)
+                    eff.SetEnabled(0, false);
             }
         }
     }

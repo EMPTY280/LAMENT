@@ -60,6 +60,10 @@ namespace LAMENT
                 rightArmSlot.UpdateCooldown(Time.deltaTime);
             if (legSlot.Equipment)
                 legSlot.UpdateCooldown(Time.deltaTime);
+
+            Animator.SetBool("IsGrounded", MoveComponent.IsGrounded);
+            Animator.SetFloat("HSpeedMagnitude", Math.Abs(MoveComponent.HSpeed));
+            Animator.SetFloat("VSpeed", MoveComponent.VSpeed);
         }
 
         #region ���

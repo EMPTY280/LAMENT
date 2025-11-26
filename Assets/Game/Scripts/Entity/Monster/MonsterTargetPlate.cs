@@ -1,3 +1,4 @@
+using System;
 using PLibrary;
 using UnityEngine;
 
@@ -18,6 +19,9 @@ namespace LAMENT
 
         public LayerMask terrainLayer;
 
+        private bool isAttacking = false;
+        public Skill skill;
+
 
         protected override void Awake()
         {
@@ -29,6 +33,8 @@ namespace LAMENT
         {
             base.Update();
             bt.Run();
+
+            Animator.SetFloat("HSpeedMagnitude", Math.Abs(MoveComponent.HSpeed));
         }
 
 
@@ -70,6 +76,9 @@ namespace LAMENT
             if (!target)
                 return EBTState.FAILURE;
 
+            if (isAttacking)
+                return EBTState.RUN;
+
             if (Vector3.Distance(transform.position, target.position) <= attackRadius)
                 return EBTState.SUCCESS;
 
@@ -79,6 +88,13 @@ namespace LAMENT
         private EBTState Attack()
         {
             MoveComponent.SetMovement(MoveComponent.EMoveState.STOP);
+
+            if (isAttacking)
+                return EBTState.RUN;
+
+            isAttacking = true;
+            StartSkill(skill, () => { isAttacking = false; });
+
             if (attackDelay < Time.time - lastAttackTime)
             {
                 lastAttackTime = Time.time;
