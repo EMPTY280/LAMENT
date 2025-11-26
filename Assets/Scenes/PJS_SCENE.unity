@@ -1546,6 +1546,8 @@ MonoBehaviour:
   - {fileID: 625666157}
   - {fileID: 2037739396}
   - {fileID: 1631206073}
+  heartIcons: []
+  stomachBar: {fileID: 0}
 --- !u!1 &770524634
 GameObject:
   m_ObjectHideFlags: 0
@@ -1742,7 +1744,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1016898915032491892, guid: 427a7f74f912238429debecb986ac701, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1016898915032491892, guid: 427a7f74f912238429debecb986ac701, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.y
@@ -4046,6 +4048,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1817745045}
+  playerHealth: {fileID: 0}
   bufferDuration: 0.2
   DEBUG_COMBO_TEXT: {fileID: 0}
 --- !u!114 &1817745047
