@@ -9,7 +9,6 @@ namespace LAMENT
 
         public void SetFill(float ratio)
         {
-            if (fillImage == null) return;
             fillImage.fillAmount = Mathf.Clamp01(ratio);
         }
     }

@@ -99,10 +99,6 @@ namespace LAMENT
             if (IsGameOver)
                 return;
 
-            // 이미 최대 체력이 다 회복되었으면 더 이상 의미 없음
-            if (CurrentMaxHp >= initialMaxHp)
-                return;
-
             StomachCurr += amount;
             if (StomachCurr >= stomachMax)
             {

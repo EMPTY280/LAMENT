@@ -127,7 +127,7 @@ namespace LAMENT
             CurrentMaxHp = currentMaxHp;
         }
     }
-
+    
     public readonly struct GEOnPlayerDied : IGameEvent
     {
         public int RemainingMaxHp { get; }
@@ -140,7 +140,6 @@ namespace LAMENT
 
     public readonly struct GEOnPlayerGameOver : IGameEvent
     {
-        
     }
 
 }

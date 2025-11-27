@@ -15,7 +15,7 @@ namespace LAMENT
             GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
             GameManager.Eventbus.Subscribe<GEOnSkillFinished>(OnPlayerSkillFinished);
 
-             GameManager.Eventbus.Subscribe<GEOnPlayerHealthChanged>(OnPlayerHealthChanged);
+            GameManager.Eventbus.Subscribe<GEOnPlayerHealthChanged>(OnPlayerHealthChanged);
             GameManager.Eventbus.Subscribe<GEOnStomachGaugeChanged>(OnStomachGaugeChanged);
         }
 
@@ -117,7 +117,7 @@ namespace LAMENT
             if (stomachBar == null)
                 return;
 
-            float ratio = (float)e.Current / (float)e.Max;
+            float ratio = (float)e.Current / e.Max;
             stomachBar.SetFill(ratio);
         }
 
