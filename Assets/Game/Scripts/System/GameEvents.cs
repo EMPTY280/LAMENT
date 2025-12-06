@@ -142,4 +142,15 @@ namespace LAMENT
     {
     }
 
+    public readonly struct GEOnEntityDied:IGameEvent
+    {
+        public Entity Dead{get;}
+        public Entity Killer {get;}
+
+        public GEOnEntityDied(Entity dead, Entity killer)
+        {
+            Dead = dead;
+            Killer = killer;
+        }
+    }
 }

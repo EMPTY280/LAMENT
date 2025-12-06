@@ -14,6 +14,11 @@ namespace LAMENT
         [SerializeField] private int amount = 1;
         [SerializeField] private float destroyDelay = 0f;
 
+        public void Setup(ItemData data, int amount)
+        {
+            this.data=data;
+            this.amount=amount;
+        }
         private void Reset()
         {
             var col = GetComponent<Collider2D>();
