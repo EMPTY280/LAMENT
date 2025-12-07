@@ -155,15 +155,13 @@ namespace LAMENT
             return true;
         }
 
-        public override void OnDamaged(Entity src)
+        public override void OnDamageHandled(Entity src)
         {
-            base.OnDamaged(src);
+            if (health == null)
+                return;
 
-            if (health != null)
-            {
-                // 한 번 맞으면 하트 1개 감소
-                health.TakeHit(1);
-            }
+            // 한 번 맞으면 하트 1개 감소
+            health.TakeHit(1);
         }
 
          public override void OnHitTarget(IDamageable target)

@@ -40,7 +40,7 @@ namespace LAMENT
             if (!DEBUG_COMBO_TEXT)
                 return;
 
-            string str = "���� �޺� { ";
+            string str = "Current Combo { ";
 
             if (inputQueue.Count > 0)
             {
@@ -60,11 +60,11 @@ namespace LAMENT
 
             if (Time.time <= bufferTime + bufferDuration)
             {
-                str += "\n\n[���Է�]\n" + inputBuffer.ToString() + "\n";
+                str += "\n\n[Buffer]\n" + inputBuffer.ToString() + "\n";
                 str += (bufferTime + bufferDuration - Time.time).ToString("F2") + " sec left";
             }
             else
-                str += "\n\n[���Է�]\n" + "NONE\n";
+                str += "\n\n[Buffer]\n" + "NONE\n";
 
 
             DEBUG_COMBO_TEXT.text = str;

@@ -90,7 +90,6 @@ namespace LAMENT
         {
             if (collision.TryGetComponent(out IDamageable target))
             {
-                Debug.Log(collision.name);
                 OnHitTarget(target);
                 target.OnDamaged(this);
             }
@@ -102,10 +101,21 @@ namespace LAMENT
             Debug.Log("I HIT SOME ASS!");
         }
 
-        /// <summary> 타격당했을 때 호출 </summary>
-        public virtual void OnDamaged(Entity src)
+
+        /// <summary> 타격당했을 때 호출, 유효한 타격만 받음 타격 성공 여부 반환 </summary>
+        public bool OnDamaged(Entity src)
         {
+            // 같은 태그 = 같은 진영 엔티티들끼리 공격 안됨
+            if (CompareTag(src.tag))
+                return false;
+
             Debug.Log("SOMEONE HIT MY ASS!");
+            OnDamageHandled(src);
+
+            return true;
         }
+
+        /// <summary> 유효한 타격을 당했을 때 추가 호출 </summary>
+        public virtual void OnDamageHandled(Entity src) { }
     }
 }

@@ -22,6 +22,9 @@ namespace LAMENT
         private bool isAttacking = false;
         public Skill skill;
 
+        [Header("Item")]
+        public GameObject dropitem;
+
 
         protected override void Awake()
         {
@@ -138,6 +141,12 @@ namespace LAMENT
                 MoveComponent.TryJump();
 
             return EBTState.RUN;
+        }
+
+        public override void OnDamageHandled(Entity src)
+        {
+            Instantiate(dropitem, transform.position, Quaternion.identity);
+            Destroy(gameObject);
         }
     }
 }
