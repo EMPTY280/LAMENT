@@ -192,7 +192,7 @@ namespace LAMENT
 
         #endregion
 
-        #region �޺� �����̳�
+        #region Build / Clear Player Combo
 
         // �޺� ��� ����
         private void ClearCombo()

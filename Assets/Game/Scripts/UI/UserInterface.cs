@@ -21,12 +21,11 @@ namespace LAMENT
 
         private void OnDestroy()
         {
-            GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
+            GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
             GameManager.Eventbus.Unsubscribe<GEOnSkillFinished>(OnPlayerSkillFinished);
         
             GameManager.Eventbus.Unsubscribe<GEOnPlayerHealthChanged>(OnPlayerHealthChanged);
             GameManager.Eventbus.Unsubscribe<GEOnStomachGaugeChanged>(OnStomachGaugeChanged);
-
         }
 
 
