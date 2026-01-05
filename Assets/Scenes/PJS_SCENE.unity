@@ -11628,7 +11628,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8850845442771069919, guid: f119d4f6d45f4c644a15d8f6a250d210, type: 3}
       propertyPath: m_AssetsPPU
-      value: 128
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 8850845442771069919, guid: f119d4f6d45f4c644a15d8f6a250d210, type: 3}
       propertyPath: m_RefResolutionX
