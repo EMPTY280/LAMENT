@@ -6,7 +6,7 @@ namespace LAMENT
 {
     public class GameManager
     {
-        #region ½Ì±ÛÅæ
+        #region ì‹±ê¸€í†¤
 
         private static GameManager inst;
 
@@ -23,13 +23,10 @@ namespace LAMENT
         #endregion
 
 
+        private GameManager() { }
 
-        private GameManager()
-        {
 
-        }
-
-        #region ·Î±×
+        #region ë¡œê·¸
 
         public static class Logger
         {
@@ -44,7 +41,7 @@ namespace LAMENT
 
         #endregion
 
-        #region ÀÌº¥Æ® °ü¸®ÀÚ
+        #region ì´ë²¤íŠ¸
 
         public static class Eventbus
         {
@@ -91,9 +88,8 @@ namespace LAMENT
 
         #endregion
 
-        #region ½Ã°£ Á¶Àı
+        #region ê²Œì„ ì†ë„
 
-        /// <summary> ÀåºñÃ¢ ¿ÀÇÂ/´İÈû¿¡ ¸ÂÃç Time.timeScale Á¶Á¤. </summary>
         public static class TimeSlowdownController
         {
             private static float slowScale = 0.25f;
@@ -122,6 +118,48 @@ namespace LAMENT
                     Time.timeScale = 1f;
                     Time.fixedDeltaTime = defaultFixed;
                 }
+            }
+        }
+
+        #endregion
+    
+        #region í”Œë ˆì´ì–´
+
+        public static class Player
+        {
+            private static GutData[] guts = new GutData[(int)EGutType._LENGTH];
+
+            public static GutData GetGutData(EGutType type)
+            {
+                return guts[(int)type];
+            }
+
+            public static void SetGutData(EGutType type, GutData data)
+            {
+                guts[(int)type] = data;
+            }
+
+        }
+
+        #endregion
+
+        #region ê²Œì„ ì–¸ë½ (ë„ì „ê³¼ì œ)
+
+        /// <summary> ê²Œì„ ì»¨í…ì¸ ì˜ ì ê¸ˆ í•´ì œ ì—¬ë¶€ë¥¼ ë‹´ë‹¹ </summary>
+        public static class GameUnlock
+        {
+            private static HashSet<string> unlockSet = new();
+
+            /// <summary> ê·¸ IDì˜ ì–¸ë½ ì—¬ë¶€ ë°˜í™˜ </summary>
+            public static bool IsUnlocked(string id)
+            {
+                return unlockSet.Contains(id);
+            }
+
+            /// <summary> ê·¸ IDë¥¼ ì–¸ë½ </summary>
+            public static void Unlock(string id)
+            {
+                unlockSet.Add(id);
             }
         }
 
