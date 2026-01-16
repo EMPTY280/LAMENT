@@ -13,7 +13,7 @@ namespace LAMENT
         private Sprite skillIcon;
 
         [SerializeField]
-        [Tooltip("¹èÁ¤µÈ ½ºÅ³")]
+        [Tooltip("ë°°ì •ëœ ìŠ¤í‚¬")]
         private Skill[] skills;
 
         [SerializeField]
@@ -21,7 +21,7 @@ namespace LAMENT
         private float cooldown = 0.5f;
 
 
-        public EEquipSlotType Slot; // TODO: ³ªÁß¿¡ ¾ø¾Ö¾ßµÊ
+        public EEquipSlotType Slot; // TODO: ë‚˜ì¤‘ì— ì—†ì• ì•¼ë¨
 
 
         public Sprite SkillIcon => skillIcon;

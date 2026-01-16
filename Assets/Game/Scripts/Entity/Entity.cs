@@ -9,25 +9,27 @@ namespace LAMENT
         private Animator animator;
         public Animator Animator => animator;
 
-        [Header("ÀÏ¹İ")]
+        [Header("ì¼ë°˜")]
         [SerializeField]
         protected float hpMax = 1;
         protected float hpCurr = 1;
 
-        protected bool isInvulnerable = false; // ¹«Àû
-        protected bool isUnstoppable = false;  // ÀúÁöºÒ°¡
+        protected bool isInvulnerable = false; // ë¬´ì 
+        protected bool isUnstoppable = false;  // ì €ì§€ë¶ˆê°€
 
-        [Header("ÀÌµ¿")]
+        [Header("ì´ë™")]
         [SerializeField] private MoveComponent moveComponent;
         public MoveComponent MoveComponent => moveComponent;
 
-        // ===== ½ºÅ³ =====
-        protected Skill skillCurr = null; // ÇöÀç ½ÃÀüÁßÀÎ ½ºÅ³ (°ø°İ)
+        // ===== ìŠ¤í‚¬ =====
+        protected Skill skillCurr = null; // í˜„ì¬ ì‹œì „ì¤‘ì¸ ìŠ¤í‚¬ (ê³µê²©)
         protected float skillDurationCurr = 0;
         protected Action cbOnSkillEnd;
 
-        private Dictionary<string, SkillEffector> effectors = new(); // Àåºñ ÀÌÆåÅÍ ¸ğÀ½
-                                                               // NOTE: Àåºñ ±³Ã¼°¡ ÀæÀº °ÔÀÓÀÌ¹Ç·Î, Àåºñ°¡ ÆÄ±«µÇ¾îµµ ±×´ë·Î À¯ÁöÇÔ (On / Off)
+        [Header("ìŠ¤í‚¬")]
+        [SerializeField] protected Transform effectorRoot;
+        private Dictionary<string, SkillEffector> effectors = new(); // ì¥ë¹„ ì´í™í„° ëª¨ìŒ
+                                                               // NOTE: ì¥ë¹„ êµì²´ê°€ ì¦ì€ ê²Œì„ì´ë¯€ë¡œ, ì¥ë¹„ê°€ íŒŒê´´ë˜ì–´ë„ ê·¸ëŒ€ë¡œ ìœ ì§€í•¨ (On / Off)
         public Dictionary<string, SkillEffector> Effectors => effectors;
 
 
@@ -46,9 +48,9 @@ namespace LAMENT
             effectors.Clear();
         }
 
-        #region ½ºÅ³
+        #region ìŠ¤í‚¬
 
-        /// <summary> ½ÇÇàÁßÀÎ ½ºÅ³ÀÌ ÀÖ´Ù¸é Å¸ÀÌ¹Ö ¾÷µ¥ÀÌÆ® ¹× Á¾·á ÆÇÁ¤ </summary>
+        /// <summary> ì‹¤í–‰ì¤‘ì¸ ìŠ¤í‚¬ì´ ìˆë‹¤ë©´ íƒ€ì´ë° ì—…ë°ì´íŠ¸ ë° ì¢…ë£Œ íŒì • </summary>
         private void UpdateSkill()
         {
             if (skillCurr == null)
@@ -95,17 +97,17 @@ namespace LAMENT
             }
         }
 
-        /// <summary> Å¸°İ °¡´ÉÇÑ ´ë»ó Å¸°İ ½Ã È£Ãâ </summary>
+        /// <summary> íƒ€ê²© ê°€ëŠ¥í•œ ëŒ€ìƒ íƒ€ê²© ì‹œ í˜¸ì¶œ </summary>
         public virtual void OnHitTarget(IDamageable target)
         {
             Debug.Log("I HIT SOME ASS!");
         }
 
 
-        /// <summary> Å¸°İ´çÇßÀ» ¶§ È£Ãâ, À¯È¿ÇÑ Å¸°İ¸¸ ¹ŞÀ½ Å¸°İ ¼º°ø ¿©ºÎ ¹İÈ¯ </summary>
+        /// <summary> íƒ€ê²©ë‹¹í–ˆì„ ë•Œ í˜¸ì¶œ, ìœ íš¨í•œ íƒ€ê²©ë§Œ ë°›ìŒ íƒ€ê²© ì„±ê³µ ì—¬ë¶€ ë°˜í™˜ </summary>
         public bool OnDamaged(Entity src)
         {
-            // °°Àº ÅÂ±× = °°Àº Áø¿µ ¿£Æ¼Æ¼µé³¢¸® °ø°İ ¾ÈµÊ
+            // ê°™ì€ íƒœê·¸ = ê°™ì€ ì§„ì˜ ì—”í‹°í‹°ë“¤ë¼ë¦¬ ê³µê²© ì•ˆë¨
             if (CompareTag(src.tag))
                 return false;
 
@@ -115,7 +117,7 @@ namespace LAMENT
             return true;
         }
 
-        /// <summary> À¯È¿ÇÑ Å¸°İÀ» ´çÇßÀ» ¶§ Ãß°¡ È£Ãâ </summary>
+        /// <summary> ìœ íš¨í•œ íƒ€ê²©ì„ ë‹¹í–ˆì„ ë•Œ ì¶”ê°€ í˜¸ì¶œ </summary>
         public virtual void OnDamageHandled(Entity src) { }
     }
 }

@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2afa75cadf92954cbdd9bb04ef6eab7, type: 3}
   m_Name: UpperSlash
   m_EditorClassIdentifier: 
-  duration: 0.3
+  duration: 0.5
   triggerName: Slash
   isUnstoppable: 0
   effector: {fileID: 4229285835958901732, guid: c1741bc3aa8b84f4287c7ca2da7f4e0a, type: 3}
   timingList:
   - 0
-  - 0.15
+  - 0.2
   - 0.8
   - 0.95
   jumpPower: 25

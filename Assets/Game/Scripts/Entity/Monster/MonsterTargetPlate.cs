@@ -41,17 +41,17 @@ namespace LAMENT
         }
 
 
-        /// <summary> BT ±¸¼º </summary>
+        /// <summary> BT êµ¬ì„± </summary>
         private void BuildBT()
         {
-            // °ø°Ý <- Á¢±Ù <- ´ë±â
+            // ê³µê²© <- ì ‘ê·¼ <- ëŒ€ê¸°
 
             bt = new();
 
             BTSelectorNode root = new();
             bt.SetRootNode(root);
 
-            // ===== °ø°Ý ½ÃÄö½º =====
+            // ===== ê³µê²© ì‹œí€€ìŠ¤ =====
 
             BTSequenceNode attackSQ = new();
             root.AddChild(attackSQ);
@@ -62,7 +62,7 @@ namespace LAMENT
             BTActionNode attackExe = new(Attack);
             attackSQ.AddChild(attackExe);
 
-            // ===== ÃßÀû ½ÃÄö½º =====
+            // ===== ì¶”ì  ì‹œí€€ìŠ¤ =====
 
             BTSequenceNode chaseSQ = new();
             root.AddChild(chaseSQ);
@@ -125,18 +125,18 @@ namespace LAMENT
                 return EBTState.FAILURE;
             }
 
-            // Å¸°Ù ÃßÀû
+            // íƒ€ê²Ÿ ì¶”ì 
             if (target.position.x < transform.position.x)
                 MoveComponent.SetMovement(MoveComponent.EMoveState.LEFT);
             else
                 MoveComponent.SetMovement(MoveComponent.EMoveState.RIGHT);
 
             Vector2 dir = Vector2.right * (MoveComponent.MoveState == MoveComponent.EMoveState.LEFT ? -1 : 1);
-            // ¿·¿¡ º®ÀÌ ÀÖ´Ù¸é Á¡ÇÁ
+            // ì˜†ì— ë²½ì´ ìžˆë‹¤ë©´ ì í”„
             if (Physics2D.BoxCast(transform.position, Vector2.one * 0.5f, 0, dir, 1, terrainLayer))
                 MoveComponent.TryJump();
 
-            // ¿· + ¾Æ·¡¿¡ ºó Ä­ÀÌ ÀÖ´Ù¸é Á¡ÇÁ
+            // ì˜† + ì•„ëž˜ì— ë¹ˆ ì¹¸ì´ ìžˆë‹¤ë©´ ì í”„
             if (!Physics2D.OverlapBox(((Vector2)transform.position) + dir + Vector2.down, Vector2.one * 0.5f, 0, terrainLayer))
                 MoveComponent.TryJump();
 

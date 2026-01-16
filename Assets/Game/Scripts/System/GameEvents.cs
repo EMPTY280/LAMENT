@@ -3,7 +3,6 @@ namespace LAMENT
 {
     public interface IGameEvent { }
 
-    /// <summary> ��������(���â ��) ����/���� ��ȣ. </summary>
     public readonly struct GEOnOverlayStateChanged : IGameEvent
     {
         public readonly bool isOpened;
@@ -14,7 +13,6 @@ namespace LAMENT
         }
     }
 
-    /// <summary> ���� Ȯ�� �� ���� (����/����/������ ����) </summary>
     public readonly struct GEOnEquipmentEquipped : IGameEvent
     {
         public EquipmentData Equipped { get; }
@@ -32,10 +30,10 @@ namespace LAMENT
     public readonly struct GEOnEquipmentPreview : IGameEvent
     {
         public EEquipSlotType Slot { get; }   // LeftArm / RightArm / Legs
-        public EquipmentData Current { get; }   // �߾�
-        public EquipmentData Prev { get; }   // ��/��(����)
-        public EquipmentData Next { get; }   // �Ʒ�/����(����)
-        public int Index { get; }   // �ĺ� ����Ʈ �� ���� �ε���
+        public EquipmentData Current { get; }
+        public EquipmentData Prev { get; }
+        public EquipmentData Next { get; }
+        public int Index { get; }
 
         public GEOnEquipmentPreview(
             EEquipSlotType slot,
@@ -52,7 +50,7 @@ namespace LAMENT
         }
     }
 
-    /// <summary> �κ��丮 ���� ��ȭ </summary>
+    /// <summary> 인벤토리의 슬롯이 변경되었을 때 </summary>
     public readonly struct GEOnInventorySlotChanged : IGameEvent
     {
         public int Index { get; }
@@ -65,7 +63,7 @@ namespace LAMENT
         }
     }
 
-    /// <summary> �κ��丮�� ������ �߰� �õ� ��� </summary>
+    /// <summary> 인벤토리에 아이템이 추가되었을 때 </summary>
     public readonly struct GEOnInventoryItemAdded : IGameEvent
     {
         public string ItemId { get; }

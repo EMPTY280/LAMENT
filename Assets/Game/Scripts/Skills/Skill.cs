@@ -8,37 +8,37 @@ namespace LAMENT
         [HideInInspector]
         public abstract string Comment { get; }
 
-        [Header("±âº»")]
+        [Header("ê¸°ë³¸")]
         [SerializeField]
-        [Tooltip("Áö¼Ó ½Ã°£ (ÃÊ), ¹èÁ¤µÈ ¾Ö´Ï¸ŞÀÌ¼Ç°ú °°Àº ±æÀÌ·Î ¸ÂÃâ°Í.")]
+        [Tooltip("ì§€ì† ì‹œê°„ (ì´ˆ), ë°°ì •ëœ ì• ë‹ˆë©”ì´ì…˜ê³¼ ê°™ì€ ê¸¸ì´ë¡œ ë§ì¶œê²ƒ.")]
         private float duration = 1.0f;
         [SerializeField]
-        [Tooltip("½ºÅ³ ½ÃÀü ½Ã ¹ßµ¿ÇÒ ¾Ö´Ï¸ŞÀÌ¼Ç Æ®¸®°Å.")]
+        [Tooltip("ìŠ¤í‚¬ ì‹œì „ ì‹œ ë°œë™í•  ì• ë‹ˆë©”ì´ì…˜ íŠ¸ë¦¬ê±°.")]
         private string triggerName = "";
         [SerializeField]
-        [Tooltip("ÀúÁö ºÒ°¡, ½ÃÀü Áß¿¡ °ø°İ¹Ş¾Æµµ ½ºÅ³ÀÌ Ãë¼ÒµÇÁö ¾ÊÀ½")]
+        [Tooltip("ì €ì§€ ë¶ˆê°€, ì‹œì „ ì¤‘ì— ê³µê²©ë°›ì•„ë„ ìŠ¤í‚¬ì´ ì·¨ì†Œë˜ì§€ ì•ŠìŒ")]
         private bool isUnstoppable = false;
 
         public float Duration => duration;
         public string TriggerName => triggerName;
 
-        [Header("ÀÌÆåÅÍ ÇÁ¸®ÆÕ")]
+        [Header("ì´í™í„° í”„ë¦¬íŒ¹")]
         [SerializeField]
-        [Tooltip("ÀÌÆåÅÍ °¡ Æ÷ÇÔµÈ ÇÁ¸®ÆÕÀ» µî·Ï.")]
+        [Tooltip("ì´í™í„° ê°€ í¬í•¨ëœ í”„ë¦¬íŒ¹ì„ ë“±ë¡.")]
         private GameObject effector;
 
         public GameObject Effector => effector;
 
-        [Header("Å¸ÀÌ¹Ö")]
+        [Header("íƒ€ì´ë°")]
         [SerializeField]
-        [Tooltip("Å¸ÀÌ¹Ö ¸®½ºÆ®, ½ºÅ³ÀÇ °¢ È¿°ú°¡ ¾î´À Å¸ÀÌ¹Ö¸¶´Ù ¹ß»ıÇÒÁöÀÇ °ª, (0 ~ 1)")]
+        [Tooltip("íƒ€ì´ë° ë¦¬ìŠ¤íŠ¸, ìŠ¤í‚¬ì˜ ê° íš¨ê³¼ê°€ ì–´ëŠ íƒ€ì´ë°ë§ˆë‹¤ ë°œìƒí• ì§€ì˜ ê°’, (0 ~ 1)")]
         private float[] timingList = null;
-        private int timingPointer = 0; // ÇöÀç ´ë±âÁßÀÎ Å¸ÀÌ¹Ö ÀÎµ¦½º
-        private float timeCurr = 0; // ÇöÀç ½ºÅ³ ÁøÇàµµ
-        private bool bAdvancePointer = false; // Å¸ÀÌ¹Ö Æ÷ÀÎÅÍ¸¦ ÀüÁøÇÒÁö ¿©ºÎ
+        private int timingPointer = 0; // í˜„ì¬ ëŒ€ê¸°ì¤‘ì¸ íƒ€ì´ë° ì¸ë±ìŠ¤
+        private float timeCurr = 0; // í˜„ì¬ ìŠ¤í‚¬ ì§„í–‰ë„
+        private bool bAdvancePointer = false; // íƒ€ì´ë° í¬ì¸í„°ë¥¼ ì „ì§„í• ì§€ ì—¬ë¶€
 
 
-        /// <summary> ÁøÇà »óÅÂ ÃÊ±âÈ­ </summary>
+        /// <summary> ì§„í–‰ ìƒíƒœ ì´ˆê¸°í™” </summary>
         public void ResetState()
         {
             timingPointer = 0;
@@ -46,9 +46,9 @@ namespace LAMENT
             bAdvancePointer = false;
         }
 
-        /// <summary> ½ºÅ³ ÁøÇàµµ¿¡ µû¶ó È£Ãâ </summary>
-        /// <param name="t"> Á¤±ÔÈ­µÈ ½Ã°£, 0 ~ 1 </param>
-        /// <param name="owner"> ½ºÅ³ÀÇ »ç¿ëÀÚ </param>
+        /// <summary> ìŠ¤í‚¬ ì§„í–‰ë„ì— ë”°ë¼ í˜¸ì¶œ </summary>
+        /// <param name="t"> ì •ê·œí™”ëœ ì‹œê°„, 0 ~ 1 </param>
+        /// <param name="owner"> ìŠ¤í‚¬ì˜ ì‚¬ìš©ì </param>
         public void OnTiming(float t, Entity owner)
         {
             timeCurr = t;
@@ -61,10 +61,10 @@ namespace LAMENT
             }
         }
 
-        /// <summary> IsTiming() ¸Ş¼­µå·Î °¢ Å¸ÀÌ¹Ö¿¡ ½ÇÇàÇÒ Çàµ¿À» ±¸Çö </summary>
+        /// <summary> IsTiming() ë©”ì„œë“œë¡œ ê° íƒ€ì´ë°ì— ì‹¤í–‰í•  í–‰ë™ì„ êµ¬í˜„ </summary>
         protected abstract void Perform(Entity owner);
 
-        /// <summary> ±× ÀÎµ¦½ºÀÇ Å¸ÀÌ¹ÖÀ» ½ÇÇàÇÒ ¶§°¡ ¸Â´ÂÁö ¹İÈ¯, true¸é Æ÷ÀÎÅÍ 1 ÀüÁø </summary>
+        /// <summary> ê·¸ ì¸ë±ìŠ¤ì˜ íƒ€ì´ë°ì„ ì‹¤í–‰í•  ë•Œê°€ ë§ëŠ”ì§€ ë°˜í™˜, trueë©´ í¬ì¸í„° 1 ì „ì§„ </summary>
         protected bool IsTiming(int idx)
         {
             if (timingList == null)
@@ -73,7 +73,7 @@ namespace LAMENT
             if (timingList.Length <= idx)
                 return false;
 
-            // Æ÷ÀÎÅÍ¿Í ÀÎµ¦½º°¡ µ¿ÀÏÇÏ°í, ÁøÇàµµ°¡ ÃæºĞÈ÷ Áö³µ´Ù¸é
+            // í¬ì¸í„°ì™€ ì¸ë±ìŠ¤ê°€ ë™ì¼í•˜ê³ , ì§„í–‰ë„ê°€ ì¶©ë¶„íˆ ì§€ë‚¬ë‹¤ë©´
             if (timingPointer == idx && timingList[idx] <= timeCurr)
             {
                 bAdvancePointer = true;
@@ -87,19 +87,19 @@ namespace LAMENT
         {
             if (!owner)
             {
-                GameManager.Logger.LogError("½ºÅ³ÀÇ owner¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+                GameManager.Logger.LogError("ìŠ¤í‚¬ì˜ ownerë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
                 return null;
             }
 
             if (!effector)
             {
-                GameManager.Logger.LogError("½ºÅ³¿¡ ¹èÁ¤µÈ ÀÌÆåÅÍ°¡ ¾ø½À´Ï´Ù.");
+                GameManager.Logger.LogError("ìŠ¤í‚¬ì— ë°°ì •ëœ ì´í™í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");
                 return null;
             }
 
             SkillEffector rst;
             if (!owner.Effectors.TryGetValue(effector.name, out rst))
-                GameManager.Logger.LogError("½ºÅ³ÀÇ ÀÌÆåÅÍ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+                GameManager.Logger.LogError("ìŠ¤í‚¬ì˜ ì´í™í„°ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
 
             return rst;
         }

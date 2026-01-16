@@ -14,9 +14,9 @@ namespace LAMENT
         protected Rigidbody2D rb = null;
         protected SpriteRenderer sr = null;
 
-        [Header("ÀÏ¹İ")]
+        [Header("ì¼ë°˜")]
         [SerializeField]
-        [Tooltip("Áß·Â")]
+        [Tooltip("ì¤‘ë ¥")]
         protected float gravityScale = 10f;
         protected bool isGravityEnabled = true;
 
@@ -28,18 +28,18 @@ namespace LAMENT
         }
 
 
-        [Header("ÀÌµ¿")]
+        [Header("ì´ë™")]
         [SerializeField]
-        [Tooltip("ÃÖ´ë ¼Óµµ")]
+        [Tooltip("ìµœëŒ€ ì†ë„")]
         protected float speedMax = 3.0f;
         [SerializeField]
-        [Tooltip("°¡¼Ó·Â")]
+        [Tooltip("ê°€ì†ë ¥")]
         protected float acceleration = 6.0f;
         [SerializeField]
-        [Tooltip("°¨¼Ó·Â")]
+        [Tooltip("ê°ì†ë ¥")]
         protected float friction = 1.0f;
 
-        private float hSpeed = 0f; // ÇöÀç ¼öÆò ¼Óµµ
+        private float hSpeed = 0f; // í˜„ì¬ ìˆ˜í‰ ì†ë„
         private EMoveState direction = EMoveState.RIGHT;
         private EMoveState moveState = EMoveState.STOP;
 
@@ -48,37 +48,37 @@ namespace LAMENT
         public EMoveState Direction => direction;
         public EMoveState MoveState => moveState;
 
-        [Header("º®ÆÇÁ¤ - ºĞÈ«»ö ¹Ú½º·Î Ç¥½ÃµÊ")]
+        [Header("ë²½íŒì • - ë¶„í™ìƒ‰ ë°•ìŠ¤ë¡œ í‘œì‹œë¨")]
         [SerializeField]
-        [Tooltip("º®À¸·Î ÆÇÁ¤ÇÒ ·¹ÀÌ¾î")]
+        [Tooltip("ë²½ìœ¼ë¡œ íŒì •í•  ë ˆì´ì–´")]
         private LayerMask wallLayer = default;
         [SerializeField]
-        [Tooltip("º® ÆÇÁ¤ ¹Ú½º")]
+        [Tooltip("ë²½ íŒì • ë°•ìŠ¤")]
         private Vector2 wallBox = Vector2.zero;
         [SerializeField]
-        [Tooltip("º® ÆÇÁ¤ ¹Ú½º Y ¿ÀÇÁ¼Â")]
+        [Tooltip("ë²½ íŒì • ë°•ìŠ¤ Y ì˜¤í”„ì…‹")]
         private float wallBoxYOffset = 0f;
 
-        [Header("¹Ù´Ú ÆÇÁ¤ - Çª¸¥»ö ¹Ú½º·Î Ç¥½ÃµÊ")]
+        [Header("ë°”ë‹¥ íŒì • - í‘¸ë¥¸ìƒ‰ ë°•ìŠ¤ë¡œ í‘œì‹œë¨")]
         [SerializeField]
-        [Tooltip("¹Ù´ÚÀ¸·Î ÆÇÁ¤ÇÒ ·¹ÀÌ¾î")]
+        [Tooltip("ë°”ë‹¥ìœ¼ë¡œ íŒì •í•  ë ˆì´ì–´")]
         private LayerMask groundLayer = default;
         [SerializeField]
-        [Tooltip("¹Ù´Ú ÆÇÁ¤ ¹Ú½º")]
+        [Tooltip("ë°”ë‹¥ íŒì • ë°•ìŠ¤")]
         private Vector2 groundBox = Vector2.zero;
-        [Tooltip("¹Ù´Ú ÆÇÁ¤ ¹Ú½º Y ¿ÀÇÁ¼Â")]
+        [Tooltip("ë°”ë‹¥ íŒì • ë°•ìŠ¤ Y ì˜¤í”„ì…‹")]
         [SerializeField]
         private float groundBoxYOffset = 0f;
-        [Tooltip("¹Ù´Ú Ã¼Å© ÃÖ´ë °Å¸®")]
+        [Tooltip("ë°”ë‹¥ ì²´í¬ ìµœëŒ€ ê±°ë¦¬")]
         [SerializeField]
         private float groundDistanceMax = 0.05f;
 
-        protected bool isGrounded = false; // ¹Ù´ÚÀÎÁö ¿©ºÎ
+        protected bool isGrounded = false; // ë°”ë‹¥ì¸ì§€ ì—¬ë¶€
         public bool IsGrounded => isGrounded;
 
-        [Header("Á¡ÇÁ")]
+        [Header("ì í”„")]
         [SerializeField]
-        [Tooltip("Á¡ÇÁ ÆÄ¿ö")]
+        [Tooltip("ì í”„ íŒŒì›Œ")]
         protected float jumpPower = 10.0f;
         protected bool isJumping = false;
         protected bool canJump = false;
@@ -88,7 +88,7 @@ namespace LAMENT
         {
             if (!TryGetComponent(out rb))
             {
-                GameManager.Logger.LogError($"{gameObject.name}ÀÇ MoveComponent°¡ RIgidbody2D¸¦ ÃÊ±âÈ­ÇÏÁö ¸øÇß½À´Ï´Ù.");
+                GameManager.Logger.LogError($"{gameObject.name}ì˜ MoveComponentê°€ RIgidbody2Dë¥¼ ì´ˆê¸°í™”í•˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
                 enabled = false;
                 return;
             }
@@ -110,20 +110,20 @@ namespace LAMENT
             UpdateGrounded(deltaTime);
         }
 
-        #region ÀÌµ¿ ¿¬»ê
+        #region ì´ë™ ì—°ì‚°
 
 #if UNITY_EDITOR
 
-        /// <summary> Ãæµ¹ ¹Ú½º Ç¥½Ã </summary>
+        /// <summary> ì¶©ëŒ ë°•ìŠ¤ í‘œì‹œ </summary>
         private void OnDrawGizmosSelected()
         {
-            // ¹Ù´Ú ÆÇÁ¤ »óÀÚ
+            // ë°”ë‹¥ íŒì • ìƒì
             Gizmos.color = new Color(0, 1, 1, 0.5f);
             Vector2 center = transform.position;
             center.y += groundBoxYOffset;
             Gizmos.DrawCube(center, groundBox);
 
-            // º® ÆÇÁ¤ »óÀÚ
+            // ë²½ íŒì • ìƒì
             Gizmos.color = new Color(1, 0, 1, 0.5f);
             center = transform.position;
             center.y += wallBoxYOffset;
@@ -132,14 +132,14 @@ namespace LAMENT
 
 #endif
 
-        /// <summary> ¼öÆò ¼Óµµ ¿¬»ê </summary>
+        /// <summary> ìˆ˜í‰ ì†ë„ ì—°ì‚° </summary>
         private void UpdateHSpeed(float dt)
         {
-            // ¼Óµµ º¯È­·®
+            // ì†ë„ ë³€í™”ëŸ‰
             float speedDelta = acceleration * dt;
             bool calcFriction = false;
 
-            // ÃÖ´ë ÀÌµ¿¼Óµµ Á¦ÇÑ
+            // ìµœëŒ€ ì´ë™ì†ë„ ì œí•œ
             switch (moveState)
             {
                 case EMoveState.LEFT:
@@ -154,7 +154,7 @@ namespace LAMENT
                     else
                         calcFriction = true;
                     break;
-                case EMoveState.STOP: // Á¤ÁöÇß´Ù¸é ¸¶Âû·Â Àû¿ë
+                case EMoveState.STOP: // ì •ì§€í–ˆë‹¤ë©´ ë§ˆì°°ë ¥ ì ìš©
                     calcFriction = true;
                     break;
             }
@@ -162,18 +162,18 @@ namespace LAMENT
             if (calcFriction)
                 hSpeed = Mathf.Max(0, Mathf.Abs(hSpeed) - friction * dt) * Mathf.Sign(hSpeed);
 
-            // º®¿¡ ´ê¾Ò´Ù¸é ¼Óµµ 0À¸·Î ÃÊ±âÈ­
+            // ë²½ì— ë‹¿ì•˜ë‹¤ë©´ ì†ë„ 0ìœ¼ë¡œ ì´ˆê¸°í™”
             Vector2 center = transform.position;
             center.y += wallBoxYOffset;
             if (Physics2D.BoxCast(center, wallBox, 0, Vector2.right, hSpeed * dt, wallLayer))
                 hSpeed = 0;
 
-            // °è»êµÈ ¼Óµµ Àû¿ë
+            // ê³„ì‚°ëœ ì†ë„ ì ìš©
             Vector2 velocity = rb.velocity;
             velocity.x = hSpeed;
             rb.velocity = velocity;
 
-            // ¹æÇâ º¯°æ
+            // ë°©í–¥ ë³€ê²½
             if (hSpeed > 0)
             {
                 direction = EMoveState.RIGHT;
@@ -190,7 +190,7 @@ namespace LAMENT
             }
         }
 
-        /// <summary> ¹Ù´Ú ÆÇÁ¤ ¿¬»ê </summary>
+        /// <summary> ë°”ë‹¥ íŒì • ì—°ì‚° </summary>
         private void UpdateGrounded(float dt)
         {
             Vector2 groundBoxCenter = transform.position;
@@ -209,9 +209,9 @@ namespace LAMENT
 
         #endregion
 
-        #region ÀÔ·Â
+        #region ì…ë ¥
 
-        /// <summary> ÀÌµ¿ »óÅÂ ¼³Á¤ </summary>
+        /// <summary> ì´ë™ ìƒíƒœ ì„¤ì • </summary>
         public void SetMovement(EMoveState newState)
         {
             if (!canControl)
@@ -233,7 +233,7 @@ namespace LAMENT
 
             isJumping = true;
 
-            // ¼öÁ÷ ¼Óµµ ÁöÁ¤
+            // ìˆ˜ì§ ì†ë„ ì§€ì •
             Vector2 velocity = rb.velocity;
             velocity.y = jumpPower;
             rb.velocity = velocity;

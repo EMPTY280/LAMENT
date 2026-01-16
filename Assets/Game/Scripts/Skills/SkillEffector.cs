@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace LAMENT
 {
-    /// <summary> ¹«±âÀÇ È÷Æ® ÆÇÁ¤, ½ºÇÁ¶óÀÌÆ® Ç¥½Ã µîÀ» ´ã´çÇÏ´Â Å¬·¡½º </summary>
+    /// <summary> ë¬´ê¸°ì˜ íˆíŠ¸ íŒì •, ìŠ¤í”„ë¼ì´íŠ¸ í‘œì‹œ ë“±ì„ ë‹´ë‹¹í•˜ëŠ” í´ë˜ìŠ¤ </summary>
     public class SkillEffector : MonoBehaviour
     {
         private GameObject[] childs;
@@ -22,7 +22,7 @@ namespace LAMENT
         {
             if (idx < 0 || childs.Length <= idx)
             {
-                GameManager.Logger.LogError("È÷Æ®¹Ú½º ÀÎµ¦½º°¡ ¹üÀ§¸¦ ¹ş¾î³µ½À´Ï´Ù.");
+                GameManager.Logger.LogError("íˆíŠ¸ë°•ìŠ¤ ì¸ë±ìŠ¤ê°€ ë²”ìœ„ë¥¼ ë²—ì–´ë‚¬ìŠµë‹ˆë‹¤.");
                 return;
             }
 

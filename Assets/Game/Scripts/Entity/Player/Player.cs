@@ -136,7 +136,7 @@ namespace LAMENT
                     return;
 
                 SkillEffector eff;
-                if (!Instantiate(skill.Effector, transform).TryGetComponent(out eff))
+                if (!Instantiate(skill.Effector, effectorRoot ?? transform).TryGetComponent(out eff))
                 {
                     GameManager.Logger.LogError("�����Ϳ��� ������Ʈ�� ã�� �� �����ϴ�.");
                     return;

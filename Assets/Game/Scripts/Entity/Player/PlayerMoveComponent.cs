@@ -4,54 +4,54 @@ namespace LAMENT
 {
     public class PlayerMoveComponent : MoveComponent
     {
-        [Header("ÇÃ·¹ÀÌ¾î - ¹Ù´Ú ÆÇÁ¤")]
-        [Tooltip("¹Ù´Ú ÆÇÁ¤ ¿ÏÃæ ½Ã°£")]
+        [Header("í”Œë ˆì´ì–´ - ë°”ë‹¥ íŒì •")]
+        [Tooltip("ë°”ë‹¥ íŒì • ì™„ì¶© ì‹œê°„")]
         [SerializeField]
         protected float coyoteTime = 0.3f;
         protected float coyoteTimeCurr = 0.0f;
 
-        [Header("ÇÃ·¹ÀÌ¾î - Á¡ÇÁ")]
+        [Header("í”Œë ˆì´ì–´ - ì í”„")]
         /*
         [SerializeField]
-        [Tooltip("Ãß°¡ Á¡ÇÁ È½¼ö")]
+        [Tooltip("ì¶”ê°€ ì í”„ íšŸìˆ˜")]
         protected int bonusJump = 1;
         protected int bonusJumpCurr = 1;
         protected bool canBonusJump = false;
         */
         [SerializeField]
-        [Tooltip("Á¡ÇÁ Áö¼Ó Áß Áß·Â ¹èÀ²")]
+        [Tooltip("ì í”„ ì§€ì† ì¤‘ ì¤‘ë ¥ ë°°ìœ¨")]
         protected float jumpGravityMult = 0.5f;
 
 
         protected override void Update()
         {
-            base.Update(); // ¿©±â¼­ ÀÌµ¿ ¿¬»ê
+            base.Update(); // ì—¬ê¸°ì„œ ì´ë™ ì—°ì‚°
 
             float deltaTime = Time.deltaTime;
             UpdateCoyoteTime(deltaTime);
             UpdateGravityScale();
         }
 
-        #region Ãß°¡ ÀÌµ¿ ¿¬»ê
+        #region ì¶”ê°€ ì´ë™ ì—°ì‚°
 
-        /// <summary> Á¡ÇÁ ÆÇÁ¤ ¿ÏÃæ ½Ã°£ °è»ê </summary>
+        /// <summary> ì í”„ íŒì • ì™„ì¶© ì‹œê°„ ê³„ì‚° </summary>
         private void UpdateCoyoteTime(float dt)
         {
-            // Á¡ÇÁÁßÀÌ¸é ¿ÏÃæ ½Ã°£ Áï½Ã 0À¸·Î Á¦°ÅÇÔ
+            // ì í”„ì¤‘ì´ë©´ ì™„ì¶© ì‹œê°„ ì¦‰ì‹œ 0ìœ¼ë¡œ ì œê±°í•¨
             if (isJumping)
             {
                 coyoteTimeCurr = 0;
                 return;
             }
 
-            // ¶¥¿¡ ¼­ÀÖ´Ù¸é ¿ÏÃæ½Ã°£ ÃÖ´ë·Î ÇÑ µÚ ÆĞ½º
+            // ë•…ì— ì„œìˆë‹¤ë©´ ì™„ì¶©ì‹œê°„ ìµœëŒ€ë¡œ í•œ ë’¤ íŒ¨ìŠ¤
             if (isGrounded)
             {
                 coyoteTimeCurr = coyoteTime;
                 return;
             }
 
-            // °øÁßÀÏ ¶§, ¿ÏÃæ ½Ã°£ÀÌ ³²¾ÆÀÖ´Ù¸é Á¡ÇÁ °¡´É
+            // ê³µì¤‘ì¼ ë•Œ, ì™„ì¶© ì‹œê°„ì´ ë‚¨ì•„ìˆë‹¤ë©´ ì í”„ ê°€ëŠ¥
             if (coyoteTimeCurr > 0)
             {
                 canJump = true;
@@ -59,7 +59,7 @@ namespace LAMENT
             }
         }
 
-        /// <summary> Áß·Â Á¶Àı °è»ê </summary>
+        /// <summary> ì¤‘ë ¥ ì¡°ì ˆ ê³„ì‚° </summary>
         private void UpdateGravityScale()
         {
             if (!isGravityEnabled)
@@ -73,7 +73,7 @@ namespace LAMENT
 
         #endregion
 
-        /// <summary> Á¡ÇÁ ÆÇÁ¤ °­Á¦ Á¾·á (Áß·Â °è»êÀ» À§ÇØ...) </summary>
+        /// <summary> ì í”„ íŒì • ê°•ì œ ì¢…ë£Œ (ì¤‘ë ¥ ê³„ì‚°ì„ ìœ„í•´...) </summary>
         public void ForceEndJumping()
         {
             isJumping = false;

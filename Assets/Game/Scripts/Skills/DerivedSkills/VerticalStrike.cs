@@ -9,20 +9,23 @@ namespace LAMENT
         [SerializeField] private bool flipSpriteY = true;
 
         public override string Comment =>
-            "0¹ø Å¸ÀÌ¹Ö: ÀüÁø ½ÃÀÛ\n" +
-            "1¹ø Å¸ÀÌ¹Ö: Á¡ÇÁ + ÆÇÁ¤ ÄÑ±â\n" +
-            "2¹ø Å¸ÀÌ¹Ö: ÀüÁø Á¾·á\n" +
-            "3¹ø Å¸ÀÌ¹Ö: ÆÇÁ¤ ²ô±â";
+            "0ë²ˆ íƒ€ì´ë°: ì „ì§„ ì‹œì‘\n" +
+            "1ë²ˆ íƒ€ì´ë°: ì í”„ + íŒì • ì¼œê¸°\n" +
+            "2ë²ˆ íƒ€ì´ë°: ì „ì§„ ì¢…ë£Œ\n" +
+            "3ë²ˆ íƒ€ì´ë°: íŒì • ë„ê¸°";
 
         protected override void Perform(Entity owner)
         {
             if (IsTiming(0))
             {
+                owner.MoveComponent.SetGravityEnabled(false);
+                owner.MoveComponent.SetVSpeed(0);
                 owner.MoveComponent.SetMovement(owner.MoveComponent.Direction);
             }
 
             if (IsTiming(1))
             {
+                owner.MoveComponent.SetGravityEnabled(true);
                 owner.MoveComponent.SetVSpeed(jumpPower);
                 GetEffector(owner).SetEnabled(0, true);
                 GetEffector(owner).FlipY(flipSpriteY);

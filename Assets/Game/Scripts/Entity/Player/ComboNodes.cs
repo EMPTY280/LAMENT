@@ -4,7 +4,7 @@ namespace LAMENT
 {
     public enum EComboInputTypes
     {
-        NONE,  // ÀÔ·Â ¾øÀ½
+        NONE,  // ì…ë ¥ ì—†ìŒ
 
         LEFT,
         RIGHT,
@@ -20,7 +20,7 @@ namespace LAMENT
         private EComboInputTypes inputType;
         public EComboInputTypes Type => inputType;
 
-        protected List<ComboNode> children; // ¿¬°áµÉ ¼ö ÀÖ´Â ´ÙÀ½ ³ëµå
+        protected List<ComboNode> children; // ì—°ê²°ë  ìˆ˜ ìˆëŠ” ë‹¤ìŒ ë…¸ë“œ
         public List<ComboNode> Children => children;
 
         public ComboNode(EComboInputTypes inputType = EComboInputTypes.NONE)
@@ -42,9 +42,9 @@ namespace LAMENT
 
     public class ComboNodeInput : ComboNode
     {
-        private EquipSlot equipSlot; // ¹èÁ¤µÈ Àåºñ ½½·Ô
-        private Skill skill; // ¹èÁ¤µÈ ½ºÅ³
-        private bool isBurst = false; // ÆøÆÄ ½ºÅ³ ¿©ºÎ
+        private EquipSlot equipSlot; // ë°°ì •ëœ ì¥ë¹„ ìŠ¬ë¡¯
+        private Skill skill; // ë°°ì •ëœ ìŠ¤í‚¬
+        private bool isBurst = false; // í­íŒŒ ìŠ¤í‚¬ ì—¬ë¶€
 
         public EquipSlot Equipment => equipSlot;
         public Skill Skill => skill;

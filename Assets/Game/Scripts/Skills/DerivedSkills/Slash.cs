@@ -7,14 +7,16 @@ namespace LAMENT
     public class Slash : Skill
     {
         public override string Comment =>
-            "0¹ø Å¸ÀÌ¹Ö: ÀüÁø ½ÃÀÛ\n" +
-            "1¹ø Å¸ÀÌ¹Ö: ÆÇÁ¤ ÄÑ±â + ÀüÁø Á¾·á\n" +
-            "2¹ø Å¸ÀÌ¹Ö: ÆÇÁ¤ ²ô±â";
+            "0ë²ˆ íƒ€ì´ë°: ì „ì§„ ì‹œì‘\n" +
+            "1ë²ˆ íƒ€ì´ë°: íŒì • ì¼œê¸° + ì „ì§„ ì¢…ë£Œ\n" +
+            "2ë²ˆ íƒ€ì´ë°: íŒì • ë„ê¸°";
 
         protected override void Perform(Entity owner)
         {
             if (IsTiming(0))
             {
+                owner.MoveComponent.SetGravityEnabled(false);
+                owner.MoveComponent.SetVSpeed(0);
                 owner.MoveComponent.SetMovement(owner.MoveComponent.Direction);
             }
 
@@ -28,6 +30,7 @@ namespace LAMENT
 
             if (IsTiming(2))
             {
+                owner.MoveComponent.SetGravityEnabled(true);
                 SkillEffector eff = GetEffector(owner);
                 if (eff)
                     eff.SetEnabled(0, false);

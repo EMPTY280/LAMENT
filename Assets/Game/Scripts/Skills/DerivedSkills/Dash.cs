@@ -5,9 +5,9 @@ namespace LAMENT
     [CreateAssetMenu(fileName = "Dash", menuName = "ScriptableObjects/Skills/Utility/Dash")]
     public class Dash : Skill
     {
-        public override string Comment => "0¹ø ´ë½Ã ½ÃÀÛ\n1¹ø ´ë½Ã Á¾·á";
+        public override string Comment => "0ë²ˆ ëŒ€ì‹œ ì‹œìž‘\n1ë²ˆ ëŒ€ì‹œ ì¢…ë£Œ";
 
-        [SerializeField][Tooltip("¾Õ/µÚ ´ë½Ã ¿©ºÎ")] private bool isFrontDash = true;
+        [SerializeField][Tooltip("ì•ž/ë’¤ ëŒ€ì‹œ ì—¬ë¶€")] private bool isFrontDash = true;
         [SerializeField] private float speed = 5f;
 
         private bool isDashing = false;

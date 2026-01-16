@@ -1,6 +1,8 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 
+[ExecuteAlways]
 public class ParallaxBackground : MonoBehaviour
 {
     [Serializable]
@@ -25,7 +27,7 @@ public class ParallaxBackground : MonoBehaviour
 
     [Header("Target")]
     [SerializeField]
-    private Transform followTarget; // ÃßÀûÇÒ ´ë»ó
+    private Transform followTarget; // ì¶”ì í•  ëŒ€ìƒ
 
     [Header("Layers")]
     [SerializeField]
@@ -36,7 +38,12 @@ public class ParallaxBackground : MonoBehaviour
 
     private void Awake()
     {
-        // °¢ ·¹ÀÌ¾îÀÇ ÀÌ¹ÌÁöµé À§Ä¡ ÃÊ±âÈ­
+        Init();
+    }
+
+    private void Init()
+    {
+        // ê° ë ˆì´ì–´ì˜ ì´ë¯¸ì§€ë“¤ ìœ„ì¹˜ ì´ˆê¸°í™”
         for (int i = 0; i < layers.Length; i++)
         {
             Transform left = layers[i].transform.GetChild(0);
@@ -74,22 +81,22 @@ public class ParallaxBackground : MonoBehaviour
         if (!followTarget)
             return;
         
-        // ·çÆ® À§Ä¡ ÁöÁ¤
+        // ë£¨íŠ¸ ìœ„ì¹˜ ì§€ì •
         Vector3 newPosRoot = followTarget.position;
         newPosRoot.z = depth;
         transform.position = newPosRoot;
 
-        // °¢ ·¹ÀÌ¾îÀÇ ÀÌ¹ÌÁöµé À§Ä¡ ÃÊ±âÈ­
+        // ê° ë ˆì´ì–´ì˜ ì´ë¯¸ì§€ë“¤ ìœ„ì¹˜ ì´ˆê¸°í™”
         for (int i = 0; i < layers.Length; i++)
         {
             Transform left = layers[i].transform.GetChild(0);
             Transform right = layers[i].transform.GetChild(1);
 
-            // À§Ä¡ ¾÷µ¥ÀÌÆ®
+            // ìœ„ì¹˜ ì—…ë°ì´íŠ¸
             left.localPosition = new Vector2(GetBgrX(layers[i].scrollSpeed, false, layers[i].offsetX), 0);
             right.localPosition = new Vector2(GetBgrX(layers[i].scrollSpeed, true, layers[i].offsetX), 0);
 
-            // ¾Ö´Ï¸ŞÀÌ¼Ç ¾÷µ¥ÀÌÆ®
+            // ì• ë‹ˆë©”ì´ì…˜ ì—…ë°ì´íŠ¸
             if (0 < layers[i].animFrames.Length)
             {
                 layers[i].animTimeCurr += Time.deltaTime;
