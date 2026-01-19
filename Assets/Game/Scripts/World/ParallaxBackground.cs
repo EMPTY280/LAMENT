@@ -1,5 +1,4 @@
 using System;
-using UnityEditor;
 using UnityEngine;
 
 [ExecuteAlways]
@@ -23,7 +22,7 @@ public class ParallaxBackground : MonoBehaviour
     }
 
     [SerializeField]
-    private float depth = 10;
+    private float depth = 100;
 
     [Header("Target")]
     [SerializeField]

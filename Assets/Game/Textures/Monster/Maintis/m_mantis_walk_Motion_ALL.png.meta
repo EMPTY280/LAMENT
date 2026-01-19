@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d62e026509491744ab82e4fb7cb54fa2
+guid: 4a42ef5acfd874c4ba3d90c3149c76dc
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,127 +97,85 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: l_punch-2-Sheet_0
+      name: m_mantis_walk_Motion_ALL_0
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 115
+        width: 140
+        height: 114
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7860dbc62c7d8e248bdb03eae24547e1
+      internalID: -1011858313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: m_mantis_walk_Motion_ALL_1
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 169
-        height: 128
-      alignment: 9
-      pivot: {x: 0.3846154, y: 0.0859375}
+        width: 128
+        height: 114
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 31c7124874b448149b1baa778f5b8cd2
-      internalID: 183590221
+      spriteID: 6eecd12a7829c2941a83337ffa666229
+      internalID: -1487452917
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: l_punch-2-Sheet_1
+      name: m_mantis_walk_Motion_ALL_2
       rect:
         serializedVersion: 2
-        x: 169
+        x: 137
         y: 0
-        width: 169
-        height: 128
-      alignment: 9
-      pivot: {x: 0.3846154, y: 0.0859375}
+        width: 138
+        height: 115
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8cb12ba2a2474594aab5b69b49d9e75d
-      internalID: 1844781668
+      spriteID: 29f16bf328bbc704d8f4b534f30e8df3
+      internalID: 269989182
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: l_punch-2-Sheet_2
+      name: m_mantis_walk_Motion_ALL_3
       rect:
         serializedVersion: 2
-        x: 338
+        x: 284
         y: 0
-        width: 169
-        height: 128
-      alignment: 9
-      pivot: {x: 0.3846154, y: 0.0859375}
+        width: 128
+        height: 114
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 31133ebde62345743be51a705ff21015
-      internalID: 1661421835
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: l_punch-2-Sheet_3
-      rect:
-        serializedVersion: 2
-        x: 507
-        y: 0
-        width: 169
-        height: 128
-      alignment: 9
-      pivot: {x: 0.3846154, y: 0.0859375}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fe939ea21b25c554995a1c22f8c81c6f
-      internalID: 1489394648
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: l_punch-2-Sheet_4
-      rect:
-        serializedVersion: 2
-        x: 676
-        y: 0
-        width: 169
-        height: 128
-      alignment: 9
-      pivot: {x: 0.3846154, y: 0.0859375}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 72930739efcd2724cb163e41f2725900
-      internalID: 541766006
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: l_punch-2-Sheet_5
-      rect:
-        serializedVersion: 2
-        x: 845
-        y: 0
-        width: 169
-        height: 128
-      alignment: 9
-      pivot: {x: 0.3846154, y: 0.0859375}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b89686c776d93764b8dbde62f49cb337
-      internalID: 1898128808
+      spriteID: 51a31ac8a1150da4a81d5680bb7c79c2
+      internalID: -75633286
       vertices: []
       indices: 
       edges: []
@@ -233,12 +191,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      l_punch-2-Sheet_0: 183590221
-      l_punch-2-Sheet_1: 1844781668
-      l_punch-2-Sheet_2: 1661421835
-      l_punch-2-Sheet_3: 1489394648
-      l_punch-2-Sheet_4: 541766006
-      l_punch-2-Sheet_5: 1898128808
+      m_mantis_walk_Motion_ALL_0: -1011858313
+      m_mantis_walk_Motion_ALL_1: -1487452917
+      m_mantis_walk_Motion_ALL_2: 269989182
+      m_mantis_walk_Motion_ALL_3: -75633286
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

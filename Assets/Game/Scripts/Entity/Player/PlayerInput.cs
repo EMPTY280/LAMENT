@@ -81,6 +81,13 @@ namespace LAMENT
 
             ClearCombo();
             BuildCombo();
+
+            GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
+        }
+
+        void OnDestroy()
+        {
+            GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
         }
 
         private void Update()
@@ -127,6 +134,7 @@ namespace LAMENT
                 Debug.Log($"[DEBUG] LimbConsumed: Stomach = {playerHealth.StomachCurr}");
             }
         }
+        
         #region �Է� ó��
 
         // �޺� �Է� �ޱ�
@@ -322,6 +330,12 @@ namespace LAMENT
         private void Unlock()
         {
             isLocked = false;
+        }
+    
+        public void OnPlayerEquipmentChanged(GEOnEquipmentEquipped e)
+        {
+            ClearCombo();
+            BuildCombo();
         }
     }
 }

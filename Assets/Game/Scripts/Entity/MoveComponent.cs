@@ -73,6 +73,7 @@ namespace LAMENT
         [SerializeField]
         private float groundDistanceMax = 0.05f;
 
+        [SerializeField]
         protected bool isGrounded = false; // 바닥인지 여부
         public bool IsGrounded => isGrounded;
 
@@ -198,7 +199,7 @@ namespace LAMENT
 
             if (!Physics2D.BoxCast(groundBoxCenter, groundBox, 0f, Vector2.down, groundDistanceMax, groundLayer))
                 isGrounded = false;
-            else if (rb.velocity.y <= 0)
+            else if (rb.velocity.y <= 0.001f) // 오차 반영
             {
                 isGrounded = true;
                 isJumping = false;

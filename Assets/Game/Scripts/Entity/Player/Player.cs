@@ -28,6 +28,8 @@ namespace LAMENT
             TryCreateEffector(leftArmSlot.Equipment, true);
             TryCreateEffector(rightArmSlot.Equipment, true);
             TryCreateEffector(legSlot.Equipment);
+
+            GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
         }
 
         private void Start()
@@ -50,6 +52,13 @@ namespace LAMENT
                 EEquipSlotType.LEG));
         }
 
+
+        protected override void OnDestroy()
+        {
+            base.Awake();
+            GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
+        }
+
         protected override void Update()
         {
             base.Update();
@@ -66,7 +75,7 @@ namespace LAMENT
             Animator.SetFloat("VSpeed", MoveComponent.VSpeed);
         }
 
-        #region ���
+        #region 스킬 및 장비
 
         /// <summary> ��� ��� �õ� </summary>
         public bool TryUseEquipment(EquipSlot slot, Skill skill, Action cbOnSkillEnd = null, bool isBurst = false)
@@ -112,7 +121,7 @@ namespace LAMENT
             return true;
         }
 
-        /// <summary> ��� ������ ���� �õ� </summary>
+        /// <summary> 스킬 이펙터 생성 시도 </summary>
         protected bool TryCreateEffector(EquipmentData e, bool isWeapon = false)
         {
             if (!e)
@@ -155,6 +164,26 @@ namespace LAMENT
             return true;
         }
 
+        #endregion
+    
+        public void OnPlayerEquipmentChanged(GEOnEquipmentEquipped e)
+        {
+            switch (e.SlotType)
+            {
+                case EEquipSlotType.LEFT:
+                    leftArmSlot.Equipment = e.Equipped;
+                break;
+                case EEquipSlotType.RIGHT:
+                    rightArmSlot.Equipment = e.Equipped;
+                break;
+                case EEquipSlotType.LEG:
+                    legSlot.Equipment = e.Equipped;
+                break;
+            }
+        }
+
+        #region 타격 및 피격
+
         public override void OnDamageHandled(Entity src)
         {
             if (health == null)
@@ -164,7 +193,7 @@ namespace LAMENT
             health.TakeHit(1);
         }
 
-         public override void OnHitTarget(IDamageable target)
+        public override void OnHitTarget(IDamageable target)
         {
             base.OnHitTarget(target);
 

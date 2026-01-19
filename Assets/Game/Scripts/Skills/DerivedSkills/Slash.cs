@@ -15,8 +15,8 @@ namespace LAMENT
         {
             if (IsTiming(0))
             {
-                owner.MoveComponent.SetGravityEnabled(false);
-                owner.MoveComponent.SetVSpeed(0);
+                // owner.MoveComponent.SetGravityEnabled(false);
+                // owner.MoveComponent.SetVSpeed(0);
                 owner.MoveComponent.SetMovement(owner.MoveComponent.Direction);
             }
 
@@ -30,7 +30,7 @@ namespace LAMENT
 
             if (IsTiming(2))
             {
-                owner.MoveComponent.SetGravityEnabled(true);
+                // owner.MoveComponent.SetGravityEnabled(true);
                 SkillEffector eff = GetEffector(owner);
                 if (eff)
                     eff.SetEnabled(0, false);

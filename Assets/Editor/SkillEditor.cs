@@ -8,7 +8,7 @@ public class SkillEditor : Editor
         DrawDefaultInspector();
 
         EditorGUILayout.Space(7);
-        EditorGUILayout.LabelField("¡÷ºÆ");
+        EditorGUILayout.LabelField("Ï£ºÏÑù");
 
         EditorGUI.BeginDisabledGroup(true);
         EditorGUILayout.TextArea(((LAMENT.Skill)target).Comment);
