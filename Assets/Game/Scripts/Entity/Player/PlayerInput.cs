@@ -186,11 +186,11 @@ namespace LAMENT
             bool isRightPressed = Input.GetKey(KeyCode.RightArrow);
 
             if (isLeftPressed == isRightPressed)
-                player.MoveComponent.SetMovement(MoveComponent.EMoveState.STOP);
+                player.MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
             else if (isLeftPressed)
-                player.MoveComponent.SetMovement(MoveComponent.EMoveState.LEFT);
+                player.MoveComponent.SetMovement(MoveComponent.EDirection.LEFT);
             else
-                player.MoveComponent.SetMovement(MoveComponent.EMoveState.RIGHT);
+                player.MoveComponent.SetMovement(MoveComponent.EDirection.RIGHT);
 
             if (Input.GetKey(KeyCode.Space))
                 player.MoveComponent.TryJump();
@@ -323,7 +323,7 @@ namespace LAMENT
 
         private void Lock()
         {
-            player.MoveComponent.SetMovement(MoveComponent.EMoveState.STOP);
+            player.MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
             isLocked = true;
         }
 

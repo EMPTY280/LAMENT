@@ -34,7 +34,7 @@ namespace LAMENT
 
         private float GetSpeedByDirection(MoveComponent mc)
         {
-            if (mc.Direction == MoveComponent.EMoveState.RIGHT)
+            if (mc.Direction == MoveComponent.EDirection.RIGHT)
                 return isFrontDash ? speed : -speed;
             else
                 return isFrontDash ? -speed : speed;

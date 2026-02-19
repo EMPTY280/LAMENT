@@ -22,7 +22,7 @@ namespace LAMENT
 
             if (IsTiming(1))
             {
-                owner.MoveComponent.SetMovement(MoveComponent.EMoveState.STOP);
+                owner.MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
                 SkillEffector eff = GetEffector(owner);
                 if (eff)
                     eff.SetEnabled(0, true);

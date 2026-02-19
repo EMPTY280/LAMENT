@@ -33,7 +33,7 @@ namespace LAMENT
 
             if (IsTiming(2))
             {
-                owner.MoveComponent.SetMovement(MoveComponent.EMoveState.STOP);
+                owner.MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
             }
 
             if (IsTiming(3))

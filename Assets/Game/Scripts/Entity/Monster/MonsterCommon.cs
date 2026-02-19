@@ -102,16 +102,16 @@ namespace LAMENT
 
             // 타겟 추적
             if (target.position.x < transform.position.x)
-                MoveComponent.SetMovement(MoveComponent.EMoveState.LEFT);
+                MoveComponent.SetMovement(MoveComponent.EDirection.LEFT);
             else
-                MoveComponent.SetMovement(MoveComponent.EMoveState.RIGHT);
+                MoveComponent.SetMovement(MoveComponent.EDirection.RIGHT);
 
             return EBTState.RUN;
         }
 
         private EBTState Idle()
         {
-            MoveComponent.SetMovement(MoveComponent.EMoveState.STOP);
+            MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
             return EBTState.RUN;
         }
 

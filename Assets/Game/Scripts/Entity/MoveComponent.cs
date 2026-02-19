@@ -6,7 +6,7 @@ namespace LAMENT
     [RequireComponent(typeof(Rigidbody2D))]
     public class MoveComponent : MonoBehaviour
     {
-        public enum EMoveState
+        public enum EDirection
         {
             LEFT, RIGHT, STOP
         }
@@ -40,13 +40,13 @@ namespace LAMENT
         protected float friction = 1.0f;
 
         private float hSpeed = 0f; // 현재 수평 속도
-        private EMoveState direction = EMoveState.RIGHT;
-        private EMoveState moveState = EMoveState.STOP;
+        private EDirection direction = EDirection.RIGHT;
+        private EDirection moveState = EDirection.STOP;
 
         public float HSpeed => hSpeed;
         public float VSpeed => rb.velocity.y;
-        public EMoveState Direction => direction;
-        public EMoveState MoveState => moveState;
+        public EDirection Direction => direction;
+        public EDirection MoveState => moveState;
 
         [Header("벽판정 - 분홍색 박스로 표시됨")]
         [SerializeField]
@@ -143,19 +143,19 @@ namespace LAMENT
             // 최대 이동속도 제한
             switch (moveState)
             {
-                case EMoveState.LEFT:
+                case EDirection.LEFT:
                     if (-speedMax < hSpeed)
                         hSpeed = Mathf.Max(-speedMax, hSpeed - speedDelta);
                     else
                         calcFriction = true;
                     break;
-                case EMoveState.RIGHT:
+                case EDirection.RIGHT:
                     if (hSpeed < speedMax)
                         hSpeed = Mathf.Min(speedMax, hSpeed + speedDelta);
                     else
                         calcFriction = true;
                     break;
-                case EMoveState.STOP: // 정지했다면 마찰력 적용
+                case EDirection.STOP: // 정지했다면 마찰력 적용
                     calcFriction = true;
                     break;
             }
@@ -175,20 +175,8 @@ namespace LAMENT
             rb.velocity = velocity;
 
             // 방향 변경
-            if (hSpeed > 0)
-            {
-                direction = EMoveState.RIGHT;
-                Vector3 v = transform.localScale;
-                v.x = math.abs(v.x);
-                transform.localScale = v;
-            }
-            else if (hSpeed < 0)
-            {
-                direction = EMoveState.LEFT;
-                Vector3 v = transform.localScale;
-                v.x = -math.abs(v.x);
-                transform.localScale = v;
-            }
+            if (direction != EDirection.STOP && hSpeed != 0)
+                SetDirection(hSpeed > 0 ? EDirection.RIGHT : EDirection.LEFT);
         }
 
         /// <summary> 바닥 판정 연산 </summary>
@@ -213,7 +201,7 @@ namespace LAMENT
         #region 입력
 
         /// <summary> 이동 상태 설정 </summary>
-        public void SetMovement(EMoveState newState)
+        public void SetMovement(EDirection newState)
         {
             if (!canControl)
                 return;
@@ -256,6 +244,15 @@ namespace LAMENT
         {
             rb.gravityScale = b ? gravityScale : 0;
             isGravityEnabled = b;
+        }
+
+        public void SetDirection(EDirection newDir)
+        {
+            direction = newDir;
+            
+            Vector3 v = transform.localScale;
+            v.x = math.abs(v.x) * (newDir == EDirection.LEFT ? -1 : 1);
+            transform.localScale = v;
         }
 
         #endregion
