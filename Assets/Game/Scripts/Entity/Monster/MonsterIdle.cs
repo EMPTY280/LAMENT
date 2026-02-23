@@ -19,7 +19,7 @@ namespace LAMENT
             base.Update();
         }
 
-        public override void OnDamageHandled(Entity src)
+        public override void OnDamageHandled(DamageResponse rsp)
         {
             Instantiate(dropitem, dropPoint.position, Quaternion.identity);
             Destroy(gameObject);

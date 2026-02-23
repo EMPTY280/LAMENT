@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace LAMENT
@@ -6,6 +7,11 @@ namespace LAMENT
     public class SkillEffector : MonoBehaviour
     {
         private GameObject[] childs;
+
+        private Entity owner;
+        private Action<IHittable> cbOnHitTarget;
+
+        public Action<IHittable> CB_OnHitTarget { set { cbOnHitTarget = value; } } 
 
 
         private void Awake()
@@ -29,11 +35,33 @@ namespace LAMENT
             childs[idx].SetActive(isEnabled);
         }
 
+        public void SetOwner(Entity entity)
+        {
+            owner = entity;
+        }
+
         public void FlipY(bool isFlipped)
         {
             Vector3 v = transform.localScale;
             v.y = Mathf.Abs(v.y) * (isFlipped ? -1 : 1);
             transform.localScale = v;
+        }
+
+        public void OnTriggered(Collider2D collision)
+        {
+            // 같은 진영은 타격하지 않음
+            if (owner.CompareTag(collision.tag))
+                return;
+
+            if (collision.TryGetComponent(out IHittable target))
+            {
+                DamageResponse rsp = new();
+                rsp.src = owner;
+
+                target.OnHit(rsp);
+                if (cbOnHitTarget != null)
+                    cbOnHitTarget(target);
+            }
         }
     }
 }

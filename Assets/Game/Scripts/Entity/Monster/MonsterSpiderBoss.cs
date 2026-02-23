@@ -6,13 +6,13 @@ namespace LAMENT
     public class MonsterSpiderBoss : Entity
     {
         [SerializeField, Header("다리 찍기 구역")]
-        private ZoneTriggerHandler zone1;
+        private TriggerHandler zone1;
         [SerializeField]
-        private ZoneTriggerHandler zone2;
+        private TriggerHandler zone2;
         [SerializeField]
-        private ZoneTriggerHandler zone3;
+        private TriggerHandler zone3;
         [SerializeField]
-        private ZoneTriggerHandler zone4;
+        private TriggerHandler zone4;
         [SerializeField]
         private int currZone = 0;
 

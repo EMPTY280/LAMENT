@@ -4,21 +4,23 @@ using UnityEngine;
 
 namespace LAMENT
 {
-    public abstract class Entity : MonoBehaviour, IDamageable
+    public abstract class Entity : MonoBehaviour, IHittable
     {
-        private Animator animator;
-        public Animator Animator => animator;
-
-        [Header("일반")]
-        [SerializeField]
+        // ===== 일반 =====
+        [Header("일반"), SerializeField]
         protected float hpMax = 1;
         protected float hpCurr = 1;
 
         protected bool isInvulnerable = false; // 무적
         protected bool isUnstoppable = false;  // 저지불가
 
-        [Header("이동")]
-        [SerializeField] private MoveComponent moveComponent;
+        // ===== 애니메이션 =====
+        private Animator animator;
+        public Animator Animator => animator;
+
+        // ===== 이동 =====
+        [Header("이동"), SerializeField]
+        private MoveComponent moveComponent;
         public MoveComponent MoveComponent => moveComponent;
 
         // ===== 스킬 =====
@@ -26,8 +28,8 @@ namespace LAMENT
         protected float skillDurationCurr = 0;
         protected Action cbOnSkillEnd;
 
-        [Header("스킬")]
-        [SerializeField] protected Transform effectorRoot;
+        [Header("스킬"), SerializeField]
+        protected Transform effectorRoot;
         private Dictionary<string, SkillEffector> effectors = new(); // 장비 이펙터 모음
                                                                // NOTE: 장비 교체가 잦은 게임이므로, 장비가 파괴되어도 그대로 유지함 (On / Off)
         public Dictionary<string, SkillEffector> Effectors => effectors;
@@ -88,36 +90,20 @@ namespace LAMENT
 
         #endregion
 
-        protected virtual void OnTriggerEnter2D(Collider2D collision)
-        {
-            if (collision.TryGetComponent(out IDamageable target))
-            {
-                OnHitTarget(target);
-                target.OnDamaged(this);
-            }
-        }
-
-        /// <summary> 타격 가능한 대상 타격 시 호출 </summary>
-        public virtual void OnHitTarget(IDamageable target)
-        {
-            Debug.Log("I HIT SOME ASS!");
-        }
-
+        #region 히트 박스
 
         /// <summary> 타격당했을 때 호출, 유효한 타격만 받음 타격 성공 여부 반환 </summary>
-        public bool OnDamaged(Entity src)
+        public bool OnHit(DamageResponse rsp)
         {
-            // 같은 태그 = 같은 진영 엔티티들끼리 공격 안됨
-            if (CompareTag(src.tag))
-                return false;
-
-            Debug.Log("SOMEONE HIT MY ASS!");
-            OnDamageHandled(src);
+            Debug.Log($"{name}: SOMEONE HIT MY ASS!");
+            OnDamageHandled(rsp);
 
             return true;
         }
 
         /// <summary> 유효한 타격을 당했을 때 추가 호출 </summary>
-        public virtual void OnDamageHandled(Entity src) { }
+        public virtual void OnDamageHandled(DamageResponse rsp) { }
+
+        #endregion
     }
 }

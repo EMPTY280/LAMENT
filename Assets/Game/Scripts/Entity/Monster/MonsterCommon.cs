@@ -115,8 +115,11 @@ namespace LAMENT
             return EBTState.RUN;
         }
 
-        public override void OnDamageHandled(Entity src)
+        public override void OnDamageHandled(DamageResponse rsp)
         {
+            if (!dropitem)
+                return;
+
             Instantiate(dropitem, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }

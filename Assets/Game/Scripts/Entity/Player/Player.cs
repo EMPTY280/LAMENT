@@ -134,7 +134,7 @@ namespace LAMENT
             {
                 if (!skill)
                 {
-                    GameManager.Logger.LogError("������ ��ų�� �����ϴ�.");
+                    GameManager.Logger.LogError("배정된 스킬이 없습니다.");
                     return;
                 }
 
@@ -147,11 +147,13 @@ namespace LAMENT
                 SkillEffector eff;
                 if (!Instantiate(skill.Effector, effectorRoot ?? transform).TryGetComponent(out eff))
                 {
-                    GameManager.Logger.LogError("�����Ϳ��� ������Ʈ�� ã�� �� �����ϴ�.");
+                    GameManager.Logger.LogError("스킬 이펙터 프리팹에서 스크립트를 찾을 수 없습니다.");
                     return;
                 }
 
                 eff.transform.localPosition = Vector3.zero;
+                eff.SetOwner(this);
+                eff.CB_OnHitTarget = OnHitTarget;
                 Effectors.Add(skill.Effector.name, eff);
             }
 
@@ -184,7 +186,7 @@ namespace LAMENT
 
         #region 타격 및 피격
 
-        public override void OnDamageHandled(Entity src)
+        public override void OnDamageHandled(DamageResponse rsp)
         {
             if (health == null)
                 return;
@@ -193,10 +195,8 @@ namespace LAMENT
             health.TakeHit(1);
         }
 
-        public override void OnHitTarget(IDamageable target)
+        private void OnHitTarget(IHittable target)
         {
-            base.OnHitTarget(target);
-
             if (health != null)
             {
                 // 적을 맞출 때마다 위 게이지 증가
