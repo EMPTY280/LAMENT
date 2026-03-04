@@ -138,6 +138,9 @@ namespace LAMENT
                     TryChangeMode(true);
             }
 
+            if (Input.GetKeyDown(KeyCode.X))
+                GameManager.Instance.TryChangeScene("Worldmap");
+
             // TODO: 테스트
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {

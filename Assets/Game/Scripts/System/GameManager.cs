@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace LAMENT
 {
@@ -23,9 +24,27 @@ namespace LAMENT
         #endregion
 
 
-        private GameManager() { }
+        private ScreenFade screenFade;
 
 
+        private GameManager()
+        {
+            screenFade = GameObject.Instantiate(Resources.Load<GameObject>("System/SCENE_TRANSITION_CANV")).GetComponent<ScreenFade>();
+        }
+
+        #region 씬 전환
+
+        public bool TryChangeScene(string name, float duration = 1)
+        {
+            return screenFade.TryStartFadeout(duration * 0.5f, () =>
+            {
+                SceneManager.LoadScene(name);
+                screenFade.TryStartFadein(duration * 0.5f);
+            });
+        }
+
+        #endregion
+        
         #region 로그
 
         public static class Logger
