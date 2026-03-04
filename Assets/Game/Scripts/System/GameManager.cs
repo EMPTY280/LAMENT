@@ -183,5 +183,53 @@ namespace LAMENT
         }
 
         #endregion
+        
+        #region 키 설정
+
+        public static class KeyMap
+        {
+            public enum EKey
+            {
+                UP, DOWN, LEFT, RIGHT,
+                CONFIRM, CANCEL
+            }
+
+            private static Dictionary<EKey, KeyCode> keyMap;
+            private static Dictionary<KeyCode, string> keyNameConverts;
+
+            static KeyMap()
+            {
+                keyMap = new()
+                {
+                    { EKey.UP, KeyCode.W },
+                    { EKey.DOWN, KeyCode.S },
+                    { EKey.LEFT, KeyCode.A },
+                    { EKey.RIGHT, KeyCode.D },
+
+                    { EKey.CONFIRM, KeyCode.Space },
+                    { EKey.CANCEL, KeyCode.X }
+                };
+
+                keyNameConverts = new()
+                {
+                    
+                };
+            }
+
+            /// <summary> 그 행동을 수행하는 키 코드 반환 </summary>
+            public static KeyCode GetKeyCode(EKey type)
+            {
+                return keyMap[type];
+            }
+
+            /// <summary> 그 행동을 수행하는 키의 이름 반환 </summary>
+            public static string GetKeyName(EKey type)
+            {
+                if (keyNameConverts.ContainsKey(keyMap[type]))
+                    return keyNameConverts[keyMap[type]];
+                return keyMap[type].ToString();
+            }
+        }
+        #endregion
     }
 }

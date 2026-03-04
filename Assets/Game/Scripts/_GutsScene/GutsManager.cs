@@ -20,7 +20,7 @@ namespace LAMENT
 
         // ===== 커서 =====
         [Header("커서")]
-        [SerializeField] private RectTransform cursorRect;
+        [SerializeField] private CursorRect cursor;
         private int gutCursor = 0;
         private int invCursor = 0;
 
@@ -83,18 +83,8 @@ namespace LAMENT
 
         private void Update()
         {
-            UpdateCursorSize();
             UpdateSelectedGutColor();
             GetInput();
-        }
-
-        /// <summary> 커서 크기 조절 </summary>
-        private void UpdateCursorSize()
-        {
-            float size = Mathf.Sin(Time.time * 10) * 2f;
-
-            cursorRect.offsetMax = Vector2.one * (10 - size); // Right, Top
-            cursorRect.offsetMin = -Vector2.one * (10 - size); // Left, Bottom
         }
 
         private void UpdateSelectedGutColor()
@@ -209,8 +199,7 @@ namespace LAMENT
 
         private void SetCursorPos(Transform t)
         {
-            cursorRect.SetParent(t);
-            UpdateCursorSize();
+            cursor.SetParent(t);
         }
 
         #endregion
