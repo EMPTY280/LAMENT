@@ -13,8 +13,12 @@ namespace LAMENT
         {
             rectTransform = GetComponent<RectTransform>();
         }
+
         private void Update()
         {
+            if (!rectTransform)
+                return;
+                
             float size = Mathf.Sin(Time.time * 10) * 2f;
 
             rectTransform.offsetMax = Vector2.one * (10 - size); // Right, Top

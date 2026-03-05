@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 
@@ -7,83 +8,97 @@ namespace LAMENT
     /// <summary> 상하좌우, 선택, 취소를 처리하는 클래스 </summary>
     public class CommonUIContorl : MonoBehaviour
     {
-        // 각각 가로 세로 최대 범위
-        private int horizontalRange = 1;
-        private int verticalRange = 1;
+        [SerializeField] private bool isHInverted = false;
+        [SerializeField] private bool isVInverted = false;
 
-        private int posH = 0;
-        private int posV = 0;
-
-        public Action<int, int> CB_OnPositionMoved { private get; set; }
-        public Action<int, int> CB_OnConfirmed;
-        public Action<int, int> CB_OnCanceled;
+        public int HorizontalMove { private get; set; }
+        public int VerticalMove { private get; set; }
 
 
-        /// <summary> 좌우로 선택 가능한 범위를 지정 </summary>
-        public void SetHorizontalRange(int max)
+        private int max = 1;
+        private int pos = 0;
+
+        public Action<int> CB_OnPositionMoved { private get; set; }
+        public Action<int> CB_OnConfirmed { private get; set; }
+        public Action<int> CB_OnCanceled { private get; set; }
+
+        /// <summary> 최댓값 지정 </summary>
+        public void SetMax(int maxIncluded)
         {
-            if (max <= 0)
-                max = 1;
+            if (maxIncluded <= 0)
+                maxIncluded = 1;
 
-            horizontalRange = max;
+            max = maxIncluded;
 
-            if (horizontalRange < posH)
-                posH = horizontalRange;
+            if (max < pos)
+                pos = max;
         }
 
-        /// <summary> 상하로 선택 가능한 범위를 지정 </summary>
-        public void SetVeticalRange(int max)
+        /// <summary> 위치 설정 </summary>
+        public void SetPos(int p, bool isRelative, bool invokeCallback = true)
         {
-            if (max <= 0)
-                max = 1;
+            if (isRelative)
+                pos += p;
+            else
+                pos = p;
 
-            verticalRange = max;
+            pos = math.clamp(pos, 0, max);
 
-            if (verticalRange < posV)
-                posV = verticalRange;
+            if (invokeCallback && CB_OnPositionMoved != null)
+                CB_OnPositionMoved(pos);
         }
 
+        public int GetPos() => pos;
+        
         private void Update()
         {
-            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.UP)))
+            bool up = Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.UP));
+            bool down = Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.DOWN));
+            bool left = Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.LEFT));
+            bool right = Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.RIGHT));
+
+            if (isHInverted)
             {
-                posV = (posV + 1) % verticalRange;
-                if (CB_OnPositionMoved != null)
-                    CB_OnPositionMoved(posH, posV);
+                bool temp = left;
+                left = right;
+                right = temp;
             }
 
-            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.DOWN)))
+            if (isVInverted)
             {
-                posV = (posV - 1) % verticalRange;
-                if (CB_OnPositionMoved != null)
-                    CB_OnPositionMoved(posH, posV);
+                bool temp = up;
+                up = down;
+                down = temp;
             }
+            
+            if (up)
+                pos += VerticalMove;
+            if (down)
+                pos -= VerticalMove;
+            if (left)
+                pos -= HorizontalMove;
+            if (right)
+                pos += HorizontalMove;
 
-            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.LEFT)))
+            int ceiling = max + 1;
+            pos = ((pos % ceiling) + ceiling) % ceiling;
+
+            if (up || down || left || right)
             {
-                posH = (posH - 1) % horizontalRange;
                 if (CB_OnPositionMoved != null)
-                    CB_OnPositionMoved(posH, posV);
+                    CB_OnPositionMoved(pos);
             }
-
-            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.RIGHT)))
-            {
-                posH = (posH + 1) % horizontalRange;
-                if (CB_OnPositionMoved != null)
-                    CB_OnPositionMoved(posH, posV);
-            }
-
 
             if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.CONFIRM)))
             {
                 if (CB_OnConfirmed != null)
-                    CB_OnConfirmed(posH, posV);
+                    CB_OnConfirmed(pos);
             }
 
             if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.CANCEL)))
             {
                 if (CB_OnCanceled != null)
-                    CB_OnCanceled(posH, posV);
+                    CB_OnCanceled(pos);
             }
         }
     }

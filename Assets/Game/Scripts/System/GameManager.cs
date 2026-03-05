@@ -201,18 +201,21 @@ namespace LAMENT
             {
                 keyMap = new()
                 {
-                    { EKey.UP, KeyCode.W },
-                    { EKey.DOWN, KeyCode.S },
-                    { EKey.LEFT, KeyCode.A },
-                    { EKey.RIGHT, KeyCode.D },
+                    { EKey.UP, KeyCode.UpArrow },
+                    { EKey.DOWN, KeyCode.DownArrow },
+                    { EKey.LEFT, KeyCode.LeftArrow },
+                    { EKey.RIGHT, KeyCode.RightArrow },
 
-                    { EKey.CONFIRM, KeyCode.Space },
+                    { EKey.CONFIRM, KeyCode.Z },
                     { EKey.CANCEL, KeyCode.X }
                 };
 
                 keyNameConverts = new()
                 {
-                    
+                    { KeyCode.UpArrow, "▲" },
+                    { KeyCode.DownArrow, "▼" },
+                    { KeyCode.LeftArrow, "◀" },
+                    { KeyCode.RightArrow, "▶" },
                 };
             }
 

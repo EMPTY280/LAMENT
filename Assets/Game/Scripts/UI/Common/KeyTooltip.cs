@@ -33,8 +33,9 @@ namespace LAMENT
                     textL.text += $"{GameManager.KeyMap.GetKeyName(k)} ";
                 textL.text += "] ";
 
-                textL.text += kts.str + "\n";
+                textL.text += kts.str + "  ";
             }
+            textL.text = textL.text.Substring(0, math.max(0, textL.text.Length - 1));
 
             textR.text = "";
             foreach (KeyTooltipStruct kts in rightTooltips)
@@ -44,8 +45,11 @@ namespace LAMENT
                 textR.text += " [ ";
                 foreach (GameManager.KeyMap.EKey k in kts.keys)
                     textR.text += $"{GameManager.KeyMap.GetKeyName(k)} ";
-                textR.text += "]\n";
+                textR.text += "] ";
+
+                textR.text += kts.str + "  ";
             }
+            textR.text = textR.text.Substring(0, math.max(0, textR.text.Length - 1));
         }
 
         private void Update()

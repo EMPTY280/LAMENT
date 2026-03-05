@@ -7,22 +7,24 @@ namespace LAMENT
 {
     public class GutsManager : MonoBehaviour
     {
+        [Header("입력")]
+        [SerializeField] private CommonUIContorl control;
+        [SerializeField] private CursorRect cursor;
+        [SerializeField] private Button returnBtt;
+
+        private int gutPosPrev = 0;
+        private int gutPos = 0;
+        private int invPos = 0;
+        private bool isInvMode = false;
+
         // ===== 슬롯 =====
         [Header("슬롯")]
         [SerializeField] private SpriteRenderer[] silhouettes;
         [SerializeField] private GutSlot[] gutSlots;
 
-        [SerializeField] private GutSlot descPanel;
-
         [SerializeField] private Color silhouettDefault;
         [SerializeField] private Color silhouettFocused;
         [SerializeField] private Color silhouettEquipped;
-
-        // ===== 커서 =====
-        [Header("커서")]
-        [SerializeField] private CursorRect cursor;
-        private int gutCursor = 0;
-        private int invCursor = 0;
 
         // ===== 인벤 =====
         [Serializable]
@@ -37,8 +39,6 @@ namespace LAMENT
         [SerializeField] private Sprite lockedIcon;
         [SerializeField] private RectTransform equippedText;
         [SerializeField] private int invSlotPerLine = 3;
-
-        private bool isInvMode = false;
 
         // ===== 설명 =====
         [Header("설명창")]
@@ -55,17 +55,27 @@ namespace LAMENT
 
         private void Awake()
         {
-            foreach (GutSlot s in gutSlots)
-                s.Clear();
+            // 장기 슬롯 초기화
+            for (int i = 0; i < gutSlots.Length; i++)
+            {
+                GutData data = GameManager.Player.GetGutData((EGutType)i);
+                if (data)
+                    gutSlots[i].SetData(data);
+                else
+                    gutSlots[i].Clear();
+            }
 
-            descPanel.Clear();
-
+            // 모든 실루엣들 색상 초기화
             for (int i = 0; i < silhouettes.Length; i++)
-                silhouettes[i].color = GameManager.Player.GetGutData((EGutType)i) != null ? silhouettEquipped : silhouettDefault;
-            
-            MoveGutCursor(0, false);
+                UpdateSilhouett(i);
+
+            // 설명창 초기화
             UpdateDescPanel();
+
+            // 장착 텍스트 비활성화
             equippedText.gameObject.SetActive(false);
+
+            SetAsGutMode();
         }
 
         private void OnValidate()
@@ -74,7 +84,7 @@ namespace LAMENT
                 return;
 
             for (int i = 0; i < silhouettes.Length; i++)
-                silhouettes[i].color = gutCursor == i ? silhouettFocused : silhouettDefault;
+                silhouettes[i].color = (i == 0) ? silhouettFocused : silhouettDefault;
         }
 
         #endregion
@@ -83,54 +93,10 @@ namespace LAMENT
 
         private void Update()
         {
-            UpdateSelectedGutColor();
-            GetInput();
-        }
+            // 선택된 장기 실루엣만 색상 업데이트
+            UpdateSilhouett(gutPos);
 
-        private void UpdateSelectedGutColor()
-        {
-            silhouettes[gutCursor].color = Color.Lerp(silhouettFocused, Color.white, 0.5f + 0.5f * Mathf.Sin(Time.time * 10));
-        }
-
-        #endregion
-
-        #region 입력
-
-        private void GetInput()
-        {
-            if (isInvMode)
-            {
-                if (Input.GetKeyDown(KeyCode.W) && 0 <= invCursor - invSlotPerLine)
-                    MoveInvCursor(-invSlotPerLine, true);
-                if (Input.GetKeyDown(KeyCode.S) && invCursor + invSlotPerLine < collections[gutCursor].list.Length)
-                    MoveInvCursor(invSlotPerLine, true);
-                if (Input.GetKeyDown(KeyCode.A))
-                {
-                    if ((invCursor + 1) % invSlotPerLine != 1)
-                        MoveInvCursor(-1, true);
-                    else
-                        TryChangeMode(false);
-                }
-                if (Input.GetKeyDown(KeyCode.D) &&
-                    ((invCursor + 1) % invSlotPerLine != 0 ||
-                    invCursor + invSlotPerLine < collections[gutCursor].list.Length))
-                    MoveInvCursor(1, true);
-                if (Input.GetKeyDown(KeyCode.Space))
-                    TryEquip();
-            }
-            else
-            {
-                if (Input.GetKeyDown(KeyCode.W))
-                    MoveGutCursor(-1, true);
-                if (Input.GetKeyDown(KeyCode.S))
-                    MoveGutCursor(1, true);
-                if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.Space))
-                    TryChangeMode(true);
-            }
-
-            if (Input.GetKeyDown(KeyCode.X))
-                GameManager.Instance.TryChangeScene("Worldmap");
-
+#if UNITY_EDITOR
             // TODO: 테스트
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
@@ -144,119 +110,59 @@ namespace LAMENT
                 UpdateInventory();
                 UpdateDescPanel();
             }
+#endif
         }
 
-        #endregion
-
-        #region 커서
-
-        private void MoveGutCursor(int v, bool isRelative)
+        private void UpdateSilhouett(int idx)
         {
-            int newPos = isRelative ? gutCursor + v : v;
-            if (newPos < 0)
-                newPos = (int)EGutType._LENGTH - 1;
-            else if ((int)EGutType._LENGTH <= newPos)
-                newPos = 0;
-
-            silhouettes[gutCursor].color = GameManager.Player.GetGutData((EGutType)gutCursor) != null ? silhouettEquipped : silhouettDefault;
-            gutCursor = newPos;
-            silhouettes[gutCursor].color = silhouettFocused;
-
-            SetCursorPos(gutSlots[gutCursor].transform);
-            MoveInvCursor(0, false);
-            UpdateInventory();
-        }
-
-        private void MoveInvCursor(int v, bool isRelative)
-        {
-            int newPos = isRelative ? invCursor + v : v;
-            
-            if (collections.Length <= 0)
+            if (idx < 0 || silhouettes.Length <= idx)
                 return;
+
+            SpriteRenderer img = silhouettes[idx];
+
+            if (idx == gutPos)
+                img.color = Color.Lerp(silhouettFocused, Color.white, 0.5f + 0.5f * Mathf.Sin(Time.time * 10));
             else
-            {
-                if (collections.Length <= gutCursor)
-                    return;
-
-                GutData[] list = collections[gutCursor].list;
-                if (list != null)
-                {
-                    if (newPos < 0)
-                        newPos = list.Length - 1;
-                    else if (list.Length <= newPos)
-                        newPos = 0;
-                }
-            }
-
-            invCursor = newPos;
-
-            if (isInvMode)
-            {
-                SetCursorPos(invIcons[invCursor].transform.parent);
-                UpdateDescPanel();
-            }
-        }
-
-        private void SetCursorPos(Transform t)
-        {
-            cursor.SetParent(t);
-        }
-
-        #endregion
-
-        #region 모드
-
-        private void TryChangeMode(bool isInvMode)
-        {
-            if (isInvMode &&
-                (collections.Length <= gutCursor ||
-                collections[gutCursor].list.Length <= 0))
-                return;
-            
-            this.isInvMode = isInvMode;
-
-            if (isInvMode)
-                SetCursorPos(invIcons[invCursor].transform.parent);
-            else
-            {
-                SetCursorPos(gutSlots[gutCursor].transform);
-                MoveInvCursor(0, false);
-            }
-            UpdateDescPanel();
+                img.color = GameManager.Player.GetGutData((EGutType)idx) != null ? silhouettEquipped : silhouettDefault;
         }
 
         private void UpdateInventory()
         {
-            if (collections.Length <= gutCursor)
-            {
-                for (int i = 0; i < invIcons.Length; i++)
-                    invIcons[i].transform.parent.gameObject.SetActive(false);
+            if (gutPos < 0 || gutSlots.Length <= gutPos)
                 return;
-            }
-            
-            equippedText.gameObject.SetActive(false);
 
-            GutData[] list = collections[gutCursor].list;
+            equippedText.gameObject.SetActive(false);
+            
+            GutData[] list = collections[gutPos].list;
             for (int i = 0; i < invIcons.Length; i++)
             {
                 bool isActive = i < list.Length;
                 invIcons[i].transform.parent.gameObject.SetActive(isActive);
+
                 if (isActive)
                 {
                     invIcons[i].sprite = GameManager.GameUnlock.IsUnlocked(list[i].ID) ? list[i].Icon : lockedIcon;
-                    if (list[i] == GameManager.Player.GetGutData((EGutType)gutCursor))
+                    if (list[i] == GameManager.Player.GetGutData((EGutType)gutPos))
                         SetEquippedText(invIcons[i].transform.parent);
                 }
             }
         }
 
-        #endregion
-
-        #region 설명창
-
         private void UpdateDescPanel()
         {
-            if (!isInvMode)
+            GutData data = null;
+
+            // 현재 모드에 따라 장기 정보 가져오기
+            if (0 <= gutPos && gutPos < gutSlots.Length)
+            {
+                if (isInvMode)
+                    data = collections[gutPos].list[invPos];
+                else
+                    data = GameManager.Player.GetGutData((EGutType)gutPos);
+            }
+
+            // 장기 정보가 없으면 설명 비활성화
+            if (!data)
             {
                 descFrame.enabled = false;
                 descIcon.enabled = false;
@@ -265,7 +171,6 @@ namespace LAMENT
                 return;
             }
 
-            GutData data = collections[gutCursor].list[invCursor];
             bool isUnlocked = GameManager.GameUnlock.IsUnlocked(data.ID);
 
             descFrame.enabled = true;
@@ -283,29 +188,144 @@ namespace LAMENT
         }
 
         #endregion
-    
-        #region 장착
 
-        private void TryEquip()
+        #region 입력
+
+        /// <summary> 장기 슬롯 선택 모드로 전환 </summary>
+        private void SetAsGutMode()
         {
-            // NOTE: 인덱스 예외처리는 커서 함수들에서 처리하기에 더 할 필요 없음.
-            GutData selectedGut = collections[gutCursor].list[invCursor];
-            if (!GameManager.GameUnlock.IsUnlocked(selectedGut.ID))
-                return;
+            isInvMode = false;
 
-            GutData equippedGut = GameManager.Player.GetGutData((EGutType)gutCursor);
-            if (equippedGut == selectedGut)
+            control.SetMax(gutSlots.Length); // 마지막은 뒤로가기 버튼
+            control.HorizontalMove = 0;
+            control.VerticalMove = 1;
+
+            control.CB_OnPositionMoved = OnGutCursorMoved;
+            control.CB_OnConfirmed = OnGutConfirmed;
+            control.CB_OnCanceled = OnGutCanceled;
+
+            control.SetPos(gutPos, false);
+
+            UpdateDescPanel();
+        }
+
+        /// <summary> 장기 슬롯 선택 입력 </summary>
+        private void OnGutCursorMoved(int pos)
+        {
+            gutPosPrev = gutPos;
+            gutPos = pos;
+
+            if (gutPos == gutSlots.Length) // 뒤로가기
             {
-                GameManager.Player.SetGutData((EGutType)gutCursor, null);
-                gutSlots[gutCursor].Clear();
+                UpdateSilhouett(gutPosPrev);
+                cursor.SetParent(returnBtt.transform);
             }
             else
             {
-                GameManager.Player.SetGutData((EGutType)gutCursor, selectedGut);
-                gutSlots[gutCursor].SetData(selectedGut);
+                UpdateSilhouett(gutPosPrev);
+                UpdateSilhouett(gutPos);
+
+                UpdateInventory();
+                cursor.SetParent(gutSlots[gutPos].transform);
+            }
+
+            UpdateDescPanel();
+        }
+
+        /// <summary> 장기 슬롯 선택 </summary>
+        private void OnGutConfirmed(int pos)
+        {
+            if (gutPos == gutSlots.Length) // 뒤로가기
+                ReturnToWorldmap();
+            else
+            {
+                if (collections[gutPos] != null && 0 < collections[gutPos].list.Length)
+                    SetAsInvMode();
+            }
+        }
+
+        /// <summary> 장기 슬롯 취소 </summary>
+        private void OnGutCanceled(int pos)
+        {
+            control.SetPos(gutSlots.Length, false);
+        }
+
+        /// <summary> 인벤토리 모드로 전환 </summary>
+        private void SetAsInvMode()
+        {
+            isInvMode = true;
+
+            control.SetMax(collections[gutPos].list.Length - 1);
+            control.HorizontalMove = 1;
+            control.VerticalMove = 3;
+
+            control.CB_OnPositionMoved = OnInvCursorMoved;
+            control.CB_OnConfirmed = OnInvConfirmed;
+            control.CB_OnCanceled = OnInvCanceled;
+
+            control.SetPos(0, false);
+            control.SetPos(0, false, false);
+        }
+
+        private void OnInvCursorMoved(int pos)
+        {
+            invPos = pos;
+            
+            cursor.SetParent(invIcons[invPos].transform.parent);
+            UpdateDescPanel();
+        }
+
+        private void OnInvConfirmed(int pos)
+        {
+            GutData selectedGut = collections[gutPos].list[invPos];
+            if (!GameManager.GameUnlock.IsUnlocked(selectedGut.ID))
+                return;
+
+            GutData equippedGut = GameManager.Player.GetGutData((EGutType)gutPos);
+            if (equippedGut == selectedGut)
+            {
+                GameManager.Player.SetGutData((EGutType)gutPos, null);
+                gutSlots[gutPos].Clear();
+            }
+            else
+            {
+                GameManager.Player.SetGutData((EGutType)gutPos, selectedGut);
+                gutSlots[gutPos].SetData(selectedGut);
             }
 
             UpdateInventory();
+        }
+
+        private void OnInvCanceled(int pos)
+        {
+            SetAsGutMode();
+        }
+
+        #endregion
+
+        #region 기타
+
+        public void ReturnToWorldmap()
+        {
+            GameManager.Instance.TryChangeScene("Worldmap");
+        }
+
+        public void SelectGutSlot(int idx)
+        {
+            if (isInvMode)
+                SetAsGutMode();
+            
+            control.SetPos(idx, false);
+            OnGutConfirmed(idx);
+        }
+
+        public void SelectInvSlot(int idx)
+        {
+            if (!isInvMode)
+                SetAsInvMode();
+            
+            control.SetPos(idx, false);
+            OnInvConfirmed(idx);
         }
         
         private void SetEquippedText(Transform t)
