@@ -150,8 +150,9 @@ public class StageMarker : MonoBehaviour
         }
     }
 
-    public void Enter()
+    public void TryEnter()
     {
-        GameManager.Instance.TryChangeScene(targetSceneName);
+        if (isUnlocked)
+            GameManager.Instance.TryChangeScene(targetSceneName);
     }
 }

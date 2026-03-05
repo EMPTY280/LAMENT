@@ -38,7 +38,7 @@ namespace LAMENT
             }
 
             if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.CONFIRM)))
-                currMarker.Enter();
+                currMarker.TryEnter();
             if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.CANCEL)))
                 OnCoffinButtonClicked();
 
