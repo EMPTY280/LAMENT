@@ -10,6 +10,9 @@ namespace LAMENT
         [SerializeField] private EquipSlot rightArmSlot;
         [SerializeField] private EquipSlot legSlot;
 
+        [Header("장기")]
+        [SerializeField] private PlayerGutsController gutsController;
+
         private EquipSlot lastUsedEquipment; // ���������� ����� ��� ����
         
         private PlayerHealth health;
@@ -17,11 +20,20 @@ namespace LAMENT
         public EquipSlot RightArmSlot => rightArmSlot;
         public EquipSlot LegSlot => legSlot;
 
+          public PlayerGutRuntime GutRuntime => gutsController != null ? gutsController.Runtime : null;
+
+         private readonly GutData[] appliedGuts = new GutData[(int)EGutType._LENGTH];
+
 
 
         protected override void Awake()
         {
             base.Awake();
+
+            if (!gutsController)
+                gutsController = GetComponent<PlayerGutsController>();
+
+
 
             // �̹� ������ ��� �ִٸ� ������ ���� �� ���
             health = GetComponent<PlayerHealth>();
@@ -92,9 +104,37 @@ namespace LAMENT
                 Debug.Log("���߿� ��� �ı� ����"); // TODO
                 // slot.Equipment = null;
                 // OnEquipmentChanged.Notify(slot);
+                 TryConsumeBurstEquipment(slot);
             }
 
             return true;
+        }
+
+         private void TryConsumeBurstEquipment(EquipSlot slot)
+        {
+            if (slot == null || slot.Equipment == null)
+                return;
+
+            if (GutRuntime != null && GutRuntime.RollPreventConsume())
+            {
+                Debug.Log("[GUT][PLAY][BURST] consume prevented");
+                return;
+            }
+
+            Debug.Log($"[GUT][PLAY][BURST] consumed = {slot.Equipment.name}");
+
+            EquipmentData replaced = slot.Equipment;
+            slot.Equipment = null;
+
+            EEquipSlotType slotType = EEquipSlotType.LEG;
+            if (slot == leftArmSlot) slotType = EEquipSlotType.LEFT;
+            else if (slot == rightArmSlot) slotType = EEquipSlotType.RIGHT;
+            else if (slot == legSlot) slotType = EEquipSlotType.LEG;
+
+            GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(
+                null,
+                replaced,
+                slotType));
         }
 
         /// <summary> ��ų ��� ���� </summary>
@@ -205,5 +245,6 @@ namespace LAMENT
         }
 
         #endregion
+
     }
 }

@@ -151,4 +151,38 @@ namespace LAMENT
             Killer = killer;
         }
     }
+
+    /// <summary>
+    /// 장기 이벤트
+    /// </summary>
+    public readonly struct GEOnGutChanged : IGameEvent
+    {
+        public EGutType Type {get;}
+        public GutData Equipped {get;}
+        public GutData Replaced {get;}
+
+        public GEOnGutChanged(EGutType type, GutData equipped, GutData replaced)
+        {
+            Type = type;
+            Equipped = equipped;
+            Replaced = replaced;
+        }
+    }
+
+     public readonly struct GEOnGutsRuntimeChanged : IGameEvent
+    {
+        public int WeightCapacityBonus { get; }
+        public float NoConsumeChance01 { get; }     // 0~1
+        public int MaxHpBonus { get; }
+        public float StomachGainMult { get; }       // 배율
+
+        public GEOnGutsRuntimeChanged(int weightCapacityBonus, float noConsumeChance01, int maxHpBonus, float stomachGainMult)
+        {
+            WeightCapacityBonus = weightCapacityBonus;
+            NoConsumeChance01 = noConsumeChance01;
+            MaxHpBonus = maxHpBonus;
+            StomachGainMult = stomachGainMult;
+        }
+    }
+    
 }
