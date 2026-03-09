@@ -17,16 +17,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PJS_SCENE.unity
     guid: f9f357404a023514394f8f02d4d86b68
-  - enabled: 1
-    path: Assets/Scenes/SampleScene 0.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 1
-    path: Assets/Scenes/PJS_SCENE.unity
-    guid: f9f357404a023514394f8f02d4d86b68
-  - enabled: 1
-    path: Assets/Scenes/Worldmap.unity
-    guid: 0d79c0bd0d9bcb042943d136b8de7ce3
-  - enabled: 1
-    path: Assets/Scenes/Collections.unity
-    guid: 20dde35751172fa4f850f89338465df2
   m_configObjects: {}
