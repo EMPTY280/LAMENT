@@ -6,39 +6,64 @@ namespace LAMENT
 {
     public class PlayerHealth : MonoBehaviour
     {
-        [Header("체력설정")]
+         [Header("체력설정")]
         [SerializeField] private int initialMaxHp = 5;
         [SerializeField] private int minMaxHp = 1;
 
         [Header("위 게이지 설정")]
         [SerializeField] private int stomachMax = 100;
-        [SerializeField] private int gainPerAttack =5;
+        [SerializeField] private int gainPerAttack = 5;
         [SerializeField] private int gainPerLimb = 20;
 
-        public int CurrentHp{get; private set;}
-         public int CurrentMaxHp { get; private set; }
-        public int InitialMaxHp { get { return initialMaxHp; } }
+        public int CurrentHp { get; private set; }
+
+        private int baseMaxHp;
+        private int gutMaxHpBonus;
+
+        public int CurrentMaxHp => Mathf.Max(minMaxHp, baseMaxHp + gutMaxHpBonus);
+        public int InitialMaxHp => initialMaxHp;
 
         public int StomachCurr { get; private set; }
 
         public bool IsDead { get; private set; }
         public bool IsGameOver { get; private set; }
 
+        private float gutStomachGainMult = 1f;
+
         private void Awake()
         {
-            CurrentMaxHp = initialMaxHp;
+            baseMaxHp = initialMaxHp;
+            gutMaxHpBonus = 0;
+            gutStomachGainMult = 1f;
+
             CurrentHp = CurrentMaxHp;
             StomachCurr = 0;
+
+            GameManager.Eventbus.Subscribe<GEOnGutsRuntimeChanged>(OnGutsRuntimeChanged);
 
             PublishHealthChanged();
             PublishStomachChanged();
         }
 
-        #region 데미지 & 사망 처리
+        private void OnDestroy()
+        {
+            GameManager.Eventbus.Unsubscribe<GEOnGutsRuntimeChanged>(OnGutsRuntimeChanged);
+        }
 
-        /// <summary>
-        /// 한 번 맞았을 때 호출 (필요하면 amount 늘려도 됨)
-        /// </summary>
+        private void OnGutsRuntimeChanged(GEOnGutsRuntimeChanged e)
+        {
+            int prevMax = CurrentMaxHp;
+
+            gutMaxHpBonus = e.MaxHpBonus;
+            gutStomachGainMult = Mathf.Max(0f, e.StomachGainMult);
+
+            if (CurrentHp > CurrentMaxHp)
+                CurrentHp = CurrentMaxHp;
+
+            if (prevMax != CurrentMaxHp)
+                PublishHealthChanged();
+        }
+
         public void TakeHit(int amount)
         {
             if (IsGameOver)
@@ -61,7 +86,6 @@ namespace LAMENT
             int remainingMaxHpAfter = CurrentMaxHp - 1;
             GameManager.Eventbus.Publish(new GEOnPlayerDied(remainingMaxHpAfter));
 
-            // 최대 체력이 1인 상태에서 죽으면 게임오버
             if (CurrentMaxHp <= minMaxHp)
             {
                 IsGameOver = true;
@@ -69,8 +93,7 @@ namespace LAMENT
                 return;
             }
 
-            // 부활 : 최대 체력 -1, 그 값으로 풀피
-            CurrentMaxHp = Mathf.Max(minMaxHp, CurrentMaxHp - 1);
+            baseMaxHp = Mathf.Max(minMaxHp - gutMaxHpBonus, baseMaxHp - 1);
             CurrentHp = CurrentMaxHp;
             IsDead = false;
 
@@ -78,17 +101,11 @@ namespace LAMENT
             PublishHealthChanged();
         }
 
-        #endregion
-
-        #region 위 게이지
-
-        /// <summary> 적에게 공격이 적중했을 때 </summary>
         public void OnAttackLanded()
         {
             AddStomach(gainPerAttack);
         }
 
-        /// <summary> 팔 / 다리 섭취했을 때 (아이템에서 호출) </summary>
         public void OnLimbConsumed()
         {
             AddStomach(gainPerLimb);
@@ -99,15 +116,19 @@ namespace LAMENT
             if (IsGameOver)
                 return;
 
-            StomachCurr += amount;
+            int finalAmount = Mathf.RoundToInt(amount * gutStomachGainMult);
+            if (finalAmount <= 0)
+                return;
+
+            StomachCurr += finalAmount;
+
             if (StomachCurr >= stomachMax)
             {
                 StomachCurr -= stomachMax;
 
-                if (CurrentMaxHp < initialMaxHp)
+                if (baseMaxHp < initialMaxHp)
                 {
-                    CurrentMaxHp++;
-                    // 위게이지로 최대 체력이 회복되면, 현재 체력도 1 회복
+                    baseMaxHp++;
                     CurrentHp = Mathf.Min(CurrentHp + 1, CurrentMaxHp);
                     PublishHealthChanged();
                 }
@@ -116,14 +137,10 @@ namespace LAMENT
             PublishStomachChanged();
         }
 
-        #endregion
-
-        #region 이벤트 발행
-
         private void PublishHealthChanged()
         {
             GameManager.Eventbus.Publish(
-                new GEOnPlayerHealthChanged(CurrentHp, CurrentMaxHp, initialMaxHp));
+                new GEOnPlayerHealthChanged(CurrentHp, CurrentMaxHp, InitialMaxHp));
         }
 
         private void PublishStomachChanged()
@@ -131,7 +148,5 @@ namespace LAMENT
             GameManager.Eventbus.Publish(
                 new GEOnStomachGaugeChanged(StomachCurr, stomachMax));
         }
-
-        #endregion
     }
 }

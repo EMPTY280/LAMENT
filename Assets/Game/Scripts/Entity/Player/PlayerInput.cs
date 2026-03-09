@@ -193,9 +193,16 @@ namespace LAMENT
                 player.MoveComponent.SetMovement(MoveComponent.EDirection.RIGHT);
 
             if (Input.GetKey(KeyCode.Space))
-                player.MoveComponent.TryJump();
+            {
+                if (player.MoveComponent is PlayerMoveComponent pm)
+                    pm.TryJumpWithExtra();
+                else
+                    player.MoveComponent.TryJump();
+            }
             else
+            {
                 ((PlayerMoveComponent)player.MoveComponent).ForceEndJumping();
+            }
         }
 
         #endregion

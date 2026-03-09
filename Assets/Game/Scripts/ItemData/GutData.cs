@@ -23,10 +23,14 @@ namespace LAMENT
         [SerializeField] private string desc;
         [SerializeField] private string unlockMethod;
 
+        [SerializeField] private GutEffect[] effects;
+
         public string ID => id;
         public Sprite Icon => icon;
         public string Name => name;
         public string Desc => desc;
         public string UnlockMethod => unlockMethod;
+
+        public GutEffect[] Effects => effects;
     }
 }

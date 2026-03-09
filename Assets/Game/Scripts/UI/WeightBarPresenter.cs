@@ -11,20 +11,18 @@ namespace LAMENT
     {
         [Header("Refs")]
         [SerializeField] private EquipmentLoadoutService _loadout;
+        [SerializeField] private Player _player;
         [SerializeField] private Image _fill;
         [SerializeField] private Image _iconWeight;
         [SerializeField] private Image _decorLeft;
         [SerializeField] private Image _decorRight;
 
         [Header("Config")]
-        [Tooltip("허용 중량 (예: 100). 합계/허용중량 = 바 비율")]
         [SerializeField] private float _capacity = 100f;
 
-        [Tooltip("이 비율 이상이면 '느려짐(노랑)'")]
         [Range(0f, 1f)]
         [SerializeField] private float _slowThreshold = 0.50f;
 
-        [Tooltip("(선택) 이 비율 초과면 '과중(빨강)'")]
         [Range(0f, 2f)]
         [SerializeField] private float _overThreshold = 1.00f;
 
@@ -34,14 +32,30 @@ namespace LAMENT
         [SerializeField] private Color _red = new Color(1f, 0.3f, 0.3f);
 
         public float CurrentWeight { get; private set; }
-        public float Capacity => Mathf.Max(1f, _capacity);
-        public float Ratio01 => Mathf.Clamp01(CurrentWeight / Capacity);
 
+        public float Capacity
+        {
+            get
+            {
+                int bonus = 0;
+                if (_player && _player.GutRuntime != null)
+                    bonus = _player.GutRuntime.WeightCapacityBonus;
+
+                return Mathf.Max(1f, _capacity + bonus);
+            }
+        }
+
+        public float Ratio01 => Mathf.Clamp01(CurrentWeight / Capacity);
 
         private void Awake()
         {
+            if (!_player)
+                _player = FindObjectOfType<Player>();
+
             GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnEquipped);
             GameManager.Eventbus.Subscribe<GEOnOverlayStateChanged>(OnOverlayStateChanged);
+            GameManager.Eventbus.Subscribe<GEOnGutsRuntimeChanged>(OnGutsRuntimeChanged);
+
             Refresh();
         }
 
@@ -49,6 +63,7 @@ namespace LAMENT
         {
             GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnEquipped);
             GameManager.Eventbus.Unsubscribe<GEOnOverlayStateChanged>(OnOverlayStateChanged);
+            GameManager.Eventbus.Unsubscribe<GEOnGutsRuntimeChanged>(OnGutsRuntimeChanged);
         }
 
         private void OnEquipped(GEOnEquipmentEquipped e)
@@ -62,12 +77,18 @@ namespace LAMENT
                 Refresh();
         }
 
+        private void OnGutsRuntimeChanged(GEOnGutsRuntimeChanged e)
+        {
+            Refresh();
+        }
+
         private void Refresh()
         {
-            if (_loadout == null || _fill == null) return;
+            if (_loadout == null || _fill == null)
+                return;
 
             CurrentWeight = SumEquippedWeights(_loadout);
-            var ratio = Ratio01;
+            float ratio = Ratio01;
 
             _fill.fillAmount = ratio;
             _fill.color = CalcColor(ratio);
@@ -87,9 +108,9 @@ namespace LAMENT
 
         private Color CalcColor(float ratio)
         {
-            if (ratio > _overThreshold) return _red;      // 선택: 100% 초과
-            if (ratio >= _slowThreshold) return _yellow;  // 50~100%
-            return _green;                                 // 0~49%
+            if (ratio > _overThreshold) return _red;
+            if (ratio >= _slowThreshold) return _yellow;
+            return _green;
         }
     }
 }

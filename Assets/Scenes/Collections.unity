@@ -5376,12 +5376,26 @@ MonoBehaviour:
     - {fileID: 11400000, guid: f026f07d7e2f1f74cbe853049bb6c420, type: 2}
     - {fileID: 11400000, guid: cf0de70a898631446a561dee321b487e, type: 2}
     - {fileID: 11400000, guid: aacfe2bb88930eb48b14a74f42627c7a, type: 2}
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+  - list:
+    - {fileID: 11400000, guid: 93b8520d4f92e544a8eb38aaa17070f5, type: 2}
+    - {fileID: 11400000, guid: 21b6ecc39f8deba47b03fa035fe7c2af, type: 2}
+  - list:
+    - {fileID: 11400000, guid: c1751a02b91a1594384071335487157e, type: 2}
+=======
+>>>>>>> Stashed changes
     - {fileID: 11400000, guid: aacfe2bb88930eb48b14a74f42627c7a, type: 2}
     - {fileID: 11400000, guid: aacfe2bb88930eb48b14a74f42627c7a, type: 2}
   - list: []
   - list: []
   - list: []
   - list: []
+<<<<<<< Updated upstream
+=======
+>>>>>>> 2c818a3e02399aeb12ed8c902a570d7f2249c4d1
+>>>>>>> Stashed changes
   invIcons:
   - {fileID: 943415336}
   - {fileID: 1066928961}
@@ -5411,11 +5425,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 2116465466}
   m_Enabled: 1
   m_EditorHideFlags: 0
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+  m_Script: {fileID: 11500000, guid: f72cd97435e687f409d7dc04ba2d79a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playSceneName: PJS_SCENE
+  moveKey: 282
+=======
+>>>>>>> Stashed changes
   m_Script: {fileID: 11500000, guid: 08f4784c7687b7940a3683e3b7229cba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isHInverted: 0
   isVInverted: 1
+<<<<<<< Updated upstream
+=======
+>>>>>>> 2c818a3e02399aeb12ed8c902a570d7f2249c4d1
+>>>>>>> Stashed changes
 --- !u!1001 &4427472740630229739
 PrefabInstance:
   m_ObjectHideFlags: 0

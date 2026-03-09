@@ -18,3 +18,5 @@ MonoBehaviour:
   desc: "\uC870\uB9AC \uB2A5\uB825 +33%"
   unlockMethod: "\"\uC774\uC131\uADDC\"\uB97C \uC4F0\uB7EC\uD2B8\uB824 \uC7A0\uAE08
     \uD574\uC81C"
+  effects:
+  - {fileID: 11400000, guid: c72b4754d61249c4190aca44bcbe4ff7, type: 2}

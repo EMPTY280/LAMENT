@@ -141,10 +141,11 @@ namespace LAMENT
         }
 
         #endregion
-    
-        #region 플레이어
+       
 
-        public static class Player
+        #region 플레이어 장기 데이터
+
+         public static class Player
         {
             private static GutData[] guts = new GutData[(int)EGutType._LENGTH];
 
@@ -155,13 +156,23 @@ namespace LAMENT
 
             public static void SetGutData(EGutType type, GutData data)
             {
-                guts[(int)type] = data;
-            }
+                int idx = (int)type;
+                GutData old = guts[idx];
 
+                if (old == data)
+                    return;
+
+                guts[idx] = data;
+                Debug.Log($"[GUT][SET] type={type}, old={(old ? old.ID : "null")}, new={(data ? data.ID : "null")}");
+                GameManager.Eventbus.Publish(new GEOnGutChanged(type, data, old));
+            }
         }
+
 
         #endregion
 
+
+        
         #region 게임 언락 (도전과제)
 
         /// <summary> 게임 컨텐츠의 잠금 해제 여부를 담당 </summary>
