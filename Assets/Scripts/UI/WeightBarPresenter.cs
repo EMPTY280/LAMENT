@@ -38,9 +38,6 @@ namespace LAMENT
             get
             {
                 int bonus = 0;
-                if (_player && _player.GutRuntime != null)
-                    bonus = _player.GutRuntime.WeightCapacityBonus;
-
                 return Mathf.Max(1f, _capacity + bonus);
             }
         }
@@ -54,7 +51,6 @@ namespace LAMENT
 
             GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnEquipped);
             GameManager.Eventbus.Subscribe<GEOnOverlayStateChanged>(OnOverlayStateChanged);
-            GameManager.Eventbus.Subscribe<GEOnGutsRuntimeChanged>(OnGutsRuntimeChanged);
 
             Refresh();
         }
@@ -63,7 +59,6 @@ namespace LAMENT
         {
             GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnEquipped);
             GameManager.Eventbus.Unsubscribe<GEOnOverlayStateChanged>(OnOverlayStateChanged);
-            GameManager.Eventbus.Unsubscribe<GEOnGutsRuntimeChanged>(OnGutsRuntimeChanged);
         }
 
         private void OnEquipped(GEOnEquipmentEquipped e)
@@ -75,11 +70,6 @@ namespace LAMENT
         {
             if (e.isOpened)
                 Refresh();
-        }
-
-        private void OnGutsRuntimeChanged(GEOnGutsRuntimeChanged e)
-        {
-            Refresh();
         }
 
         private void Refresh()

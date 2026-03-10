@@ -89,7 +89,7 @@ namespace LAMENT
         {
             if (!TryGetComponent(out rb))
             {
-                GameManager.Logger.LogError($"{gameObject.name}의 MoveComponent가 RIgidbody2D를 초기화하지 못했습니다.");
+                GameManager.Logger.LogError($"{gameObject.name}의 MoveComponent가 Rigidbody2D를 초기화하지 못했습니다.");
                 enabled = false;
                 return;
             }
@@ -209,15 +209,12 @@ namespace LAMENT
             moveState = newState;
         }
 
-        public void TryJump(bool force = false)
+        public virtual bool TryJump(bool force = false)
         {
             if (!force)
             {
-                if (!canControl)
-                    return;
-
-                if (!canJump)
-                    return;
+                if (!canControl || !canJump)
+                    return false;
             }
 
             isJumping = true;
@@ -226,6 +223,8 @@ namespace LAMENT
             Vector2 velocity = rb.velocity;
             velocity.y = jumpPower;
             rb.velocity = velocity;
+
+            return true;
         }
 
         public void SetHSpeed(float f)

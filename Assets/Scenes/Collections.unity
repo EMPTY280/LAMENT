@@ -5372,16 +5372,11 @@ MonoBehaviour:
   silhouettFocused: {r: 1, g: 0.5613208, b: 0.5613208, a: 1}
   silhouettEquipped: {r: 0.60784316, g: 1, b: 0, a: 1}
   collections:
-  - list:
-    - {fileID: 11400000, guid: f026f07d7e2f1f74cbe853049bb6c420, type: 2}
-    - {fileID: 11400000, guid: cf0de70a898631446a561dee321b487e, type: 2}
-    - {fileID: 11400000, guid: aacfe2bb88930eb48b14a74f42627c7a, type: 2}
-    - {fileID: 11400000, guid: aacfe2bb88930eb48b14a74f42627c7a, type: 2}
-    - {fileID: 11400000, guid: aacfe2bb88930eb48b14a74f42627c7a, type: 2}
-  - list: []
-  - list: []
-  - list: []
-  - list: []
+  - {fileID: 11400000, guid: a1e2595cc351d874796e1fa3863a95f4, type: 2}
+  - {fileID: 11400000, guid: 3d6233a7de472ba488506479bf63988d, type: 2}
+  - {fileID: 11400000, guid: a1ef8b5498950484288e583b935b951f, type: 2}
+  - {fileID: 11400000, guid: 3f32fd472ae8e2046872f468c5242c87, type: 2}
+  - {fileID: 11400000, guid: e3823118bcdc2be4d94617536f00a528, type: 2}
   invIcons:
   - {fileID: 943415336}
   - {fileID: 1066928961}

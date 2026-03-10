@@ -142,7 +142,6 @@ namespace LAMENT
 
         #endregion
        
-
         #region 플레이어 장기 데이터
 
          public static class Player
@@ -163,8 +162,6 @@ namespace LAMENT
                     return;
 
                 guts[idx] = data;
-                Debug.Log($"[GUT][SET] type={type}, old={(old ? old.ID : "null")}, new={(data ? data.ID : "null")}");
-                GameManager.Eventbus.Publish(new GEOnGutChanged(type, data, old));
             }
         }
 
@@ -202,7 +199,10 @@ namespace LAMENT
             public enum EKey
             {
                 UP, DOWN, LEFT, RIGHT,
-                CONFIRM, CANCEL
+                CONFIRM, CANCEL,
+
+                MOVE_LEFT, MOVE_RIGHT, JUMP,
+                SKILL_UTILITY, SKILL_PRIMARY, SKILL_SECONDARY, BURST_PRIMARY, BURST_SECONDARY
             }
 
             private static Dictionary<EKey, KeyCode> keyMap;
@@ -218,7 +218,17 @@ namespace LAMENT
                     { EKey.RIGHT, KeyCode.RightArrow },
 
                     { EKey.CONFIRM, KeyCode.Z },
-                    { EKey.CANCEL, KeyCode.X }
+                    { EKey.CANCEL, KeyCode.X },
+                    
+                    { EKey.MOVE_LEFT, KeyCode.LeftArrow },
+                    { EKey.MOVE_RIGHT, KeyCode.RightArrow },
+                    { EKey.JUMP, KeyCode.Space },
+
+                    { EKey.SKILL_UTILITY, KeyCode.LeftShift },
+                    { EKey.SKILL_PRIMARY, KeyCode.Z },
+                    { EKey.SKILL_SECONDARY, KeyCode.X },
+                    { EKey.BURST_PRIMARY, KeyCode.C },
+                    { EKey.BURST_SECONDARY, KeyCode.V },
                 };
 
                 keyNameConverts = new()
@@ -227,6 +237,8 @@ namespace LAMENT
                     { KeyCode.DownArrow, "▼" },
                     { KeyCode.LeftArrow, "◀" },
                     { KeyCode.RightArrow, "▶" },
+
+                    { KeyCode.LeftShift, "SHIFT" }
                 };
             }
 

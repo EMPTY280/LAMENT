@@ -68,3 +68,24 @@
 - UI: 배치와 애니메이션 임시 적용
 - 디렉토리 정리 및 리팩토링
   - GutEffect 분리 및 정리
+
+==================== 2026. 03. 10 화 ====================
+
+- UI
+  - 체력 회복 혹은 최대 체력 복구 시 애니 추가
+- PlayerHealth
+  - 삭제 후 기존 Player의 Entity에서 상속된 것 사용
+  - 위 게이지 관련도 혼합되어있어 Player에 통합. (내부 명칭은 Energy)
+- GutController 및 GutRuntime
+  - 삭제 후 GameManager 및 Player에 통합
+- Entity 구조 재작업
+  - 피격 및 HP 제어를 더 체계적으로 수정
+  - 몬스터들은 Monster 클래스를 한번 더 거쳐 상속
+- PlayerInput
+  - 기존 입력에 키 타입이 하드코딩 되었던 것을 매핑과 연결
+  - 추가 점프 판정: 공중에 있을 때는 키 탭을 해야만 다시 점프 판정
+- UserInterface, HeartIcon, StomachBar 삭제 후 PlayerIndicator로 교체
+- ReviveTimeController를 ResurrectTimeScaler로 이름 변경
+  - 플레이어 부활 시 시간 정지를 천천히 복구되는 슬로우로 변경
+- 기타 불필요한 스크립트 제거 및 통합.
+- 모든 장기 목록을 ScriptableObject로 관리할 수 있게 함: Data/items/Guts

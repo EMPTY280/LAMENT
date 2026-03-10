@@ -1,10 +1,9 @@
 using PLibrary;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace LAMENT
 {
-    public class MonsterCommon : Entity
+    public class MonsterCommon : Monster
     {
         private BehaviorTree bt;
 
@@ -22,9 +21,6 @@ namespace LAMENT
         [SerializeField] private float attackRadius; // 공격 실행 반경
         [SerializeField] private Skill skill;
         private bool isAttacking = false;
-
-        [Header("Item")]
-        [SerializeField] private GameObject dropitem;
 
 
         protected override void Awake()
@@ -113,15 +109,6 @@ namespace LAMENT
         {
             MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
             return EBTState.RUN;
-        }
-
-        public override void OnDamageHandled(DamageResponse rsp)
-        {
-            if (!dropitem)
-                return;
-
-            Instantiate(dropitem, transform.position, Quaternion.identity);
-            Destroy(gameObject);
         }
     }
 }

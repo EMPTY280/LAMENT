@@ -1,4 +1,3 @@
-
 namespace LAMENT
 {
     public interface IGameEvent { }
@@ -90,42 +89,38 @@ namespace LAMENT
 
      public readonly struct GEOnPlayerHealthChanged : IGameEvent
     {
-        public int CurrentHp { get; }
-        public int CurrentMaxHp { get; }
-        public int InitialMaxHp { get; }
+        public int Curr { get; } // 현재 체력
+        public int Max { get; } // 최대 체력
+        public int Delta { get; } // 변화량
+        public int Decay { get; } // 최대 체력 감소량
 
-        public GEOnPlayerHealthChanged(int currentHp, int currentMaxHp, int initialMaxHp)
+        public GEOnPlayerHealthChanged(int curr, int max, int delta, int decay)
         {
-            CurrentHp = currentHp;
-            CurrentMaxHp = currentMaxHp;
-            InitialMaxHp = initialMaxHp;
+            Curr = curr;
+            Max = max;
+            Delta = delta;
+            Decay = decay;
         }
     }
 
-    public readonly struct GEOnStomachGaugeChanged : IGameEvent
+    public readonly struct GEOnPlayerEnergyChanged : IGameEvent
     {
-        public int Current { get; }
-        public int Max { get; }
+        public float Current { get; }
+        public float Max { get; }
 
-        public GEOnStomachGaugeChanged(int current, int max)
+        public GEOnPlayerEnergyChanged(float current, float max)
         {
             Current = current;
             Max = max;
         }
     }
 
-    public readonly struct GEOnPlayerRevived : IGameEvent
+    /// <summary> 플레이어 부활 </summary>
+    public readonly struct GEOnPlayerResurrected : IGameEvent
     {
-        public int CurrentHp { get; }
-        public int CurrentMaxHp { get; }
-
-        public GEOnPlayerRevived(int currentHp, int currentMaxHp)
-        {
-            CurrentHp = currentHp;
-            CurrentMaxHp = currentMaxHp;
-        }
     }
     
+    /// <summary> 플레이어 사망 </summary>
     public readonly struct GEOnPlayerDied : IGameEvent
     {
         public int RemainingMaxHp { get; }
@@ -136,53 +131,9 @@ namespace LAMENT
         }
     }
 
+    /// <summary> 플레이어 게임 오버 </summary>
     public readonly struct GEOnPlayerGameOver : IGameEvent
     {
+        
     }
-
-    public readonly struct GEOnEntityDied:IGameEvent
-    {
-        public Entity Dead{get;}
-        public Entity Killer {get;}
-
-        public GEOnEntityDied(Entity dead, Entity killer)
-        {
-            Dead = dead;
-            Killer = killer;
-        }
-    }
-
-    /// <summary>
-    /// 장기 이벤트
-    /// </summary>
-    public readonly struct GEOnGutChanged : IGameEvent
-    {
-        public EGutType Type {get;}
-        public GutData Equipped {get;}
-        public GutData Replaced {get;}
-
-        public GEOnGutChanged(EGutType type, GutData equipped, GutData replaced)
-        {
-            Type = type;
-            Equipped = equipped;
-            Replaced = replaced;
-        }
-    }
-
-     public readonly struct GEOnGutsRuntimeChanged : IGameEvent
-    {
-        public int WeightCapacityBonus { get; }
-        public float NoConsumeChance01 { get; }     // 0~1
-        public int MaxHpBonus { get; }
-        public float StomachGainMult { get; }       // 배율
-
-        public GEOnGutsRuntimeChanged(int weightCapacityBonus, float noConsumeChance01, int maxHpBonus, float stomachGainMult)
-        {
-            WeightCapacityBonus = weightCapacityBonus;
-            NoConsumeChance01 = noConsumeChance01;
-            MaxHpBonus = maxHpBonus;
-            StomachGainMult = stomachGainMult;
-        }
-    }
-    
 }

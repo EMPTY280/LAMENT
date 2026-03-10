@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace LAMENT
@@ -7,10 +8,11 @@ namespace LAMENT
     public abstract class Entity : MonoBehaviour, IHittable
     {
         // ===== 일반 =====
-        [Header("일반"), SerializeField]
-        protected float hpMax = 1;
-        protected float hpCurr = 1;
+        [Header("일반")]
+        [SerializeField] protected float hpMax = 1;
+        [SerializeField] protected float hpCurr = 1;
 
+        protected bool isDead = false; // 사망 여부
         protected bool isInvulnerable = false; // 무적
         protected bool isUnstoppable = false;  // 저지불가
 
@@ -90,19 +92,29 @@ namespace LAMENT
 
         #endregion
 
-        #region 히트 박스
+        #region 체력 및 사망
 
         /// <summary> 타격당했을 때 호출, 유효한 타격만 받음 타격 성공 여부 반환 </summary>
         public bool OnHit(DamageResponse rsp)
         {
-            Debug.Log($"{name}: SOMEONE HIT MY ASS!");
-            OnDamageHandled(rsp);
-
+            TakeDamage(rsp);
             return true;
         }
 
-        /// <summary> 유효한 타격을 당했을 때 추가 호출 </summary>
-        public virtual void OnDamageHandled(DamageResponse rsp) { }
+        /// <summary> 피해 받기 계산 </summary>
+        protected virtual void TakeDamage(DamageResponse rsp) { }
+
+        /// <summary> 체력 설정 </summary>
+        public virtual void SetHP(float amount, bool isRelative)
+        {
+            if (isRelative)
+                hpCurr = math.min(hpCurr + amount, hpMax);
+            else
+                hpCurr = math.min(amount, hpMax);
+        }
+
+        /// <summary> 사망 시 호출 </summary>
+        protected virtual void OnDied() {}
 
         #endregion
     }

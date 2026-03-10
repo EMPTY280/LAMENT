@@ -4,22 +4,18 @@ namespace LAMENT
 {
     /// <summary> 위 게이지 획득 배율 </summary>
     [CreateAssetMenu(fileName = "EnergyMult", menuName = "ScriptableObjects/GutEffects/EnergyMult")]
-    public sealed class GEEnergyMult : GutEffectData
+    public sealed class GEFEnergyMult : GutEffectData
     {
-        [SerializeField] private float mult = 1f;
+        [SerializeField] private float value = 1f;
 
         public override void Apply(Player player)
         {
-            if (!player)
-                return;
-            player.GutRuntime.AddStomachGainMult(this, mult);
+            player.AddEnergyMultAttribute(value);
         }
 
         public override void Remove(Player player)
         {
-            if (!player)
-                return;
-            player.GutRuntime.RemoveStomachGainMult(this);
+            player.AddEnergyMultAttribute(-value);
         }
     }
     

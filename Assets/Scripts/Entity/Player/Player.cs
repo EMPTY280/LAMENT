@@ -1,69 +1,49 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace LAMENT
 {
     public class Player : Entity
     {
-        [Header("���")]
-        [SerializeField] private EquipSlot leftArmSlot;
+        // ===== 체력 =====
+        [Header("최대 체력 감소")]
+        [SerializeField] private int hpDecay = 0; // 줄어든 체력
+
+        [Header("장비 슬롯")] // =====
+        [SerializeField] public EquipSlot leftArmSlot;
         [SerializeField] private EquipSlot rightArmSlot;
         [SerializeField] private EquipSlot legSlot;
 
-        [Header("장기")]
-        [SerializeField] private PlayerGutsController gutsController;
-
-        private EquipSlot lastUsedEquipment; // ���������� ����� ��� ����
-        
-        private PlayerHealth health;
         public EquipSlot LeftArmSlot => leftArmSlot;
         public EquipSlot RightArmSlot => rightArmSlot;
         public EquipSlot LegSlot => legSlot;
 
-          public PlayerGutRuntime GutRuntime => gutsController != null ? gutsController.Runtime : null;
+        private EquipSlot lastUsedEquipment; // 마지막으로 사용된 장비
 
-         private readonly GutData[] appliedGuts = new GutData[(int)EGutType._LENGTH];
+        // ===== 위 게이지 =====
+        private float energyMax = 100;
+        private float energyCurr = 0;
+        private float energyGainPerHit = 5;
 
+        // ===== 추가 능력치 =====
+        private float energyMult = 1.0f;
+        private float consumeChance = 1.0f;
 
 
         protected override void Awake()
         {
             base.Awake();
 
-            if (!gutsController)
-                gutsController = GetComponent<PlayerGutsController>();
-
-
-
-            // �̹� ������ ��� �ִٸ� ������ ���� �� ���
-            health = GetComponent<PlayerHealth>();
-            TryCreateEffector(leftArmSlot.Equipment, true);
-            TryCreateEffector(rightArmSlot.Equipment, true);
-            TryCreateEffector(legSlot.Equipment);
-
-            GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
+            InitEquipments();
+            InitEvents();
+            InitGuts();
         }
 
         private void Start()
         {
-            // TODO: �κ��� ����ǰ� �����Ұ�
-
-            GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(
-                leftArmSlot.Equipment,
-                null,
-                EEquipSlotType.LEFT));
-
-            GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(
-                rightArmSlot.Equipment,
-                null,
-                EEquipSlotType.RIGHT));
-
-            GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(
-                legSlot.Equipment,
-                null,
-                EEquipSlotType.LEG));
+            PublishInitStates();
         }
-
 
         protected override void OnDestroy()
         {
@@ -87,9 +67,62 @@ namespace LAMENT
             Animator.SetFloat("VSpeed", MoveComponent.VSpeed);
         }
 
+        #region 초기화
+
+        /// <summary> 초기 장착된 장비 준비 </summary>
+        private void InitEquipments()
+        {
+            TryCreateEffector(leftArmSlot.Equipment, true);
+            TryCreateEffector(rightArmSlot.Equipment, true);
+            TryCreateEffector(legSlot.Equipment);
+        }
+
+        /// <summary> 이벤트 등록 </summary>
+        private void InitEvents()
+        {
+            GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
+        }
+
+        /// <summary> 초기 상태 전파 </summary>
+        private void PublishInitStates()
+        {
+            GameManager.Eventbus.Publish(new GEOnPlayerHealthChanged((int)hpCurr, (int)hpMax, 0, 0));
+            GameManager.Eventbus.Publish(new GEOnPlayerEnergyChanged(energyCurr, energyMax));
+
+            GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(
+                leftArmSlot.Equipment,
+                null,
+                EEquipSlotType.LEFT));
+
+            GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(
+                rightArmSlot.Equipment,
+                null,
+                EEquipSlotType.RIGHT));
+
+            GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(
+                legSlot.Equipment,
+                null,
+                EEquipSlotType.LEG));
+        }
+
+        private void InitGuts()
+        {
+            for (int i = 0; i < (int)EGutType._LENGTH; i++)
+            {
+                GutData data = GameManager.Player.GetGutData((EGutType)i);
+                if (!data)
+                    continue;
+                
+                foreach (GutEffectData eff in data.Effects)
+                    eff.Apply(this);
+            }
+        }
+
+        #endregion
+
         #region 스킬 및 장비
 
-        /// <summary> ��� ��� �õ� </summary>
+        /// <summary> 스킬 사용 </summary>
         public bool TryUseEquipment(EquipSlot slot, Skill skill, Action cbOnSkillEnd = null, bool isBurst = false)
         {
             if (!slot.IsReady() && !isBurst)
@@ -98,58 +131,54 @@ namespace LAMENT
             lastUsedEquipment = slot;
             StartSkill(skill, cbOnSkillEnd);
 
-            // ���� ��ų�̸� ��� ��� �ı�
-            if (isBurst)
-            {
-                Debug.Log("���߿� ��� �ı� ����"); // TODO
-                // slot.Equipment = null;
-                // OnEquipmentChanged.Notify(slot);
-                 TryConsumeBurstEquipment(slot);
-            }
+            // 폭파 스킬이었다면 파괴 판정
+            if (isBurst && BurstRoll())
+                BurstEquipment(slot);
 
             return true;
         }
 
-         private void TryConsumeBurstEquipment(EquipSlot slot)
+        /// <summary> 장비 파괴 확률 판정 </summary>
+        public bool BurstRoll()
+        {
+            return UnityEngine.Random.value < consumeChance;
+        }
+
+        /// <summary> 장비 파괴 판정 </summary>
+        private void BurstEquipment(EquipSlot slot)
         {
             if (slot == null || slot.Equipment == null)
                 return;
-
-            if (GutRuntime != null && GutRuntime.RollPreventConsume())
-            {
-                Debug.Log("[GUT][PLAY][BURST] consume prevented");
-                return;
-            }
-
-            Debug.Log($"[GUT][PLAY][BURST] consumed = {slot.Equipment.name}");
 
             EquipmentData replaced = slot.Equipment;
             slot.Equipment = null;
 
             EEquipSlotType slotType = EEquipSlotType.LEG;
-            if (slot == leftArmSlot) slotType = EEquipSlotType.LEFT;
-            else if (slot == rightArmSlot) slotType = EEquipSlotType.RIGHT;
-            else if (slot == legSlot) slotType = EEquipSlotType.LEG;
+            if (slot == leftArmSlot)
+                slotType = EEquipSlotType.LEFT;
+            else if (slot == rightArmSlot)
+                slotType = EEquipSlotType.RIGHT;
+            else if (slot == legSlot)
+                slotType = EEquipSlotType.LEG;
 
+            // 장비 교환 이벤트
             GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(
                 null,
                 replaced,
                 slotType));
         }
 
-        /// <summary> ��ų ��� ���� </summary>
+        /// <summary> 스킬 사용 종료 시 호출 </summary>
         public void FinishSkill()
         {
             TrySetCooldown();
         }
 
-        /// <summary> ���������� ����� ��� ��ٿ� ���� �� null </summary>
         protected bool TrySetCooldown()
         {
             if (lastUsedEquipment == null)
                 return false;
 
-            // ���� ��ų�̸� ���ŵ�
             if (!lastUsedEquipment.Equipment)
                 return false;
 
@@ -206,9 +235,7 @@ namespace LAMENT
             return true;
         }
 
-        #endregion
-    
-        public void OnPlayerEquipmentChanged(GEOnEquipmentEquipped e)
+        private void OnPlayerEquipmentChanged(GEOnEquipmentEquipped e)
         {
             switch (e.SlotType)
             {
@@ -224,24 +251,131 @@ namespace LAMENT
             }
         }
 
-        #region 타격 및 피격
+        #endregion
 
-        public override void OnDamageHandled(DamageResponse rsp)
+        #region 에너지
+
+        /// <summary> 위 게이지 획득 </summary>
+        /// <param name="isRelative"> true면 +-, false면 즉시 지정 </param>
+        public void SetEnergy(float amount, bool isRelative)
         {
-            if (health == null)
-                return;
+            if (isRelative)
+                energyCurr = math.min(energyMax, energyCurr + amount);
+            else
+                energyCurr = math.min(energyMax, amount);
 
-            // 한 번 맞으면 하트 1개 감소
-            health.TakeHit(1);
+            GameManager.Eventbus.Publish(new GEOnPlayerEnergyChanged(energyCurr, energyMax));
+
+            TryRestoreDecay();
         }
+
+        public void ClearEnergy()
+        {
+            energyCurr = 0;
+
+            GameManager.Eventbus.Publish(new GEOnPlayerEnergyChanged(energyCurr, energyMax));
+        }
+
+        #endregion
+
+        #region 체력 
+
+        protected override void TakeDamage(DamageResponse rsp)
+        {
+            hpCurr--;
+
+            if (hpCurr <= 0 && !isDead)
+            {
+                isDead = true;
+                OnDied();
+            }
+
+            GameManager.Eventbus.Publish(new GEOnPlayerHealthChanged((int)hpCurr, (int)hpMax, -1, hpDecay));
+        }
+
+        protected override void OnDied()
+        {
+            if (!TryResurrect())
+            {
+                Debug.Log("최대 체력 0, 구현 바람!");
+                GameManager.Eventbus.Publish(new GEOnPlayerGameOver());
+                return;
+            }
+        }
+
+        public override void SetHP(float amount, bool isRelative)
+        {
+            float hpFrom = hpCurr;
+            base.SetHP(amount, isRelative);
+            float hpTo = hpCurr;
+
+            GameManager.Eventbus.Publish(new GEOnPlayerHealthChanged((int)hpCurr, (int)hpMax, (int)(hpTo - hpFrom), hpDecay));
+        }
+
+        /// <summary> 부활 시도 </summary>
+        private bool TryResurrect()
+        {
+            // 최대 체력이 0이 되면 부활 실패
+            if (hpMax - 1 <= 0)
+                return false;
+
+            // 아니면 최대 체력 1 감소 후 부활
+            isDead = false;
+            hpMax--;
+            hpDecay++;
+            SetHP(hpMax, false);
+
+            GameManager.Eventbus.Publish(new GEOnPlayerResurrected());
+
+            TryRestoreDecay();
+
+            return true;
+        }
+
+        /// <summary> 체력 및 위 게이지 상태에 따라 감소된 최대 체력 복구 시도 </summary>
+        private bool TryRestoreDecay()
+        {
+            if (energyCurr < energyMax)
+                return false;
+
+            if (hpDecay <= 0)
+                return false;
+
+            ClearEnergy();
+            hpMax++;
+            hpDecay--;
+            SetHP(1, true);
+
+            return true;
+        }
+
+        #endregion
+
+        #region 공격
 
         private void OnHitTarget(IHittable target)
         {
-            if (health != null)
-            {
-                // 적을 맞출 때마다 위 게이지 증가
-                health.OnAttackLanded();
-            }
+            SetEnergy(energyGainPerHit * energyMult, true);
+        }
+
+        #endregion
+
+        #region 추가 능력치
+
+        public void AddEnergyMultAttribute(float v)
+        {
+            energyMult += v;
+        }
+
+        public void AddConsumeChanceAttribute(float v)
+        {
+            consumeChance += v;
+        }
+
+        public void AddMaxHPAttribute(float v)
+        {
+            hpMax = math.max(1.0f, hpMax + v);
+            hpCurr = hpMax;
         }
 
         #endregion

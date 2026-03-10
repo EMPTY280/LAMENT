@@ -27,12 +27,6 @@ namespace LAMENT
         [SerializeField] private Color silhouettEquipped;
 
         // ===== 인벤 =====
-        [Serializable]
-        private class GutList
-        {
-            public GutData[] list;
-        }
-
         [Header("인벤")]
         [SerializeField] private GutList[] collections;
         [SerializeField] private Image[] invIcons;
@@ -133,7 +127,7 @@ namespace LAMENT
 
             equippedText.gameObject.SetActive(false);
             
-            GutData[] list = collections[gutPos].list;
+            GutData[] list = collections[gutPos].List;
             for (int i = 0; i < invIcons.Length; i++)
             {
                 bool isActive = i < list.Length;
@@ -156,7 +150,7 @@ namespace LAMENT
             if (0 <= gutPos && gutPos < gutSlots.Length)
             {
                 if (isInvMode)
-                    data = collections[gutPos].list[invPos];
+                    data = collections[gutPos].List[invPos];
                 else
                     data = GameManager.Player.GetGutData((EGutType)gutPos);
             }
@@ -239,7 +233,7 @@ namespace LAMENT
                 ReturnToWorldmap();
             else
             {
-                if (collections[gutPos] != null && 0 < collections[gutPos].list.Length)
+                if (collections[gutPos] != null && 0 < collections[gutPos].List.Length)
                     SetAsInvMode();
             }
         }
@@ -255,9 +249,9 @@ namespace LAMENT
         {
             isInvMode = true;
 
-            control.SetMax(collections[gutPos].list.Length - 1);
+            control.SetMax(collections[gutPos].List.Length - 1);
             control.HorizontalMove = 1;
-            control.VerticalMove = 3;
+            control.VerticalMove = invSlotPerLine;
 
             control.CB_OnPositionMoved = OnInvCursorMoved;
             control.CB_OnConfirmed = OnInvConfirmed;
@@ -277,7 +271,7 @@ namespace LAMENT
 
         private void OnInvConfirmed(int pos)
         {
-            GutData selectedGut = collections[gutPos].list[invPos];
+            GutData selectedGut = collections[gutPos].List[invPos];
             if (!GameManager.GameUnlock.IsUnlocked(selectedGut.ID))
                 return;
 

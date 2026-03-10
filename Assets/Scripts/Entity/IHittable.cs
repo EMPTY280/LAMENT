@@ -8,6 +8,7 @@ namespace LAMENT
 
     public struct DamageResponse
     {
-        public Entity src;
+        public Entity src; // 공격자
+        public int amount; // 대미지 총량
     }
 }

@@ -6,28 +6,21 @@ namespace LAMENT
 {
     public class PlayerInput : MonoBehaviour
     {
-        [Header("�÷��̾�")]
+        [Header("플레이어")]
         [SerializeField] private Player player;
 
-         [Header("테스트용")]
-        [SerializeField] private PlayerHealth playerHealth;
-
-        // ===== �޺� =====
-
-        // �޺��� ����� �� �ִ� �Է��� ����
-
+        // ===== 콤보 =====
         private ComboNode root;
         private ComboNode currNode;
-        private LinkedList<EComboInputTypes> inputQueue; // �Է��� Ű ��⿭, TODO: ������ ����׿����ιۿ� �Ⱦ�
+        private LinkedList<EComboInputTypes> inputQueue;
 
-        private EComboInputTypes inputBuffer = EComboInputTypes.NONE; // ���Է� ����
-        private float bufferTime = 0; // ���������� ���Է��� �ð�
-        [Header("�޺�")]
-        [Tooltip("���Է��� ���� ���ӵǴ°�")]
+        [Header("선입력")]
         [SerializeField]
-        private float bufferDuration = 0.2f; // ���Է� ���� �ð�
+        private float bufferDuration = 0.2f; // 선입력 유지 시간 (sec)
+        private float bufferTime = 0; 
+        private EComboInputTypes inputBuffer = EComboInputTypes.NONE;
 
-        private bool isLocked = false; // �Է� ���� ����
+        private bool isLocked = false;
 
 #if UNITY_EDITOR
 
@@ -35,7 +28,7 @@ namespace LAMENT
         [SerializeField]
         private Text DEBUG_COMBO_TEXT;
 
-        private void PrintCombo()
+        private void DEBUG_PrintCombo()
         {
             if (!DEBUG_COMBO_TEXT)
                 return;
@@ -70,8 +63,47 @@ namespace LAMENT
             DEBUG_COMBO_TEXT.text = str;
         }
 
-#endif
+        private void DEBUG_Input()
+        {
+            // 대미지 1
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                player.OnHit(new()
+                {
+                    src = null,
+                    amount = 1
+                });
+            }
+            
+            // 회복 1
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                player.SetHP(1, true);
+            }
 
+            // 위 게이지 소량 증가
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                player.SetEnergy(5, true);
+            }
+
+            // 위 게이지 대량 증가
+            if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                player.SetEnergy(50, true);
+            }
+
+            /*
+            // 3: 사지 섭취 -> 위 게이지 많이 증가
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                playerHealth.OnLimbConsumed();
+                Debug.Log($"[DEBUG] LimbConsumed: Stomach = {playerHealth.StomachCurr}");
+            }
+            */
+        }
+
+#endif
 
         private void Start()
         {
@@ -92,89 +124,70 @@ namespace LAMENT
 
         private void Update()
         {
-            // TODO: InputHandler�� ���߿� �ٸ��� ������ ��.
-
-            // �޺� �Է�
-            GetComboKeyBuffer();
+            HandleComboBuffer();
             ProcessInput();
 
-            // �̵� �Է�
             GetMoveInput();
 
-             HandleHealthDebugKeys();
 
 #if UNITY_EDITOR
-            PrintCombo();
+            DEBUG_PrintCombo();
+            DEBUG_Input();
 #endif
         }
 
-        private void HandleHealthDebugKeys()
-        {
-            if (playerHealth == null)
-                return;
+        #region 콤보
 
-            // 1: 데미지 1
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                playerHealth.TakeHit(1);
-                Debug.Log($"[DEBUG] Hit: HP = {playerHealth.CurrentHp}/{playerHealth.CurrentMaxHp}");
-            }
-
-            // 2: 적에게 공격 적중 -> 위 게이지 소량 증가
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                playerHealth.OnAttackLanded();
-                Debug.Log($"[DEBUG] AttackLanded: Stomach = {playerHealth.StomachCurr}");
-            }
-
-            // 3: 사지 섭취 -> 위 게이지 많이 증가
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                playerHealth.OnLimbConsumed();
-                Debug.Log($"[DEBUG] LimbConsumed: Stomach = {playerHealth.StomachCurr}");
-            }
-        }
-        
-        #region �Է� ó��
-
-        // �޺� �Է� �ޱ�
+        /// <summary> 현재 입력된 키 반환 </summary>
         private EComboInputTypes GetComboKey()
         {
-            if (Input.GetKey(KeyCode.LeftShift))
+            bool IsKeyPressed(GameManager.KeyMap.EKey type)
+            {
+                return Input.GetKey(GameManager.KeyMap.GetKeyCode(type));
+            }
+
+            if (IsKeyPressed(GameManager.KeyMap.EKey.SKILL_UTILITY))
                 return EComboInputTypes.UTILITY;
-            else if (Input.GetKey(KeyCode.Z))
+
+            if (IsKeyPressed(GameManager.KeyMap.EKey.SKILL_PRIMARY))
                 return EComboInputTypes.LEFT;
-            else if (Input.GetKey(KeyCode.X))
+
+            if (IsKeyPressed(GameManager.KeyMap.EKey.SKILL_SECONDARY))
                 return EComboInputTypes.RIGHT;
-            else if (Input.GetKey(KeyCode.C))
+
+            if (IsKeyPressed(GameManager.KeyMap.EKey.BURST_PRIMARY))
                 return EComboInputTypes.LEFT_BURST;
-            else if (Input.GetKey(KeyCode.V))
+
+            if (IsKeyPressed(GameManager.KeyMap.EKey.BURST_SECONDARY))
                 return EComboInputTypes.RIGHT_BURST;
 
             return EComboInputTypes.NONE;
         }
 
-        // �޺� ���Է� �ޱ�
-        private void GetComboKeyBuffer()
+        /// <summary> 선입력 처리 </summary>
+        private void HandleComboBuffer()
         {
-            // �Է� ��� == ��ų ����߿��� ���Է� ���
+            // 입력이 잠긴 동안에만 작동
             if (!isLocked)
                 return;
 
             EComboInputTypes input = GetComboKey();
 
-            // �Է��� ���ٸ� �н�
             if (input == EComboInputTypes.NONE)
                 return;
 
-            // �Էµ� Ű�� �ִٸ� ���Է� ���� �� �ð� ����
             inputBuffer = input;
             bufferTime = Time.time;
         }
 
-        // �̵� �Է� �ޱ�
+        /// <summary> 이동 처리 </summary>
         private void GetMoveInput()
         {
+            bool IsKeyPressed(GameManager.KeyMap.EKey type)
+            {
+                return Input.GetKey(GameManager.KeyMap.GetKeyCode(type));
+            }
+
             if (isLocked)
             {
                 ((PlayerMoveComponent)player.MoveComponent).ForceEndJumping();
@@ -182,40 +195,37 @@ namespace LAMENT
                 return;
             }
 
-            bool isLeftPressed = Input.GetKey(KeyCode.LeftArrow);
-            bool isRightPressed = Input.GetKey(KeyCode.RightArrow);
+            bool isLeftPressed = IsKeyPressed(GameManager.KeyMap.EKey.MOVE_LEFT);
+            bool isRightPressed = IsKeyPressed(GameManager.KeyMap.EKey.MOVE_RIGHT);
 
             if (isLeftPressed == isRightPressed)
                 player.MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
-            else if (isLeftPressed)
-                player.MoveComponent.SetMovement(MoveComponent.EDirection.LEFT);
             else
-                player.MoveComponent.SetMovement(MoveComponent.EDirection.RIGHT);
+                player.MoveComponent.SetMovement(
+                    isLeftPressed ? MoveComponent.EDirection.LEFT : MoveComponent.EDirection.RIGHT);
 
-            if (Input.GetKey(KeyCode.Space))
+            if (IsKeyPressed(GameManager.KeyMap.EKey.JUMP))
             {
-                if (player.MoveComponent is PlayerMoveComponent pm)
-                    pm.TryJumpWithExtra();
-                else
+                if (player.MoveComponent.IsGrounded)
+                    player.MoveComponent.TryJump();
+                else if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.JUMP)))
                     player.MoveComponent.TryJump();
             }
             else
-            {
-                ((PlayerMoveComponent)player.MoveComponent).ForceEndJumping();
-            }
+                (player.MoveComponent as PlayerMoveComponent).ForceEndJumping();
         }
 
         #endregion
 
-        #region Build / Clear Player Combo
+        #region 콤보 생성
 
-        // �޺� ��� ����
+        /// <summary> 기존 콤보 제거 </summary>
         private void ClearCombo()
         {
             root.ClearChild();
         }
 
-        // �޺� �߰�
+        /// <summary> 콤보 빌드 </summary>
         public void BuildCombo()
         {
             void BuildFromSlot(EComboInputTypes type, EquipSlot slot, bool isWeapon = false)
@@ -233,9 +243,9 @@ namespace LAMENT
                     ComboNodeInput newNode = new(type);
                     newNode.Set(slot, skills[i]);
 
-                    if (comboRoot == null) // ���� ���� ��Ʈ��
+                    if (comboRoot == null)
                         comboRoot = newNode;
-                    else // �� �ܴ̿� ������� ���̱�
+                    else
                         prevNode.AddChild(newNode);
 
                     prevNode = newNode;
@@ -244,61 +254,51 @@ namespace LAMENT
                 if (comboRoot != null)
                     root.AddChild(comboRoot);
 
-                // ������, ���� ��ų �߰�
                 if (isWeapon)
                 {
-                    ComboNodeInput newNode = new(type + 3); // NOTE: Enum ��� ���� �س���
-                    newNode.Set(slot, ((WeaponData)slot.Equipment).BurstSkill, true);
+                    ComboNodeInput newNode = new(type + 3);
+                    newNode.Set(slot, (slot.Equipment as WeaponData).BurstSkill, true);
 
                     root.AddChild(newNode);
                 }
             }
 
-            // �� �޺�
             BuildFromSlot(EComboInputTypes.LEFT, player.LeftArmSlot, true);
             BuildFromSlot(EComboInputTypes.RIGHT, player.RightArmSlot, true);
-
-            // �ٸ� �޺�
             BuildFromSlot(EComboInputTypes.UTILITY, player.LegSlot);
         }
 
         #endregion
 
-        #region �޺� Ž��
+        #region 입력 처리
 
-        // �޺� Ž��
         private void ProcessInput()
         {
-            // �Է� ��� == ��ų ������̸� ���� ����
             if (isLocked)
                 return;
 
-            // �Է� �ޱ� ===========================================
+            // 입력 처리 ===========================================
 
             EComboInputTypes input = EComboInputTypes.NONE;
             if (Time.time <= bufferTime + bufferDuration &&
                 inputBuffer != EComboInputTypes.NONE)
-                input = inputBuffer; // ���Է��� �ִٸ� �װ� ���
+                input = inputBuffer;
             else
-                input = GetComboKey(); // ���Է� ������ ��� �Է� �õ�
+                input = GetComboKey();
 
-            // ��ų Ž�� ===========================================
+            // ===========================================
 
-            // �Է��� ���ų� �޺��� ������ ����
             if (input == EComboInputTypes.NONE || currNode.Children.Count == 0)
             {
                 player.FinishSkill();
                 EndComboSearch();
             }
-            else // �Է��� �ִٸ� Ž�� ����
+            else
             {
-                // ���� ��忡�� ������ �� �ִ� ��� Ȯ��
                 ComboNodeInput next = (ComboNodeInput)currNode.Children.Find((c) => c.Type == input);
 
-                // ������, �� ����� ��ų�� ���� �õ�
                 if (next != null)
                 {
-                    // ���� ���� �� ��� ���� �� Lock
                     if (player.TryUseEquipment(next.Equipment, next.Skill, Unlock, next.IsBurst))
                     {
                         currNode = next;
@@ -312,7 +312,7 @@ namespace LAMENT
                         }
                     }
                 }
-                else // ������ �޺� Ž�� ���� + ��ٿ�
+                else
                 {
                     player.FinishSkill();
                     EndComboSearch();
