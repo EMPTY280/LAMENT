@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: heart_test_1
   icon: {fileID: 21300000, guid: f20537d0327ad054089c31f1f9793752, type: 3}
-  name: "\uC7AC\uC131\uC774\uC758 \uB180\uB77C\uC6B4 \uC2EC\uC7A5"
+  name: "\uBE44\uB300\uD55C \uC2EC\uC7A5"
   desc: "\uC704 \uAC8C\uC774\uC9C0 \uD68D\uB4DD\uB7C9 +25%"
-  unlockMethod: "\"\uD33D\uC7AC\uC131\"\uC744 \uC4F0\uB7EC\uD2B8\uB824 \uC7A0\uAE08
-    \uD574\uC81C"
+  unlockMethod: "\uD14C\uC2A4\uD2B8 \uC911"
   effects:
   - {fileID: 11400000, guid: 9d34e2cff13b7a447acab314c57467da, type: 2}

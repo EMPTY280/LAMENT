@@ -38560,6 +38560,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b1ccc47abea5d2f4f8f7f2f05aa9bd38, type: 2}
   dropTable: []
   target: {fileID: 0}
+  comboRecoverDelay: 0.5
+  knockbackForce: {x: 50, y: 10}
+  meleeRange: 5
+  meleeInterval: 1
   chargeInterval: 3
   chargeRecoverDelay: 0.5
   terrainLayer:
