@@ -68,7 +68,7 @@ namespace LAMENT
             // 대미지 1
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                player.OnHit(new()
+                player.OnHitTaken(new()
                 {
                     src = null,
                     amount = 1

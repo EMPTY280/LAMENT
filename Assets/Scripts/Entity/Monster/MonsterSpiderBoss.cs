@@ -3,30 +3,27 @@ using UnityEngine;
 
 namespace LAMENT
 {
-    public class MonsterSpiderBoss : Entity
+    public class MonsterSpiderBoss : Monster
     {
-        [SerializeField, Header("다리 찍기 구역")]
-        private TriggerHandler zone1;
-        [SerializeField]
-        private TriggerHandler zone2;
-        [SerializeField]
-        private TriggerHandler zone3;
-        [SerializeField]
-        private TriggerHandler zone4;
-        [SerializeField]
-        private int currZone = 0;
-
-        // ===== AI =====
         private BehaviorTree bt;
 
+        [Header("AI- 다리 찍기")]
+        [SerializeField] private TriggerHandler zone1;
+        [SerializeField] private TriggerHandler zone2;
+        [SerializeField] private TriggerHandler zone3;
+        [SerializeField] private TriggerHandler zone4;
+        
         private bool isStomping = false;
+        
+        private int currZone = 0;
         private int stompZone = 0;
+
         private float lastStompTime = 0;
-        [SerializeField, Header("AI")]
-        private float stompInterval = 2f; // sec 단위
+        [SerializeField] private float stompInterval = 2f; // sec 단위
 
         // ===== 애니메이션 =====
-        [SerializeField, Header("애니메이션")] private Animator mobAnimator;
+        [SerializeField, Header("애니메이션")]
+        private Animator mobAnimator;
 
 
         #region 초기화

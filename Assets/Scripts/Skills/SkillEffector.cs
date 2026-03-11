@@ -55,10 +55,6 @@ namespace LAMENT
 
             if (collision.TryGetComponent(out IHittable target))
             {
-                DamageResponse rsp = new();
-                rsp.src = owner;
-
-                target.OnHit(rsp);
                 if (cbOnHitTarget != null)
                     cbOnHitTarget(target);
             }

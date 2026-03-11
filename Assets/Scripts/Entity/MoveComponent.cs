@@ -15,8 +15,7 @@ namespace LAMENT
         protected SpriteRenderer sr = null;
 
         [Header("일반")]
-        [SerializeField]
-        [Tooltip("중력")]
+        [SerializeField, Tooltip("중력")]
         protected float gravityScale = 10f;
         protected bool isGravityEnabled = true;
 
@@ -29,14 +28,11 @@ namespace LAMENT
 
 
         [Header("이동")]
-        [SerializeField]
-        [Tooltip("최대 속도")]
+        [SerializeField, Tooltip("최대 속도")]
         protected float speedMax = 3.0f;
-        [SerializeField]
-        [Tooltip("가속력")]
+        [SerializeField, Tooltip("가속력")]
         protected float acceleration = 6.0f;
-        [SerializeField]
-        [Tooltip("감속력")]
+        [SerializeField, Tooltip("감속력")]
         protected float friction = 1.0f;
 
         private float hSpeed = 0f; // 현재 수평 속도
@@ -49,28 +45,21 @@ namespace LAMENT
         public EDirection MoveState => moveState;
 
         [Header("벽판정 - 분홍색 박스로 표시됨")]
-        [SerializeField]
-        [Tooltip("벽으로 판정할 레이어")]
+        [SerializeField, Tooltip("벽으로 판정할 레이어")]
         private LayerMask wallLayer = default;
-        [SerializeField]
-        [Tooltip("벽 판정 박스")]
+        [SerializeField, Tooltip("벽 판정 박스")]
         private Vector2 wallBox = Vector2.zero;
-        [SerializeField]
-        [Tooltip("벽 판정 박스 Y 오프셋")]
+        [SerializeField, Tooltip("벽 판정 박스 Y 오프셋")]
         private float wallBoxYOffset = 0f;
 
         [Header("바닥 판정 - 푸른색 박스로 표시됨")]
-        [SerializeField]
-        [Tooltip("바닥으로 판정할 레이어")]
+        [SerializeField, Tooltip("바닥으로 판정할 레이어")]
         private LayerMask groundLayer = default;
-        [SerializeField]
-        [Tooltip("바닥 판정 박스")]
+        [SerializeField, Tooltip("바닥 판정 박스")]
         private Vector2 groundBox = Vector2.zero;
-        [Tooltip("바닥 판정 박스 Y 오프셋")]
-        [SerializeField]
+        [SerializeField, Tooltip("바닥 판정 박스 Y 오프셋")]
         private float groundBoxYOffset = 0f;
-        [Tooltip("바닥 체크 최대 거리")]
-        [SerializeField]
+        [SerializeField, Tooltip("바닥 체크 최대 거리")]
         private float groundDistanceMax = 0.05f;
 
         [SerializeField]
@@ -78,8 +67,7 @@ namespace LAMENT
         public bool IsGrounded => isGrounded;
 
         [Header("점프")]
-        [SerializeField]
-        [Tooltip("점프 파워")]
+        [SerializeField, Tooltip("점프 파워")]
         protected float jumpPower = 10.0f;
         protected bool isJumping = false;
         protected bool canJump = false;
@@ -252,6 +240,17 @@ namespace LAMENT
             Vector3 v = transform.localScale;
             v.x = math.abs(v.x) * (newDir == EDirection.LEFT ? -1 : 1);
             transform.localScale = v;
+        }
+
+        #endregion
+    
+        #region 기타
+
+        public void AddForce(Vector2 force)
+        {
+            hSpeed += force.x;
+            force.x = 0;
+            rb.AddForce(force, ForceMode2D.Impulse);
         }
 
         #endregion

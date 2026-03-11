@@ -1,24 +1,35 @@
 using System;
 using PLibrary;
+using Unity.Mathematics;
 using UnityEngine;
 
 
 namespace LAMENT
 {
-    public class MonsterSpiderBoss2 : Entity
+    public class MonsterSpiderBoss2 : Monster
     {
         private BehaviorTree bt;
-
-        // ===== AI =====
-        [Header("AI"), SerializeField] private Transform target;
-
         private Action currAttack = null; // FSM을 따로 만들지 않고 간단 구현.
         private int attackState = 0;
+
+        // ===== 연계 =====
+        [Header("AI - 발사체 연계")]
+        [SerializeField] private float comboRecoverDelay = 0.5f;
+        private float lastComboTime = 0f;
+
+        // ===== 근접 =====
+        [Header("AI - 근접")]
+        [SerializeField] private Vector2 knockbackForce;
+        [SerializeField] private float meleeRange;
+        [SerializeField] private float meleeInterval = 3f;
+        private float lastMeleeTime = 0f;
+        private bool canStartCombo = false;
 
         // ===== 돌진 =====
         private float lastChargeTime = 0f;
         private float chargeHitTime = 0f;
-        [Header("AI - 돌진"), SerializeField] private float chargeInterval = 3f;
+        [Header("AI - 돌진")]
+        [SerializeField] private float chargeInterval = 3f;
         [SerializeField] private float chargeRecoverDelay = 0.5f;
         [SerializeField] private LayerMask terrainLayer;
         [SerializeField] private float wallCheckDistance = 1;
@@ -59,9 +70,25 @@ namespace LAMENT
             BTSelectorNode root = new();
             bt.SetRootNode(root);
 
-            // ===== 근접 - 발사체 연계 시퀀스 =====
+            // ===== 발사체 연계 시퀀스 =====
+            BTSequenceNode seqCombo = new();
+            root.AddChild(seqCombo);
+
+            BTActionNode actCheckCombo = new(CheckCombo);
+            seqCombo.AddChild(actCheckCombo);
+
+            BTActionNode actStartCombo = new(StartCombo);
+            seqCombo.AddChild(actStartCombo);
 
             // ===== 근접 공격 시퀀스 =====
+            BTSequenceNode seqMelee = new();
+            root.AddChild(seqMelee);
+
+            BTActionNode actCheckMelee = new(CheckMelee);
+            seqMelee.AddChild(actCheckMelee);
+
+            BTActionNode actStartMelee = new(StartMelee);
+            seqMelee.AddChild(actStartMelee);
             
             // ===== 돌진 시퀀스 =====
             BTSequenceNode seqCharge = new();
@@ -93,6 +120,71 @@ namespace LAMENT
             currAttack = a;
             attackState = 0;
         }
+
+        #region 발사체 연계
+
+        private EBTState CheckCombo()
+        {
+            return canStartCombo ? EBTState.SUCCESS : EBTState.FAILURE;
+        }
+
+        private EBTState StartCombo()
+        {
+            // 발사
+            projectile.CB_OnHitTarget = OnSpitHit;
+            projectile.Fire(this,
+                spitPos.transform.position,
+                Vector2.right * spitSpeed * math.sign(target.position.x - transform.position.x)
+            );
+
+            lastComboTime = Time.time;
+            canStartCombo = false;
+            ChangeAttackState(ComboAttack);
+            return EBTState.SUCCESS;
+        }
+
+        private void ComboAttack()
+        {
+            if (lastComboTime + comboRecoverDelay < Time.time)
+                ChangeAttackState(null);
+        }
+
+        #endregion
+
+        #region 근접
+
+        private EBTState CheckMelee()
+        {
+            if (meleeRange < Vector2.Distance(target.position, transform.position))
+                return EBTState.FAILURE;
+            return (lastMeleeTime + meleeInterval < Time.time) ? EBTState.SUCCESS : EBTState.FAILURE;
+        }
+
+        private EBTState StartMelee()
+        {
+            lastMeleeTime = Time.time;
+            TryStartSkill(skills[0], () => ChangeAttackState(null));
+
+            ChangeAttackState(MeleeAttack);
+            return EBTState.SUCCESS;
+        }
+
+        private void MeleeAttack()
+        {
+            
+        }
+
+        protected override void OnHitTarget(IHittable target, Skill skill)
+        {
+            if ((target as TriggerHandler).TryGetOwner(out Entity owner))
+            {
+                float dir = MoveComponent.Direction == MoveComponent.EDirection.LEFT ? -1 : 1;
+                owner.MoveComponent.AddForce(new Vector2(knockbackForce.x * dir, knockbackForce.y));
+                canStartCombo = true;
+            }
+        }
+
+        #endregion
 
         #region 돌진
 
@@ -167,11 +259,11 @@ namespace LAMENT
                     if (lastSpitTime + spitDelayBefore <= Time.time)
                     {
                         // 발사
-                        if (target.position.x < transform.position.x)
-                            projectile.Fire(spitPos.transform.position, Vector2.left * spitSpeed, OnSpitHit);
-                        else
-                            projectile.Fire(spitPos.transform.position, Vector2.right * spitSpeed, OnSpitHit);
-
+                        projectile.CB_OnHitTarget = OnSpitHit;
+                        projectile.Fire(this,
+                            spitPos.transform.position,
+                            Vector2.right * spitSpeed * math.sign(target.position.x - transform.position.x)
+                        );
 
                         attackState = 1;
                         lastSpitTime = Time.time;
@@ -188,20 +280,13 @@ namespace LAMENT
             }
         }
 
-        private void OnSpitHit(Projectile p, Collider2D col)
+        private void OnSpitHit(IHittable target, Collider2D col)
         {
-            switch (col.gameObject.layer)
+            target.OnHitTaken(new()
             {
-                case 6: // Hittable
-                    if (col.transform.parent.name == this.name)
-                        return;
-                break;
-
-                case 3: // Terrain
-                break;
-            }
-
-            p.SetActive(false);
+                src = this,
+                amount = 1
+            });
         }
 
         #endregion

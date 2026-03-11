@@ -10,28 +10,29 @@ namespace LAMENT
 
         [Header("기본")]
         [SerializeField]
-        [Tooltip("지속 시간 (초), 배정된 애니메이션과 같은 길이로 맞출것.")]
-        private float duration = 1.0f;
-        [SerializeField]
-        [Tooltip("스킬 시전 시 발동할 애니메이션 트리거.")]
-        private string triggerName = "";
-        [SerializeField]
-        [Tooltip("저지 불가, 시전 중에 공격받아도 스킬이 취소되지 않음")]
+        private float damage;
+        [SerializeField, Tooltip("저지 불가, 시전 중에 공격받아도 스킬이 취소되지 않음")]
         private bool isUnstoppable = false;
+
+        public float Damage => damage;
+
+        [Header("애니메이션")]
+        [SerializeField, Tooltip("지속 시간 (초), 배정된 애니메이션과 같은 길이로 맞출것.")]
+        private float duration = 1.0f;
+        [SerializeField, Tooltip("스킬 시전 시 발동할 애니메이션 트리거.")]
+        private string triggerName = "";
 
         public float Duration => duration;
         public string TriggerName => triggerName;
 
         [Header("이펙터 프리팹")]
-        [SerializeField]
-        [Tooltip("이펙터 가 포함된 프리팹을 등록.")]
+        [SerializeField, Tooltip("이펙터가 포함된 프리팹을 등록.")]
         private GameObject effector;
 
         public GameObject Effector => effector;
 
         [Header("타이밍")]
-        [SerializeField]
-        [Tooltip("타이밍 리스트, 스킬의 각 효과가 어느 타이밍마다 발생할지의 값, (0 ~ 1)")]
+        [SerializeField, Tooltip("타이밍 리스트, 스킬의 각 효과가 어느 타이밍마다 발생할지의 값, (0 ~ 1)")]
         private float[] timingList = null;
         private int timingPointer = 0; // 현재 대기중인 타이밍 인덱스
         private float timeCurr = 0; // 현재 스킬 진행도
@@ -83,6 +84,7 @@ namespace LAMENT
             return false;
         }
 
+        /// <summary> 스킬 이펙터 가져오기 </summary>
         protected SkillEffector GetEffector(Entity owner)
         {
             if (!owner)
@@ -97,11 +99,13 @@ namespace LAMENT
                 return null;
             }
 
-            SkillEffector rst;
-            if (!owner.Effectors.TryGetValue(effector.name, out rst))
+            if (!owner.HasEffector(effector.name))
+            {
                 GameManager.Logger.LogError("스킬의 이펙터를 찾을 수 없습니다.");
+                return null;
+            }
 
-            return rst;
+            return owner.GetEffector(effector.name);
         }
     }
 }

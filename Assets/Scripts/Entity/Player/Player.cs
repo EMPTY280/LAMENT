@@ -129,7 +129,7 @@ namespace LAMENT
                 return false;
 
             lastUsedEquipment = slot;
-            StartSkill(skill, cbOnSkillEnd);
+            TryStartSkill(skill, cbOnSkillEnd);
 
             // 폭파 스킬이었다면 파괴 판정
             if (isBurst && BurstRoll())
@@ -199,38 +199,11 @@ namespace LAMENT
             if (e.Skills == null || e.Skills.Length <= 0)
                 return false;
 
-            void TryCreateFromSkill(Skill skill)
-            {
-                if (!skill)
-                {
-                    GameManager.Logger.LogError("배정된 스킬이 없습니다.");
-                    return;
-                }
-
-                if (!skill.Effector)
-                    return;
-
-                if (Effectors.ContainsKey(skill.Effector.name))
-                    return;
-
-                SkillEffector eff;
-                if (!Instantiate(skill.Effector, effectorRoot ?? transform).TryGetComponent(out eff))
-                {
-                    GameManager.Logger.LogError("스킬 이펙터 프리팹에서 스크립트를 찾을 수 없습니다.");
-                    return;
-                }
-
-                eff.transform.localPosition = Vector3.zero;
-                eff.SetOwner(this);
-                eff.CB_OnHitTarget = OnHitTarget;
-                Effectors.Add(skill.Effector.name, eff);
-            }
-
             for (int i = 0; i < e.Skills.Length; i++)
-                TryCreateFromSkill(e.Skills[i]);
+                TryAddEffector(e.Skills[i]);
 
             if (isWeapon)
-                TryCreateFromSkill(((WeaponData)e).BurstSkill);
+                TryAddEffector(((WeaponData)e).BurstSkill);
 
             return true;
         }
@@ -353,7 +326,7 @@ namespace LAMENT
 
         #region 공격
 
-        private void OnHitTarget(IHittable target)
+        protected override void OnHitTarget(IHittable target, Skill skill)
         {
             SetEnergy(energyGainPerHit * energyMult, true);
         }

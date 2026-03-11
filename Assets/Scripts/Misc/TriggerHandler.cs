@@ -18,9 +18,9 @@ namespace LAMENT
         public Action<TriggerHandler, Collider2D> CB_OnExit { set { cbOnExit = value; } }
 
 
-        public bool OnHit(DamageResponse rsp)
+        public bool OnHitTaken(DamageResponse rsp)
         {
-            return owner.OnHit(rsp);
+            return owner.OnHitTaken(rsp);
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
@@ -33,6 +33,12 @@ namespace LAMENT
         {
             if (cbOnExit != null)
                 cbOnExit(this, collision);
+        }
+
+        public bool TryGetOwner(out Entity entity)
+        {
+            entity = owner;
+            return owner != null;
         }
     }
 }

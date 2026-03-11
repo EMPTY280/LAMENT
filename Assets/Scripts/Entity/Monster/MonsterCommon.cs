@@ -8,7 +8,6 @@ namespace LAMENT
         private BehaviorTree bt;
 
         [Header("AI - 추적")]
-        [SerializeField] private Transform target; // 추적 대상
         [SerializeField] private float detectionRadius = 5; // 추적 반경
         [SerializeField] private float moveSpeed = 2; // 이동 속도
 
@@ -19,7 +18,6 @@ namespace LAMENT
         [SerializeField] private float attackDelay = 1; // 공격 딜레이
         private float lastAttackTime = 0;
         [SerializeField] private float attackRadius; // 공격 실행 반경
-        [SerializeField] private Skill skill;
         private bool isAttacking = false;
 
 
