@@ -61,10 +61,6 @@ namespace LAMENT
                 rightArmSlot.UpdateCooldown(Time.deltaTime);
             if (legSlot.Equipment)
                 legSlot.UpdateCooldown(Time.deltaTime);
-
-            Animator.SetBool("IsGrounded", MoveComponent.IsGrounded);
-            Animator.SetFloat("HSpeedMagnitude", Math.Abs(MoveComponent.HSpeed));
-            Animator.SetFloat("VSpeed", MoveComponent.VSpeed);
         }
 
         #region 초기화
@@ -131,6 +127,8 @@ namespace LAMENT
             lastUsedEquipment = slot;
             TryStartSkill(skill, cbOnSkillEnd);
 
+            GameManager.Eventbus.Publish(new GEOnPlayerUsedEquiment(slot.Type, lastUsedEquipment.Equipment, skill));
+
             // 폭파 스킬이었다면 파괴 판정
             if (isBurst && BurstRoll())
                 BurstEquipment(slot);
@@ -182,7 +180,7 @@ namespace LAMENT
             if (!lastUsedEquipment.Equipment)
                 return false;
 
-            GameManager.Eventbus.Publish(new GEOnSkillFinished(lastUsedEquipment));
+            GameManager.Eventbus.Publish(new GEOnPlayerSkillFinished(lastUsedEquipment));
 
             lastUsedEquipment.StartCooldown();
             lastUsedEquipment = null;

@@ -22,7 +22,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b1ccc47abea5d2f4f8f7f2f05aa9bd38, type: 2}
   - {fileID: 11400000, guid: a306888b1da7362468a9d80beaa7770a, type: 2}
   - {fileID: 11400000, guid: e8b8adff76d414e4aa5a40097f4f202e, type: 2}
-  cooldown: 0.5
+  cooldown: 0.2
   Slot: 0
   burstSkill: {fileID: 11400000, guid: b1ccc47abea5d2f4f8f7f2f05aa9bd38, type: 2}
   burstSkillIcon: {fileID: 21300000, guid: fc2d5966583bbc44c8eda6592c691908, type: 3}
+  sprIdle: {fileID: 21300000, guid: b420559ad9246cd48af1b794ef478d22, type: 3}
+  sprDelay:
+  - {fileID: 21300000, guid: 7b9925230db3eba41af8c492802bea0b, type: 3}
+  sprAttack:
+  - {fileID: 21300000, guid: 840631c1d27edf94e81b5a1828b3816c, type: 3}
+  - {fileID: 21300000, guid: 3e90fd48d498b7745959392a3ac8f253, type: 3}
+  - {fileID: 21300000, guid: 3e90fd48d498b7745959392a3ac8f253, type: 3}
+  - {fileID: 21300000, guid: 3e90fd48d498b7745959392a3ac8f253, type: 3}
+  - {fileID: 21300000, guid: 3e90fd48d498b7745959392a3ac8f253, type: 3}

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b09acf0063e637e49b9a009f0d2e9b88
+guid: 5c1ba9d6d224a8a458eb698beef18e3b
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: leg_default_walk_0
+      name: player_torso_attack_right.p_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 131
-        height: 91
+        width: 136
+        height: 179
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -111,20 +111,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1c316be2cbdf4ce4c8d0bd6b9378684f
-      internalID: -874886204
+      spriteID: 90be6a98854908742b43a196851acc21
+      internalID: 2138063975
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: leg_default_walk_1
+      name: player_torso_attack_right.p_1
       rect:
         serializedVersion: 2
-        x: 131
+        x: 136
         y: 0
-        width: 131
-        height: 91
+        width: 136
+        height: 179
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -132,20 +132,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a13b87b01b75c814580a3df2752a33d3
-      internalID: 778507213
+      spriteID: a626f2eb55502824bbb9e997bead649d
+      internalID: 1369411035
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: leg_default_walk_2
+      name: player_torso_attack_right.p_2
       rect:
         serializedVersion: 2
-        x: 262
+        x: 272
         y: 0
-        width: 131
-        height: 91
+        width: 136
+        height: 179
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,20 +153,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: af52da75a67c41a4faf719372c37fc4f
-      internalID: -561177815
+      spriteID: d25c458342841c54a8eb3d30705d0962
+      internalID: -1740425568
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: leg_default_walk_3
+      name: player_torso_attack_right.p_3
       rect:
         serializedVersion: 2
-        x: 393
+        x: 408
         y: 0
-        width: 131
-        height: 91
+        width: 136
+        height: 179
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -174,20 +174,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2f6ff0d2165a4d74c8ee10121dc5754f
-      internalID: 501784214
+      spriteID: 57349e0d49034ea40943ecd9db51e8b8
+      internalID: 110679232
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: leg_default_walk_4
+      name: player_torso_attack_right.p_4
       rect:
         serializedVersion: 2
-        x: 524
+        x: 544
         y: 0
-        width: 131
-        height: 91
+        width: 136
+        height: 179
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -195,8 +195,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 424826526d5dfed488088f481d120a24
-      internalID: 311416507
+      spriteID: da5bce2bff2c5934481f4df93b81e96d
+      internalID: 124777665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_torso_attack_right.p_5
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 0
+        width: 136
+        height: 179
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: deb54de81890b864085984a20f13d21a
+      internalID: -1160544200
       vertices: []
       indices: 
       edges: []
@@ -212,11 +233,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      leg_default_walk_0: -874886204
-      leg_default_walk_1: 778507213
-      leg_default_walk_2: -561177815
-      leg_default_walk_3: 501784214
-      leg_default_walk_4: 311416507
+      player_torso_attack_right.p_0: 2138063975
+      player_torso_attack_right.p_1: 1369411035
+      player_torso_attack_right.p_2: -1740425568
+      player_torso_attack_right.p_3: 110679232
+      player_torso_attack_right.p_4: 124777665
+      player_torso_attack_right.p_5: -1160544200
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

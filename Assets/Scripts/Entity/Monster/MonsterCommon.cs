@@ -1,4 +1,5 @@
 using PLibrary;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace LAMENT
@@ -32,7 +33,7 @@ namespace LAMENT
             base.Update();
             bt.Run();
 
-            //Animator.SetFloat("HSpeedMagnitude", Math.Abs(MoveComponent.HSpeed));
+            Animator.SetFloat("HSpeedMagnitude", math.abs(MoveComponent.HSpeed));
         }
 
 
@@ -79,11 +80,14 @@ namespace LAMENT
             Vector2 dir = Vector2.right * (target.position.x < transform.position.x ? -1 : 1);
 
             // 옆에 벽이 있다면 실패
-            if (Physics2D.BoxCast(transform.position, Vector2.one * 0.8f, 0, dir, wallCheckDistance, terrainLayer))
+            if (Physics2D.BoxCast(transform.position, MoveComponent.WallBox, 0, dir, wallCheckDistance, terrainLayer))
                 return EBTState.FAILURE;
 
             // 옆 + 아래에 빈 칸이 있다면 실패
-            if (!Physics2D.OverlapBox(((Vector2)transform.position) + dir + Vector2.down, Vector2.one * 0.5f, 0, terrainLayer))
+            Vector2 downDir = ((Vector2)transform.position) + dir + Vector2.down * MoveComponent.GroundDistanceMax;
+            Vector2 checkbox = MoveComponent.WallBox;
+            checkbox.x = 0.3f;
+            if (!Physics2D.OverlapBox(downDir, checkbox, 0, terrainLayer))
                 return EBTState.FAILURE;
 
             return EBTState.SUCCESS;

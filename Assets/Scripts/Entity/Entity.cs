@@ -28,7 +28,9 @@ namespace LAMENT
         [Header("스킬"), SerializeField]
         private Transform effectorRoot;
         private Dictionary<string, SkillEffector> effectors = new(); // 장비 이펙터 캐시
+        
         private Skill skillCurr = null; // 현재 시전중인 스킬 (공격)
+        public Skill CurrentSkill => skillCurr;
         private float skillDurationCurr = 0;
         private Action cbOnSkillEnd;
 

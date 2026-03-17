@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LAMENT
@@ -16,13 +17,19 @@ namespace LAMENT
 
         public float Damage => damage;
 
-        [Header("애니메이션")]
+        [Header("타이밍")]
         [SerializeField, Tooltip("지속 시간 (초), 배정된 애니메이션과 같은 길이로 맞출것.")]
         private float duration = 1.0f;
+        [SerializeField, Tooltip("플레이어의 공격 준비 스프라이트가 재생될 시간 (초).")]
+        private float playerDelay = 0.1f;
+
+        public float PlayerDelay => playerDelay;
+        public float Duration => duration;
+
+        [Header("애니메이션 - 애니메이터")]
         [SerializeField, Tooltip("스킬 시전 시 발동할 애니메이션 트리거.")]
         private string triggerName = "";
 
-        public float Duration => duration;
         public string TriggerName => triggerName;
 
         [Header("이펙터 프리팹")]

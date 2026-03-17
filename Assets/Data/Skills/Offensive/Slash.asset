@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   isUnstoppable: 0
-  duration: 0.33
+  duration: 0.25
+  playerDelay: 0.08
   triggerName: Slash
   effector: {fileID: 4342015029874012305, guid: 4bc9f749c2ee4fc459180b58db101529, type: 3}
   timingList:

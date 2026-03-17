@@ -24,3 +24,12 @@ MonoBehaviour:
   Slot: 0
   burstSkill: {fileID: 11400000, guid: a306888b1da7362468a9d80beaa7770a, type: 2}
   burstSkillIcon: {fileID: 21300000, guid: 556c99e361c79bc41bf28c7815c4914f, type: 3}
+  sprIdle: {fileID: 21300000, guid: 83c96429ae073c7438e559c06d24369f, type: 3}
+  sprDelay:
+  - {fileID: 21300000, guid: 83c96429ae073c7438e559c06d24369f, type: 3}
+  sprAttack:
+  - {fileID: 21300000, guid: b00b45dac0a922a459c18cc536e595d8, type: 3}
+  - {fileID: 21300000, guid: 6c787072836531641ba676c4ca1fcd63, type: 3}
+  - {fileID: 21300000, guid: 6c787072836531641ba676c4ca1fcd63, type: 3}
+  - {fileID: 21300000, guid: 6c787072836531641ba676c4ca1fcd63, type: 3}
+  - {fileID: 21300000, guid: 6c787072836531641ba676c4ca1fcd63, type: 3}

@@ -52,6 +52,8 @@ namespace LAMENT
         [SerializeField, Tooltip("벽 판정 박스 Y 오프셋")]
         private float wallBoxYOffset = 0f;
 
+        public Vector2 WallBox => wallBox;
+
         [Header("바닥 판정 - 푸른색 박스로 표시됨")]
         [SerializeField, Tooltip("바닥으로 판정할 레이어")]
         private LayerMask groundLayer = default;
@@ -61,6 +63,8 @@ namespace LAMENT
         private float groundBoxYOffset = 0f;
         [SerializeField, Tooltip("바닥 체크 최대 거리")]
         private float groundDistanceMax = 0.05f;
+
+        public float GroundDistanceMax => groundDistanceMax;
 
         [SerializeField]
         protected bool isGrounded = false; // 바닥인지 여부

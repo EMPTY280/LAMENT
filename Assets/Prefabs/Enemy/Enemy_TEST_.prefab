@@ -77,7 +77,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.1875, y: 1.7425631}
+  m_Size: {x: 2, y: 1.1}
   m_EdgeRadius: 0
 --- !u!114 &7033195197525939861
 MonoBehaviour:
@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 640521942747643225}
   - component: {fileID: 177807418480591394}
   m_Layer: 6
-  m_Name: Enemy_TEMPLATE
+  m_Name: Enemy_TEST_
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -199,7 +199,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1011858313, guid: 4a42ef5acfd874c4ba3d90c3149c76dc, type: 3}
+  m_Sprite: {fileID: 1648612714, guid: 42998d41a8f04ec488f8dfc17ff7dc85, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
@@ -245,15 +245,15 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.1875, y: 1.78125}
+    pivot: {x: 0.496, y: 0.49382716}
+    oldSize: {x: 1.953125, y: 1.265625}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.1875, y: 1.7453264}
+  m_Size: {x: 2, y: 1.1}
   m_EdgeRadius: 0
 --- !u!50 &5186296283533180001
 Rigidbody2D:
@@ -301,12 +301,12 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 8
-  wallBox: {x: 2.1875, y: 1.742563}
+  wallBox: {x: 2, y: 1.1}
   wallBoxYOffset: 0
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  groundBox: {x: 2.1875, y: 1.742563}
+  groundBox: {x: 2, y: 1.1}
   groundBoxYOffset: 0
   groundDistanceMax: 0.05
   isGrounded: 0
@@ -348,7 +348,7 @@ Animator:
   m_GameObject: {fileID: 3093140189885414188}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7dd047860cb0b304c92dd95c1b0732bc, type: 2}
+  m_Controller: {fileID: 22100000, guid: 1d39c5b2070d7fa4da36fe36c079561a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

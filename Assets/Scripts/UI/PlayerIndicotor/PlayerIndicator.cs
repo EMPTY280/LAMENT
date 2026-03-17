@@ -36,7 +36,7 @@ namespace LAMENT
             GameManager.Eventbus.Subscribe<GEOnPlayerHealthChanged>(OnPlayerHealthChanged);
             GameManager.Eventbus.Subscribe<GEOnPlayerEnergyChanged>(OnPlayerEnergyChanged);
             GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
-            GameManager.Eventbus.Subscribe<GEOnSkillFinished>(OnPlayerSkillFinished);
+            GameManager.Eventbus.Subscribe<GEOnPlayerSkillFinished>(OnPlayerSkillFinished);
         }
 
         private void OnDestroy()
@@ -45,7 +45,7 @@ namespace LAMENT
             GameManager.Eventbus.Unsubscribe<GEOnPlayerHealthChanged>(OnPlayerHealthChanged);
             GameManager.Eventbus.Unsubscribe<GEOnPlayerEnergyChanged>(OnPlayerEnergyChanged);
             GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
-            GameManager.Eventbus.Unsubscribe<GEOnSkillFinished>(OnPlayerSkillFinished);
+            GameManager.Eventbus.Unsubscribe<GEOnPlayerSkillFinished>(OnPlayerSkillFinished);
         }
 
         private void Update()
@@ -176,7 +176,7 @@ namespace LAMENT
             }
         }
 
-        public void OnPlayerSkillFinished(GEOnSkillFinished e)
+        public void OnPlayerSkillFinished(GEOnPlayerSkillFinished e)
         {
             EEquipSlotType equipSlot = e.Slot.Type;
 

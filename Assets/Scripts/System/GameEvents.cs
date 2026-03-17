@@ -77,17 +77,33 @@ namespace LAMENT
         }
     }
 
-    public readonly struct GEOnSkillFinished: IGameEvent
+    /// <summary> 플레이어 스킬 사용 시작 </summary>
+    public readonly struct GEOnPlayerUsedEquiment: IGameEvent
+    {
+        public EEquipSlotType SlotType { get; }
+        public EquipmentData Equipment { get; }
+        public Skill Skill { get; }
+
+        public GEOnPlayerUsedEquiment(EEquipSlotType slotType, EquipmentData equipment, Skill skill)
+        {
+            SlotType = slotType;
+            Equipment = equipment;
+            Skill = skill;
+        }
+    }
+
+    /// <summary> 플레이어 스킬 사용 종료 </summary>
+    public readonly struct GEOnPlayerSkillFinished: IGameEvent
     {
         public EquipSlot Slot { get; }
 
-        public GEOnSkillFinished(EquipSlot slot)
+        public GEOnPlayerSkillFinished(EquipSlot slot)
         {
             Slot = slot;
         }
     }
 
-     public readonly struct GEOnPlayerHealthChanged : IGameEvent
+    public readonly struct GEOnPlayerHealthChanged : IGameEvent
     {
         public int Curr { get; } // 현재 체력
         public int Max { get; } // 최대 체력
