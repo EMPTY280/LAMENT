@@ -90,7 +90,7 @@ namespace LAMENT
             // 선택된 장기 실루엣만 색상 업데이트
             UpdateSilhouett(gutPos);
 
-#if UNITY_EDITOR
+#if true
             // TODO: 테스트
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {

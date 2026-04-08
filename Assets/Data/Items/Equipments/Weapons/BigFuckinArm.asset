@@ -26,12 +26,10 @@ MonoBehaviour:
   Slot: 0
   burstSkill: {fileID: 11400000, guid: b1ccc47abea5d2f4f8f7f2f05aa9bd38, type: 2}
   burstSkillIcon: {fileID: 21300000, guid: fc2d5966583bbc44c8eda6592c691908, type: 3}
-  sprIdle: {fileID: 21300000, guid: b420559ad9246cd48af1b794ef478d22, type: 3}
+  sprIdle: {fileID: 21300000, guid: 0dfe4543cc401ce4498cc3ffc313c2e6, type: 3}
   sprDelay:
-  - {fileID: 21300000, guid: 7b9925230db3eba41af8c492802bea0b, type: 3}
+  - {fileID: 21300000, guid: 731f86236c409e045ac339914a18fe6a, type: 3}
   sprAttack:
-  - {fileID: 21300000, guid: 840631c1d27edf94e81b5a1828b3816c, type: 3}
-  - {fileID: 21300000, guid: 3e90fd48d498b7745959392a3ac8f253, type: 3}
-  - {fileID: 21300000, guid: 3e90fd48d498b7745959392a3ac8f253, type: 3}
-  - {fileID: 21300000, guid: 3e90fd48d498b7745959392a3ac8f253, type: 3}
-  - {fileID: 21300000, guid: 3e90fd48d498b7745959392a3ac8f253, type: 3}
+  - {fileID: 21300000, guid: c27e7155b22622c49b337b5876036fc2, type: 3}
+  - {fileID: 21300000, guid: d0ecd3fda30684e4c869d620f737d9ea, type: 3}
+  - {fileID: 21300000, guid: 5dba87d97a3080c4a94394c6ca128cb5, type: 3}

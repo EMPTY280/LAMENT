@@ -24,15 +24,20 @@ public class PlayerAnimator : MonoBehaviour
 
     [Header("상체")]
     [SerializeField] private Sprite torsoIdle;
+    [SerializeField] private List<Sprite> torsoMove;
     [SerializeField] private List<Sprite> torsoAttackLeft;
     [SerializeField] private List<Sprite> torsoAttackRight;
     private Vector3 torsoInitialPos;
     private float torsoAnimTime = 0;
 
-    // 0번 공격 선딜, 1번 공격 후딜, 2번 다른 팔 공격 선딜, 3번 다른 팔 공격 후딜
+    
     [Header("팔")]
+    // 0번 공격 선딜, 1번 공격 후딜, 2번 다른 팔 공격 선딜, 3번 다른 팔 공격 후딜
     [SerializeField] private List<Vector3> leftArmPosList;
     [SerializeField] private List<Vector3> rightArmPosList;
+    // 이동시 팔 위치
+    [SerializeField] private List<Vector3> leftArmMovePosList;
+    [SerializeField] private List<Vector3> rightArmMovePosList;
     private Vector3 leftArmDefaultPos;
     private Vector3 rightArmDefaultPos;
 
@@ -53,8 +58,7 @@ public class PlayerAnimator : MonoBehaviour
     [SerializeField] private float breathSpeed = 5f;
     [SerializeField] private float breathAmp = 0.05f;
     [SerializeField] private float breathArmOffset = 1f;
-    [SerializeField] private float breathSpeedMoving = 7f;
-    [SerializeField] private float breathAmpMoving = 0.1f;
+    [SerializeField] private float torsoMoveSpeed = 5f;
     private float breathAnimTime = 0;
 
 
@@ -70,6 +74,7 @@ public class PlayerAnimator : MonoBehaviour
 
     private void OnDestroy()
     {
+        GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
         GameManager.Eventbus.Unsubscribe<GEOnPlayerUsedEquiment>(OnPlayerUsedSkill);
     }
 
@@ -95,9 +100,11 @@ public class PlayerAnimator : MonoBehaviour
         else
         {
             if (isMidAir)
-                ResetTorsoPosition();
+                UpdateTorsoMidAir();
+            else if (isIdle)
+                UpdateTorsoIdle();
             else
-                UpdateTorsoIdle(!isIdle);
+                UpdateTorsoMove();
         }
     }
 
@@ -126,34 +133,28 @@ public class PlayerAnimator : MonoBehaviour
 
     #region 상체 업데이트
 
-    private void ResetTorsoPosition()
+    private void UpdateTorsoMidAir()
     {
+        torsoRenderer.sprite = torsoIdle;
+
         torsoRenderer.transform.localPosition = torsoInitialPos;
         lArmRenderer.transform.localPosition = leftArmDefaultPos;
         rArmRenderer.transform.localPosition = rightArmDefaultPos;
     }
 
-    private void UpdateTorsoIdle(bool isMoving)
+    private void UpdateTorsoIdle()
     {
-        if (isMoving)
-            breathAnimTime += Time.deltaTime * breathSpeedMoving;
-        else
-            breathAnimTime += Time.deltaTime * breathSpeed;
+        torsoRenderer.sprite = torsoIdle;
+
+        breathAnimTime += Time.deltaTime * breathSpeed;
 
         // 상체 위치
         Vector3 newPos = torsoInitialPos;
-        if (isMoving)
-            newPos.y += math.sin(breathAnimTime) * breathAmpMoving;
-        else
-            newPos.y += math.sin(breathAnimTime) * breathAmp;
+        newPos.y += math.sin(breathAnimTime) * breathAmp;
         torsoRenderer.transform.localPosition = newPos;
 
         // 양팔 위치
-        float armOffset = 0;
-        if (isMoving)
-            armOffset = math.sin(breathAnimTime + breathArmOffset) * breathAmpMoving;
-        else
-            armOffset = math.sin(breathAnimTime + breathArmOffset) * breathAmp;
+        float armOffset = math.sin(breathAnimTime + breathArmOffset) * breathAmp;
 
         newPos = leftArmDefaultPos;
         newPos.y += armOffset;
@@ -162,6 +163,14 @@ public class PlayerAnimator : MonoBehaviour
         newPos = rightArmDefaultPos;
         newPos.y += armOffset;
         rArmRenderer.transform.localPosition = newPos;
+    }
+
+    private void UpdateTorsoMove()
+    {
+        int idx = (int)(Time.time * torsoMoveSpeed) % torsoMove.Count;
+        torsoRenderer.sprite = torsoMove[idx];
+        lArmRenderer.transform.localPosition = leftArmMovePosList[idx];
+        rArmRenderer.transform.localPosition = rightArmMovePosList[idx];
     }
 
     #endregion
@@ -267,7 +276,7 @@ public class PlayerAnimator : MonoBehaviour
             return;
 
         // 상체 위치 복구
-        ResetTorsoPosition();
+        UpdateTorsoMidAir();
         rArmRenderer.sprite = rightArmSprIdle;
         lArmRenderer.sprite = leftArmSprIdle;
 

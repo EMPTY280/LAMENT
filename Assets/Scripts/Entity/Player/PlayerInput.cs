@@ -22,7 +22,7 @@ namespace LAMENT
 
         private bool isLocked = false;
 
-#if UNITY_EDITOR
+#if true
 
         [Header("DEBUG")]
         [SerializeField]
@@ -93,6 +93,12 @@ namespace LAMENT
                 player.SetEnergy(50, true);
             }
 
+            // 월드맵으로 돌아가기
+            if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                GameManager.Instance.TryChangeScene("Worldmap");
+            }
+
             /*
             // 3: 사지 섭취 -> 위 게이지 많이 증가
             if (Input.GetKeyDown(KeyCode.Alpha3))
@@ -130,7 +136,7 @@ namespace LAMENT
             GetMoveInput();
 
 
-#if UNITY_EDITOR
+#if true
             DEBUG_PrintCombo();
             DEBUG_Input();
 #endif

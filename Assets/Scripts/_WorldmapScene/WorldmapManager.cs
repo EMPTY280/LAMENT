@@ -42,14 +42,14 @@ namespace LAMENT
             if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.CANCEL)))
                 OnCoffinButtonClicked();
 
-#if UNITY_EDITOR
+#if true
             // TODO: 테스트
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 GameManager.GameUnlock.Unlock("Stage1");
                 currMarker.UpdateState();
             }
-        }
 #endif
+        }
     }
 }

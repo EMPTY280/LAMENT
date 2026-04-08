@@ -15,10 +15,10 @@ MonoBehaviour:
   damage: 1
   isUnstoppable: 0
   duration: 0.25
-  playerDelay: 0.08
+  playerDelay: 0.1
   triggerName: Slash
   effector: {fileID: 4342015029874012305, guid: 4bc9f749c2ee4fc459180b58db101529, type: 3}
   timingList:
   - 0
-  - 0.4
+  - 0.2
   - 0.85

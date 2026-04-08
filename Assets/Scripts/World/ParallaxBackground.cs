@@ -88,6 +88,8 @@ public class ParallaxBackground : MonoBehaviour
         // 각 레이어의 이미지들 위치 초기화
         for (int i = 0; i < layers.Length; i++)
         {
+            layers[i].transform.localPosition = new Vector3(0, 0, depth - i - 1);
+
             Transform left = layers[i].transform.GetChild(0);
             Transform right = layers[i].transform.GetChild(1);
 
