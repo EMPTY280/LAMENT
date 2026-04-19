@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e94747b4f5a49e4d98adaa63ba2579a, type: 3}
   m_Name: _StomachList
   m_EditorClassIdentifier: 
-  list: []
+  list:
+  - {fileID: 11400000, guid: 96c96836a2f51db49b108de0e5cf56ea, type: 2}

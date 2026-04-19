@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -188,6 +189,64 @@ namespace LAMENT
             {
                 unlockSet.Add(id);
             }
+        }
+
+        #endregion
+
+        #region 돈
+        public static class Money
+        {
+            private static int current = 0;
+
+            public static int Get()
+            {
+                return current;
+            }
+
+            public static void Set(int amount)
+            {
+                int next = Mathf.Max(0,amount);
+                int delta = next - current;
+
+                if(delta == 0)
+                    return;
+                
+                current = next;
+                GameManager.Eventbus.Publish(new GEOnMoneyChanged(current, delta));
+            }
+
+            public static void Add(int amount)
+            {
+                if(amount <=0)
+                    return;
+                
+                current += amount;
+                GameManager.Eventbus.Publish(new GEOnMoneyChanged(current, amount));
+            }
+
+            public static bool TrySpend(int amount)
+            {
+                if(amount <= 0)
+                    return false;
+                if(current < amount)
+                    return false;
+
+                current -=amount;
+                GameManager.Eventbus.Publish(new GEOnMoneyChanged(current, -amount));
+                return true;
+            }
+
+            public static void Clear()
+            {
+                if(current == 0)
+                    return;
+                
+                int delta = -current;
+                current = 0;
+                GameManager.Eventbus.Publish(new GEOnMoneyChanged(current, delta));
+            }
+
+
         }
 
         #endregion

@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace LAMENT
@@ -11,6 +12,10 @@ namespace LAMENT
 
         [Header("AI")]
         [SerializeField] protected Transform target;
+
+        [Header("재화 드랍")]
+        [SerializeField] private MoneyPickup moneyPickupPrefab;
+        [SerializeField] private int moneyDropAmount = 0;
 
 
         protected override void Awake()
@@ -61,8 +66,23 @@ namespace LAMENT
             // TODO: 아이템 풀링 고려
             if (0 < dropTable.Length)
                 Instantiate(dropTable[Random.Range(0, dropTable.Length - 1)], transform.position, Quaternion.identity);
+            
+            DropMoney();
+            //DropItme();
 
             Destroy(gameObject);
+        }
+
+        private void DropMoney()
+        {
+            if(!moneyPickupPrefab)
+                return;
+
+            if(moneyDropAmount <=0)
+                return;
+
+            MoneyPickup pickup = Instantiate(moneyPickupPrefab, transform.position, Quaternion.identity);
+            pickup.SetUp(moneyDropAmount);
         }
     }
 }

@@ -30,14 +30,15 @@ public class PlayerAnimator : MonoBehaviour
     private Vector3 torsoInitialPos;
     private float torsoAnimTime = 0;
 
-    
     [Header("팔")]
     // 0번 공격 선딜, 1번 공격 후딜, 2번 다른 팔 공격 선딜, 3번 다른 팔 공격 후딜
     [SerializeField] private List<Vector3> leftArmPosList;
     [SerializeField] private List<Vector3> rightArmPosList;
+
     // 이동시 팔 위치
     [SerializeField] private List<Vector3> leftArmMovePosList;
     [SerializeField] private List<Vector3> rightArmMovePosList;
+
     private Vector3 leftArmDefaultPos;
     private Vector3 rightArmDefaultPos;
 
@@ -46,12 +47,12 @@ public class PlayerAnimator : MonoBehaviour
     private List<Sprite> armDelaySprites = new();
     private List<Sprite> armAttackSprites = new();
 
-    private float skillDelaySpeed = 0; // 스킬 선딜 애니 재생 속도
-    private float skillAnimSpeed = 0; // 스킬 애니 재생 속도
+    private float skillDelaySpeed = 0f; // 스킬 선딜 애니 재생 속도
+    private float skillAnimSpeed = 0f;  // 스킬 애니 재생 속도
 
-    private float armAnimTime = 0;
-    private bool isAttacking = false; // 스킬 사용중 ?
-    private bool isSkillDelay = true; // 스킬 선딜레이 중 ?
+    private float armAnimTime = 0f;
+    private bool isAttacking = false;   // 스킬 사용중 ?
+    private bool isSkillDelay = true;   // 스킬 선딜레이 중 ?
     private bool isRightAttack = false; // 오른팔 공격 ?
 
     [Header("애니메이션")]
@@ -59,14 +60,18 @@ public class PlayerAnimator : MonoBehaviour
     [SerializeField] private float breathAmp = 0.05f;
     [SerializeField] private float breathArmOffset = 1f;
     [SerializeField] private float torsoMoveSpeed = 5f;
-    private float breathAnimTime = 0;
-
+    private float breathAnimTime = 0f;
 
     private void Awake()
     {
-        torsoInitialPos = torsoRenderer.transform.localPosition;
-        leftArmDefaultPos = lArmRenderer.transform.localPosition;
-        rightArmDefaultPos = rArmRenderer.transform.localPosition;
+        if (torsoRenderer != null)
+            torsoInitialPos = torsoRenderer.transform.localPosition;
+
+        if (lArmRenderer != null)
+            leftArmDefaultPos = lArmRenderer.transform.localPosition;
+
+        if (rArmRenderer != null)
+            rightArmDefaultPos = rArmRenderer.transform.localPosition;
 
         GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
         GameManager.Eventbus.Subscribe<GEOnPlayerUsedEquiment>(OnPlayerUsedSkill);
@@ -80,6 +85,9 @@ public class PlayerAnimator : MonoBehaviour
 
     private void Update()
     {
+        if (moveComponent == null)
+            return;
+
         float hSpeed = math.abs(moveComponent.HSpeed);
 
         bool isMidAir = !moveComponent.IsGrounded;
@@ -112,20 +120,31 @@ public class PlayerAnimator : MonoBehaviour
 
     private void UpdateLegMidAir()
     {
+        if (legRenderer == null)
+            return;
+
         legRenderer.sprite = legMidAir;
-        legIdx = 0;
+        legIdx = 0f;
     }
 
     private void UpdateLegIdle()
     {
+        if (legRenderer == null)
+            return;
+
         legRenderer.sprite = legIdle;
-        legIdx = 0;
+        legIdx = 0f;
     }
 
     private void UpdateLegMove(float hSpeed)
     {
-        legRenderer.sprite = legMove[(int)legIdx];
+        if (legRenderer == null)
+            return;
 
+        if (legMove == null || legMove.Count == 0)
+            return;
+
+        legRenderer.sprite = legMove[(int)legIdx];
         legIdx = (legIdx + Time.deltaTime * legBaseSpeed * hSpeed) % legMove.Count;
     }
 
@@ -135,15 +154,24 @@ public class PlayerAnimator : MonoBehaviour
 
     private void UpdateTorsoMidAir()
     {
-        torsoRenderer.sprite = torsoIdle;
+        if (torsoRenderer != null)
+        {
+            torsoRenderer.sprite = torsoIdle;
+            torsoRenderer.transform.localPosition = torsoInitialPos;
+        }
 
-        torsoRenderer.transform.localPosition = torsoInitialPos;
-        lArmRenderer.transform.localPosition = leftArmDefaultPos;
-        rArmRenderer.transform.localPosition = rightArmDefaultPos;
+        if (lArmRenderer != null)
+            lArmRenderer.transform.localPosition = leftArmDefaultPos;
+
+        if (rArmRenderer != null)
+            rArmRenderer.transform.localPosition = rightArmDefaultPos;
     }
 
     private void UpdateTorsoIdle()
     {
+        if (torsoRenderer == null)
+            return;
+
         torsoRenderer.sprite = torsoIdle;
 
         breathAnimTime += Time.deltaTime * breathSpeed;
@@ -156,21 +184,37 @@ public class PlayerAnimator : MonoBehaviour
         // 양팔 위치
         float armOffset = math.sin(breathAnimTime + breathArmOffset) * breathAmp;
 
-        newPos = leftArmDefaultPos;
-        newPos.y += armOffset;
-        lArmRenderer.transform.localPosition = newPos;
+        if (lArmRenderer != null)
+        {
+            newPos = leftArmDefaultPos;
+            newPos.y += armOffset;
+            lArmRenderer.transform.localPosition = newPos;
+        }
 
-        newPos = rightArmDefaultPos;
-        newPos.y += armOffset;
-        rArmRenderer.transform.localPosition = newPos;
+        if (rArmRenderer != null)
+        {
+            newPos = rightArmDefaultPos;
+            newPos.y += armOffset;
+            rArmRenderer.transform.localPosition = newPos;
+        }
     }
 
     private void UpdateTorsoMove()
     {
+        if (torsoRenderer == null)
+            return;
+
+        if (torsoMove == null || torsoMove.Count == 0)
+            return;
+
         int idx = (int)(Time.time * torsoMoveSpeed) % torsoMove.Count;
         torsoRenderer.sprite = torsoMove[idx];
-        lArmRenderer.transform.localPosition = leftArmMovePosList[idx];
-        rArmRenderer.transform.localPosition = rightArmMovePosList[idx];
+
+        if (lArmRenderer != null && leftArmMovePosList != null && idx < leftArmMovePosList.Count)
+            lArmRenderer.transform.localPosition = leftArmMovePosList[idx];
+
+        if (rArmRenderer != null && rightArmMovePosList != null && idx < rightArmMovePosList.Count)
+            rArmRenderer.transform.localPosition = rightArmMovePosList[idx];
     }
 
     #endregion
@@ -185,65 +229,118 @@ public class PlayerAnimator : MonoBehaviour
         if (isSkillDelay)
         {
             // 딜레이 애니 재생 완료인지 먼저 확인
-            if (armDelaySprites.Count <= armAnimTime)
+            if (armDelaySprites == null || armDelaySprites.Count <= armAnimTime)
             {
                 // 양 팔 위치 지정
-                rArmRenderer.transform.localPosition = rightArmPosList[isRightAttack ? 1 : 3];
-                lArmRenderer.transform.localPosition = leftArmPosList[isRightAttack ? 3 : 1];
+                if (rArmRenderer != null && rightArmPosList != null && rightArmPosList.Count > (isRightAttack ? 1 : 3))
+                    rArmRenderer.transform.localPosition = rightArmPosList[isRightAttack ? 1 : 3];
+
+                if (lArmRenderer != null && leftArmPosList != null && leftArmPosList.Count > (isRightAttack ? 3 : 1))
+                    lArmRenderer.transform.localPosition = leftArmPosList[isRightAttack ? 3 : 1];
 
                 // 플래그 계산
                 isSkillDelay = false;
-                armAnimTime = 0;
-                torsoAnimTime = 0;
-
+                armAnimTime = 0f;
+                torsoAnimTime = 0f;
                 return;
             }
 
             // 양 팔 위치 지정
-            rArmRenderer.transform.localPosition = rightArmPosList[isRightAttack ? 0 : 2];
-            lArmRenderer.transform.localPosition = leftArmPosList[isRightAttack ? 2 : 0];
+            if (rArmRenderer != null && rightArmPosList != null && rightArmPosList.Count > (isRightAttack ? 0 : 2))
+                rArmRenderer.transform.localPosition = rightArmPosList[isRightAttack ? 0 : 2];
+
+            if (lArmRenderer != null && leftArmPosList != null && leftArmPosList.Count > (isRightAttack ? 2 : 0))
+                lArmRenderer.transform.localPosition = leftArmPosList[isRightAttack ? 2 : 0];
 
             // 스프라이트 지정
-            torsoRenderer.sprite = isRightAttack ? torsoAttackRight[0] : torsoAttackLeft[0];
+            if (torsoRenderer != null)
+            {
+                if (isRightAttack)
+                {
+                    if (torsoAttackRight != null && torsoAttackRight.Count > 0)
+                        torsoRenderer.sprite = torsoAttackRight[0];
+                }
+                else
+                {
+                    if (torsoAttackLeft != null && torsoAttackLeft.Count > 0)
+                        torsoRenderer.sprite = torsoAttackLeft[0];
+                }
+            }
+
             if (isRightAttack)
-                rArmRenderer.sprite = armDelaySprites[(int)armAnimTime];
+            {
+                if (rArmRenderer != null && armDelaySprites.Count > (int)armAnimTime)
+                    rArmRenderer.sprite = armDelaySprites[(int)armAnimTime];
+            }
             else
-                lArmRenderer.sprite = armDelaySprites[(int)armAnimTime];
+            {
+                if (lArmRenderer != null && armDelaySprites.Count > (int)armAnimTime)
+                    lArmRenderer.sprite = armDelaySprites[(int)armAnimTime];
+            }
 
             armAnimTime += Time.deltaTime * skillDelaySpeed;
         }
         else
         {
             // 애니 재생 완료인지 먼저 확인
-            if (armAttackSprites.Count <= armAnimTime)
+            if (armAttackSprites == null || armAttackSprites.Count <= armAnimTime)
             {
-                // 스프라이트 복구
-                torsoRenderer.sprite = torsoIdle;
-                rArmRenderer.sprite = rightArmSprIdle;
-                lArmRenderer.sprite = leftArmSprIdle;
-
-                // 플래그 복구
-                isAttacking = false;
-                isSkillDelay = true;
-                armAnimTime = 0;
-
+                EndAttackAnimation();
                 return;
             }
-            
+
             if (isRightAttack)
             {
-                rArmRenderer.sprite = armAttackSprites[(int)armAnimTime];
-                torsoRenderer.sprite = torsoAttackRight[(int)Mathf.Min(torsoAttackLeft.Count - 1, 1 + torsoAnimTime)];
+                if (rArmRenderer != null && armAttackSprites.Count > (int)armAnimTime)
+                    rArmRenderer.sprite = armAttackSprites[(int)armAnimTime];
+
+                if (torsoRenderer != null && torsoAttackRight != null && torsoAttackRight.Count > 0)
+                {
+                    int torsoIdx = Mathf.Min(torsoAttackRight.Count - 1, 1 + (int)torsoAnimTime);
+                    torsoRenderer.sprite = torsoAttackRight[torsoIdx];
+                }
             }
             else
             {
-                lArmRenderer.sprite = armAttackSprites[(int)armAnimTime];
-                torsoRenderer.sprite = torsoAttackLeft[(int)Mathf.Min(torsoAttackLeft.Count - 1, 1 + torsoAnimTime)];
+                if (lArmRenderer != null && armAttackSprites.Count > (int)armAnimTime)
+                    lArmRenderer.sprite = armAttackSprites[(int)armAnimTime];
+
+                if (torsoRenderer != null && torsoAttackLeft != null && torsoAttackLeft.Count > 0)
+                {
+                    int torsoIdx = Mathf.Min(torsoAttackLeft.Count - 1, 1 + (int)torsoAnimTime);
+                    torsoRenderer.sprite = torsoAttackLeft[torsoIdx];
+                }
             }
 
             armAnimTime += Time.deltaTime * skillAnimSpeed;
-            torsoAnimTime += Time.deltaTime * 15;
+            torsoAnimTime += Time.deltaTime * 15f;
         }
+    }
+
+    private void EndAttackAnimation()
+    {
+        if (torsoRenderer != null)
+        {
+            torsoRenderer.sprite = torsoIdle;
+            torsoRenderer.transform.localPosition = torsoInitialPos;
+        }
+
+        if (rArmRenderer != null)
+        {
+            rArmRenderer.sprite = rightArmSprIdle;
+            rArmRenderer.transform.localPosition = rightArmDefaultPos;
+        }
+
+        if (lArmRenderer != null)
+        {
+            lArmRenderer.sprite = leftArmSprIdle;
+            lArmRenderer.transform.localPosition = leftArmDefaultPos;
+        }
+
+        isAttacking = false;
+        isSkillDelay = true;
+        armAnimTime = 0f;
+        torsoAnimTime = 0f;
     }
 
     #endregion
@@ -258,14 +355,40 @@ public class PlayerAnimator : MonoBehaviour
                 break;
 
             case EEquipSlotType.LEFT:
-                leftArmSprIdle = (e.Equipped as WeaponData).SprIdle;
-                lArmRenderer.sprite = leftArmSprIdle;
+            {
+                WeaponData weapon = e.Equipped as WeaponData;
+
+                if (weapon == null)
+                {
+                    leftArmSprIdle = null;
+                    if (lArmRenderer != null)
+                        lArmRenderer.sprite = null;
+                    return;
+                }
+
+                leftArmSprIdle = weapon.SprIdle;
+                if (lArmRenderer != null)
+                    lArmRenderer.sprite = leftArmSprIdle;
                 break;
+            }
 
             case EEquipSlotType.RIGHT:
-                rightArmSprIdle = (e.Equipped as WeaponData).SprIdle;
-                rArmRenderer.sprite = rightArmSprIdle;
+            {
+                WeaponData weapon = e.Equipped as WeaponData;
+
+                if (weapon == null)
+                {
+                    rightArmSprIdle = null;
+                    if (rArmRenderer != null)
+                        rArmRenderer.sprite = null;
+                    return;
+                }
+
+                rightArmSprIdle = weapon.SprIdle;
+                if (rArmRenderer != null)
+                    rArmRenderer.sprite = rightArmSprIdle;
                 break;
+            }
         }
     }
 
@@ -275,27 +398,62 @@ public class PlayerAnimator : MonoBehaviour
         if (e.SlotType == EEquipSlotType.LEG)
             return;
 
+        WeaponData weapon = e.Equipment as WeaponData;
+        if (weapon == null)
+        {
+            Debug.LogWarning("[PlayerAnimator] WeaponData가 null이라 공격 애니메이션을 재생할 수 없습니다.");
+            return;
+        }
+
+        if (e.Skill == null)
+        {
+            Debug.LogWarning("[PlayerAnimator] Skill이 null이라 공격 애니메이션을 재생할 수 없습니다.");
+            return;
+        }
+
+        if (weapon.SprAttack == null || weapon.SprDelay == null)
+        {
+            Debug.LogWarning($"[PlayerAnimator] {weapon.name} 무기의 공격/선딜 스프라이트 리스트가 null입니다.");
+            return;
+        }
+
+        if (weapon.SprAttack.Count == 0 || weapon.SprDelay.Count == 0)
+        {
+            GameManager.Logger.LogError($"{e.Skill.name} 스킬에 플레이어 애니메이션 스프라이트가 올바르게 지정되지 않았습니다.");
+            return;
+        }
+
+        if (e.Skill.PlayerDelay <= 0f)
+        {
+            Debug.LogWarning($"[PlayerAnimator] {e.Skill.name}의 PlayerDelay가 0 이하입니다.");
+            return;
+        }
+
+        if (e.Skill.Duration <= e.Skill.PlayerDelay)
+        {
+            Debug.LogWarning($"[PlayerAnimator] {e.Skill.name}의 Duration이 PlayerDelay보다 작거나 같습니다.");
+            return;
+        }
+
         // 상체 위치 복구
         UpdateTorsoMidAir();
-        rArmRenderer.sprite = rightArmSprIdle;
-        lArmRenderer.sprite = leftArmSprIdle;
+
+        if (rArmRenderer != null)
+            rArmRenderer.sprite = rightArmSprIdle;
+
+        if (lArmRenderer != null)
+            lArmRenderer.sprite = leftArmSprIdle;
 
         // 플래그 계산
         isAttacking = true;
         isSkillDelay = true;
         isRightAttack = e.SlotType == EEquipSlotType.RIGHT;
-        armAnimTime = 0;
+        armAnimTime = 0f;
+        torsoAnimTime = 0f;
 
         // 스프라이트 목록과 속도 할당
-        armAttackSprites = (e.Equipment as WeaponData).SprAttack;
-        armDelaySprites = (e.Equipment as WeaponData).SprDelay;
-
-        if (armAttackSprites.Count == 0 || armDelaySprites.Count == 0)
-        {
-            GameManager.Logger.LogError($"{e.Skill.name} 스킬에 플레이어 애니메이션 스프라이트가 올바르게 지정되지 않았습니다.");
-            isAttacking = false;
-            return;
-        }
+        armAttackSprites = weapon.SprAttack;
+        armDelaySprites = weapon.SprDelay;
 
         skillDelaySpeed = armDelaySprites.Count / e.Skill.PlayerDelay;
         skillAnimSpeed = armAttackSprites.Count / (e.Skill.Duration - e.Skill.PlayerDelay);

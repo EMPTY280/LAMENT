@@ -119,20 +119,27 @@ namespace LAMENT
         #region 스킬 및 장비
 
         /// <summary> 스킬 사용 </summary>
-        public bool TryUseEquipment(EquipSlot slot, Skill skill, Action cbOnSkillEnd = null, bool isBurst = false)
+        public bool TryUseEquipment(EquipSlot slot, Skill skill, Action cbOnSkillEnd = null, bool isBurst = false, QTEResultContext qteContext = default)
         {
             if (!slot.IsReady() && !isBurst)
                 return false;
 
+            if (qteContext.DamageMultiplier <= 0f)
+                qteContext = QTEResultContext.None;
+
             lastUsedEquipment = slot;
-            TryStartSkill(skill, cbOnSkillEnd);
+            if (!TryStartSkill(skill, cbOnSkillEnd, qteContext.DamageMultiplier <= 0f ? 1f : qteContext.DamageMultiplier))
+                 return false;
 
             GameManager.Eventbus.Publish(new GEOnPlayerUsedEquiment(slot.Type, lastUsedEquipment.Equipment, skill));
 
             // 폭파 스킬이었다면 파괴 판정
-            if (isBurst && BurstRoll())
-                BurstEquipment(slot);
-
+            if (isBurst)
+            {
+                bool shouldConsume = !qteContext.PreventBurstConsume && BurstRoll();
+                if (shouldConsume)
+                    BurstEquipment(slot);
+            }
             return true;
         }
 

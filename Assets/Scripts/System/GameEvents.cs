@@ -152,4 +152,115 @@ namespace LAMENT
     {
         
     }
+
+    public readonly struct GEOnMoneyChanged : IGameEvent
+    {
+        public int Current {get;}
+        public int Delta {get;}
+        public GEOnMoneyChanged(int current, int delta)
+        {
+            Current = current;
+            Delta = delta;
+        }
+    }
+
+    public readonly struct GEOnGutPurchased : IGameEvent
+    {
+        public GutData Gut { get; }
+        public int Price { get; }
+
+        public GEOnGutPurchased(GutData gut, int price)
+        {
+            Gut = gut;
+            Price = price;
+        }
+    }
+
+    public readonly struct GEOnGutShopPurchased : IGameEvent
+    {
+        public GutData Gut{get;}
+        public int Price {get;}
+
+        public GEOnGutShopPurchased(GutData gut, int price)
+        {
+            Gut = gut;
+            Price = price;
+        }
+    }
+
+    public readonly struct GEOnQTEStarted : IGameEvent
+{
+    public EEquipSlotType SlotType { get; }
+    public EquipmentData Equipment { get; }
+    public Skill Skill { get; }
+    public EQTEDirection[] Sequence { get; }
+    public float TimeLimit { get; }
+    public string QteId { get; }
+
+    public GEOnQTEStarted(
+        EEquipSlotType slotType,
+        EquipmentData equipment,
+        Skill skill,
+        EQTEDirection[] sequence,
+        float timeLimit,
+        string qteId)
+    {
+        SlotType = slotType;
+        Equipment = equipment;
+        Skill = skill;
+        Sequence = sequence;
+        TimeLimit = timeLimit;
+        QteId = qteId;
+    }
+}
+
+public readonly struct GEOnQTEProgress : IGameEvent
+{
+    public int CurrentIndex { get; }
+    public int TotalCount { get; }
+    public EQTEDirection LastInput { get; }
+
+    public GEOnQTEProgress(int currentIndex, int totalCount, EQTEDirection lastInput)
+    {
+        CurrentIndex = currentIndex;
+        TotalCount = totalCount;
+        LastInput = lastInput;
+    }
+}
+
+public readonly struct GEOnQTESucceeded : IGameEvent
+{
+    public string QteId { get; }
+    public float DamageMultiplier { get; }
+    public bool PreventBurstConsume { get; }
+
+    public GEOnQTESucceeded(string qteId, float damageMultiplier, bool preventBurstConsume)
+    {
+        QteId = qteId;
+        DamageMultiplier = damageMultiplier;
+        PreventBurstConsume = preventBurstConsume;
+    }
+}
+
+public readonly struct GEOnQTEFailed : IGameEvent
+{
+    public string QteId { get; }
+
+    public GEOnQTEFailed(string qteId)
+    {
+        QteId = qteId;
+    }
+}
+
+public readonly struct GEOnQTEFinished : IGameEvent
+{
+    public string QteId { get; }
+    public bool IsSuccess { get; }
+
+    public GEOnQTEFinished(string qteId, bool isSuccess)
+    {
+        QteId = qteId;
+        IsSuccess = isSuccess;
+    }
+}
 }

@@ -9,106 +9,28 @@ namespace LAMENT
         [Header("플레이어")]
         [SerializeField] private Player player;
 
-        // ===== 콤보 =====
+        [Header("QTE")]
+        [SerializeField] private QTEManager qteManager;
+
         private ComboNode root;
         private ComboNode currNode;
         private LinkedList<EComboInputTypes> inputQueue;
 
         [Header("선입력")]
         [SerializeField]
-        private float bufferDuration = 0.2f; // 선입력 유지 시간 (sec)
-        private float bufferTime = 0; 
+        private float bufferDuration = 0.2f;
+        private float bufferTime = 0;
         private EComboInputTypes inputBuffer = EComboInputTypes.NONE;
 
         private bool isLocked = false;
 
-#if true
+        private ComboNodeInput pendingQteNode = null;
+        private EComboInputTypes pendingQteInput = EComboInputTypes.NONE;
 
+#if UNITY_EDITOR
         [Header("DEBUG")]
         [SerializeField]
         private Text DEBUG_COMBO_TEXT;
-
-        private void DEBUG_PrintCombo()
-        {
-            if (!DEBUG_COMBO_TEXT)
-                return;
-
-            string str = "Current Combo { ";
-
-            if (inputQueue.Count > 0)
-            {
-                LinkedListNode<EComboInputTypes> pointer = inputQueue.Last;
-
-                while (pointer != null)
-                {
-                    str += pointer.Value.ToString();
-
-                    if (pointer.Previous != null)
-                        str += " - ";
-
-                    pointer = pointer.Previous;
-                }
-            }
-            str += " }";
-
-            if (Time.time <= bufferTime + bufferDuration)
-            {
-                str += "\n\n[Buffer]\n" + inputBuffer.ToString() + "\n";
-                str += (bufferTime + bufferDuration - Time.time).ToString("F2") + " sec left";
-            }
-            else
-                str += "\n\n[Buffer]\n" + "NONE\n";
-
-
-            DEBUG_COMBO_TEXT.text = str;
-        }
-
-        private void DEBUG_Input()
-        {
-            // 대미지 1
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                player.OnHitTaken(new()
-                {
-                    src = null,
-                    amount = 1
-                });
-            }
-            
-            // 회복 1
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                player.SetHP(1, true);
-            }
-
-            // 위 게이지 소량 증가
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                player.SetEnergy(5, true);
-            }
-
-            // 위 게이지 대량 증가
-            if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                player.SetEnergy(50, true);
-            }
-
-            // 월드맵으로 돌아가기
-            if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                GameManager.Instance.TryChangeScene("Worldmap");
-            }
-
-            /*
-            // 3: 사지 섭취 -> 위 게이지 많이 증가
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                playerHealth.OnLimbConsumed();
-                Debug.Log($"[DEBUG] LimbConsumed: Stomach = {playerHealth.StomachCurr}");
-            }
-            */
-        }
-
 #endif
 
         private void Start()
@@ -123,28 +45,176 @@ namespace LAMENT
             GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
         }
 
         private void Update()
         {
+            if (TryProcessQTEInput())
+                return;
+
             HandleComboBuffer();
             ProcessInput();
-
             GetMoveInput();
 
-
-#if true
+#if UNITY_EDITOR
             DEBUG_PrintCombo();
             DEBUG_Input();
 #endif
         }
 
+        #region QTE
+
+        private bool TryProcessQTEInput()
+        {
+            if (qteManager == null || !qteManager.IsRunning)
+                return false;
+
+            EQTEDirection dir;
+            if (!TryGetQTEDirectionDown(out dir))
+                return true;
+
+            qteManager.TryConsumeDirection(dir);
+            return true;
+        }
+
+        private bool TryGetQTEDirectionDown(out EQTEDirection dir)
+        {
+            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.UP)))
+            {
+                dir = EQTEDirection.Up;
+                return true;
+            }
+
+            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.DOWN)))
+            {
+                dir = EQTEDirection.Down;
+                return true;
+            }
+
+            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.LEFT)))
+            {
+                dir = EQTEDirection.Left;
+                return true;
+            }
+
+            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.RIGHT)))
+            {
+                dir = EQTEDirection.Right;
+                return true;
+            }
+
+            dir = EQTEDirection.Up;
+            return false;
+        }
+
+        public void NotifyDashExecuted()
+        {
+            if (qteManager == null)
+                return;
+
+            qteManager.NotifyDashExecuted();
+        }
+
+        private bool TryBeginQTE(ComboNodeInput next, EComboInputTypes input)
+        {
+            Debug.Log($"[QTE][INPUT] TryBeginQTE - slot: skill:{next.Skill.name} burst:{next.IsBurst}");
+            if (qteManager == null)
+                return false;
+
+            if (next == null || next.Equipment == null || next.Equipment.Equipment == null || next.Skill == null)
+                return false;
+
+            EEquipSlotType slotType;
+            if (!TryGetSlotType(next.Equipment, out slotType))
+                return false;
+
+            if (slotType != EEquipSlotType.LEFT && slotType != EEquipSlotType.RIGHT)
+                return false;
+
+            bool isComboFinisher = next.Children == null || next.Children.Count == 0;
+
+            bool started = qteManager.TryBegin(
+                slotType,
+                next.Equipment.Equipment,
+                next.Skill,
+                next.IsBurst,
+                isComboFinisher,
+                OnQTEFinished);
+                Debug.Log($"[QTE][INPUT] TryBegin result = {started}");
+
+            if (!started)
+                return false;
+
+            pendingQteNode = next;
+            pendingQteInput = input;
+
+            currNode = next;
+            inputQueue.AddFirst(input);
+            Lock();
+
+            return true;
+        }
+
+        private void OnQTEFinished(QTEResultContext context)
+        {
+            Debug.Log($"[QTE][INPUT] QTE Finished - success:{context.IsSuccess} mult:{context.DamageMultiplier}");
+            if (pendingQteNode == null)
+            {
+                Unlock();
+                return;
+            }
+
+            bool used = player.TryUseEquipment(
+                pendingQteNode.Equipment,
+                pendingQteNode.Skill,
+                Unlock,
+                pendingQteNode.IsBurst,
+                context);
+
+            if (!used)
+                Unlock();
+
+            if (pendingQteNode.IsBurst)
+            {
+                ClearCombo();
+                BuildCombo();
+            }
+
+            pendingQteNode = null;
+            pendingQteInput = EComboInputTypes.NONE;
+        }
+
+        private bool TryGetSlotType(EquipSlot slot, out EEquipSlotType slotType)
+        {
+            if (slot == player.LeftArmSlot)
+            {
+                slotType = EEquipSlotType.LEFT;
+                return true;
+            }
+
+            if (slot == player.RightArmSlot)
+            {
+                slotType = EEquipSlotType.RIGHT;
+                return true;
+            }
+
+            if (slot == player.LegSlot)
+            {
+                slotType = EEquipSlotType.LEG;
+                return true;
+            }
+
+            slotType = EEquipSlotType.LEG;
+            return false;
+        }
+
+        #endregion
+
         #region 콤보
 
-        /// <summary> 현재 입력된 키 반환 </summary>
         private EComboInputTypes GetComboKey()
         {
             bool IsKeyPressed(GameManager.KeyMap.EKey type)
@@ -170,10 +240,8 @@ namespace LAMENT
             return EComboInputTypes.NONE;
         }
 
-        /// <summary> 선입력 처리 </summary>
         private void HandleComboBuffer()
         {
-            // 입력이 잠긴 동안에만 작동
             if (!isLocked)
                 return;
 
@@ -186,7 +254,6 @@ namespace LAMENT
             bufferTime = Time.time;
         }
 
-        /// <summary> 이동 처리 </summary>
         private void GetMoveInput()
         {
             bool IsKeyPressed(GameManager.KeyMap.EKey type)
@@ -225,13 +292,11 @@ namespace LAMENT
 
         #region 콤보 생성
 
-        /// <summary> 기존 콤보 제거 </summary>
         private void ClearCombo()
         {
             root.ClearChild();
         }
 
-        /// <summary> 콤보 빌드 </summary>
         public void BuildCombo()
         {
             void BuildFromSlot(EComboInputTypes type, EquipSlot slot, bool isWeapon = false)
@@ -264,7 +329,6 @@ namespace LAMENT
                 {
                     ComboNodeInput newNode = new(type + 3);
                     newNode.Set(slot, (slot.Equipment as WeaponData).BurstSkill, true);
-
                     root.AddChild(newNode);
                 }
             }
@@ -283,16 +347,12 @@ namespace LAMENT
             if (isLocked)
                 return;
 
-            // 입력 처리 ===========================================
-
             EComboInputTypes input = EComboInputTypes.NONE;
             if (Time.time <= bufferTime + bufferDuration &&
                 inputBuffer != EComboInputTypes.NONE)
                 input = inputBuffer;
             else
                 input = GetComboKey();
-
-            // ===========================================
 
             if (input == EComboInputTypes.NONE || currNode.Children.Count == 0)
             {
@@ -305,7 +365,10 @@ namespace LAMENT
 
                 if (next != null)
                 {
-                    if (player.TryUseEquipment(next.Equipment, next.Skill, Unlock, next.IsBurst))
+                    if (TryBeginQTE(next, input))
+                        return;
+
+                    if (player.TryUseEquipment(next.Equipment, next.Skill, Unlock, next.IsBurst, QTEResultContext.None))
                     {
                         currNode = next;
                         inputQueue.AddFirst(input);
@@ -344,11 +407,42 @@ namespace LAMENT
         {
             isLocked = false;
         }
-    
+
         public void OnPlayerEquipmentChanged(GEOnEquipmentEquipped e)
         {
             ClearCombo();
             BuildCombo();
         }
+
+#if UNITY_EDITOR
+        private void DEBUG_PrintCombo()
+        {
+            if (!DEBUG_COMBO_TEXT)
+                return;
+
+            string str = "Current Combo { ";
+
+            if (inputQueue.Count > 0)
+            {
+                LinkedListNode<EComboInputTypes> pointer = inputQueue.Last;
+
+                while (pointer != null)
+                {
+                    str += pointer.Value.ToString();
+
+                    if (pointer.Previous != null)
+                        str += " - ";
+
+                    pointer = pointer.Previous;
+                }
+            }
+            str += " }";
+            DEBUG_COMBO_TEXT.text = str;
+        }
+
+        private void DEBUG_Input()
+        {
+        }
+#endif
     }
 }
