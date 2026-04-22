@@ -27,7 +27,10 @@ namespace LAMENT
         private float skillDurationCurr = 0;
         private Action cbOnSkillEnd;
 
+        public bool IsUsingSkill => skillCurr != null;
+
         private float skillDamageMultiplierCurr = 1f;
+
 
         protected virtual void Awake()
         {

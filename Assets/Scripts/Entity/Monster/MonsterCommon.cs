@@ -19,7 +19,6 @@ namespace LAMENT
         [SerializeField] private float attackDelay = 1; // 공격 딜레이
         private float lastAttackTime = 0;
         [SerializeField] private float attackRadius; // 공격 실행 반경
-        private bool isAttacking = false;
 
 
         protected override void Awake()
@@ -36,7 +35,6 @@ namespace LAMENT
             Animator.SetFloat("HSpeedMagnitude", math.abs(MoveComponent.HSpeed));
         }
 
-
         /// <summary> BT 구성 </summary>
         private void BuildBT()
         {
@@ -44,6 +42,17 @@ namespace LAMENT
 
             BTSelectorNode root = new();
             bt.SetRootNode(root);
+
+            // ===== 공격 시퀀스 =====
+
+            BTSequenceNode seqAttack = new();
+            root.AddChild(seqAttack);
+
+            BTActionNode actCheckAttackRadius = new(CheckAttackRadius);
+            seqAttack.AddChild(actCheckAttackRadius);
+
+            BTActionNode actAttack = new(Attack);
+            seqAttack.AddChild(actAttack);
 
             // ===== 추적 시퀀스 =====
 
@@ -64,6 +73,31 @@ namespace LAMENT
             BTActionNode actIdle = new(Idle);
             root.AddChild(actIdle);
         }
+
+        private EBTState CheckAttackRadius()
+        {
+            if (!target)
+                return EBTState.FAILURE;
+
+            if (IsUsingSkill)
+                return EBTState.SUCCESS;
+
+            if (Vector3.Distance(transform.position, target.position) <= attackRadius)
+                return EBTState.SUCCESS;
+
+            return EBTState.FAILURE;
+        }
+
+        private EBTState Attack()
+        {
+            MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
+            if (IsUsingSkill)
+                return EBTState.RUN;
+
+            TryStartSkill(skills[0]);
+            return EBTState.SUCCESS;
+        }
+
         private EBTState CheckChaseRadius()
         {
             if (!target)

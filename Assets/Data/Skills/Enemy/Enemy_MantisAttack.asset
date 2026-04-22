@@ -10,13 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1b6f78beed9d854e8a70006cdeca4f8, type: 3}
-  m_Name: Enemy_Smash
+  m_Name: Enemy_MantisAttack
   m_EditorClassIdentifier: 
-  duration: 1
-  triggerName: Smash
+  damage: 0
   isUnstoppable: 0
-  effector: {fileID: 4342015029874012305, guid: 4bc9f749c2ee4fc459180b58db101529, type: 3}
+  duration: 0.666
+  playerDelay: 0.1
+  triggerName: Attack
+  effector: {fileID: 4342015029874012305, guid: 27a34d8cd870460499f32dff39e31e43, type: 3}
   timingList:
   - 0
-  - 0
+  - 0.5
   - 0.85
+  movement: 0

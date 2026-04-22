@@ -327,7 +327,8 @@ MonoBehaviour:
   hpCurr: 1
   moveComponent: {fileID: 7594527611442793911}
   effectorRoot: {fileID: 7555126590096585197}
-  skills: []
+  skills:
+  - {fileID: 11400000, guid: 085eb2c02436160439588ddbef18a6ff, type: 2}
   dropTable:
   - {fileID: 7274617939394550516, guid: 80153aeab8ed3034585f3ef91952a93c, type: 3}
   target: {fileID: 0}
@@ -340,7 +341,7 @@ MonoBehaviour:
     m_Bits: 8
   wallCheckDistance: 1.3
   attackDelay: 1
-  attackRadius: 0
+  attackRadius: 2.3
 --- !u!95 &177807418480591394
 Animator:
   serializedVersion: 5
