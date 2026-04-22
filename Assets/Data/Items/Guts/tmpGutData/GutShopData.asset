@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3f563187cb8f7548b45bfc15883b58c, type: 3}
+  m_Name: GutShopData
+  m_EditorClassIdentifier: 
+  items:
+  - gut: {fileID: 11400000, guid: 69ad7d5d87f416f4a84070597e663068, type: 2}
+    price: 250
+  - gut: {fileID: 11400000, guid: 86b0a1e80835c734db93610a63899e3e, type: 2}
+    price: 300
+  - gut: {fileID: 11400000, guid: 30371779bea7d0e49a38029f607f5c85, type: 2}
+    price: 300
+  - gut: {fileID: 11400000, guid: c0e10f1d4f1e47d4eb9bbcf68226fb99, type: 2}
+    price: 300
+  - gut: {fileID: 11400000, guid: 975e6e319f8c23948a0ed132caaec76e, type: 2}
+    price: 300

@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 namespace LAMENT
 {
     public class ScreenFade : MonoBehaviour
@@ -15,7 +14,6 @@ namespace LAMENT
 
         private Action cbOnFinished;
 
-
         private void Awake()
         {
             DontDestroyOnLoad(this);
@@ -27,16 +25,19 @@ namespace LAMENT
                 return;
 
             Color colorNext = img.color;
-            colorNext.a += (isFadeout ? speed : -speed) * Time.deltaTime;
+            colorNext.a += (isFadeout ? speed : -speed) * Time.unscaledDeltaTime;
+            colorNext.a = Mathf.Clamp01(colorNext.a);
             img.color = colorNext;
 
-            if ((isFadeout && 1 <= colorNext.a) ||
-                (!isFadeout && colorNext.a <= 0))
+            if ((isFadeout && colorNext.a >= 1f) ||
+                (!isFadeout && colorNext.a <= 0f))
             {
                 isActive = false;
                 img.raycastTarget = false;
-                if (cbOnFinished != null)
-                    cbOnFinished();
+
+                Action onFinished = cbOnFinished;
+                cbOnFinished = null;
+                onFinished?.Invoke();
             }
         }
 
@@ -44,7 +45,7 @@ namespace LAMENT
         {
             if (isActive)
                 return false;
-            
+
             isActive = true;
             isFadeout = true;
             SetSpeed(duration);
@@ -61,7 +62,7 @@ namespace LAMENT
         {
             if (isActive)
                 return false;
-            
+
             isActive = true;
             isFadeout = false;
             SetSpeed(duration);
@@ -82,7 +83,7 @@ namespace LAMENT
                 return;
             }
 
-            speed = 1 / duration;
+            speed = 1f / duration;
         }
     }
 }

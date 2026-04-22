@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.PackageManager;
+//using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -57,7 +57,7 @@ namespace LAMENT
         /// <summary>
         /// 현재 씬을 유지한 채 오버레이 씬(예: 상점)을 Additive 로드한다.
         /// </summary>
-        public bool TryOpenOverlayScene(string name, float duration = 0.25f)
+       public bool TryOpenOverlayScene(string name, float duration = 0.25f)
         {
             if (isOverlayOpened)
                 return false;
@@ -71,18 +71,23 @@ namespace LAMENT
 
             return screenFade.TryStartFadeout(duration * 0.5f, () =>
             {
-                SceneManager.LoadScene(name, LoadSceneMode.Additive);
+                AsyncOperation op = SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
+                if (op == null)
+                    return;
 
-                Scene loadedScene = SceneManager.GetSceneByName(name);
-                if (loadedScene.IsValid())
-                    SceneManager.SetActiveScene(loadedScene);
+                op.completed += (AsyncOperation _) =>
+                {
+                    Scene loadedScene = SceneManager.GetSceneByName(name);
+                    if (loadedScene.IsValid() && loadedScene.isLoaded)
+                        SceneManager.SetActiveScene(loadedScene);
 
-                isOverlayOpened = true;
+                    isOverlayOpened = true;
 
-                Time.timeScale = 0f;
-                Time.fixedDeltaTime = pausedFixedDeltaTime;
+                    Time.timeScale = 0f;
+                    Time.fixedDeltaTime = pausedFixedDeltaTime;
 
-                screenFade.TryStartFadein(duration * 0.5f);
+                    screenFade.TryStartFadein(duration * 0.5f);
+                };
             });
         }
 

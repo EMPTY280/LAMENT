@@ -188,6 +188,8 @@ namespace LAMENT
         }
     }
 
+    
+
     /// <summary> 특정 장기 슬롯의 장착 상태가 변경되었을 때 </summary>
     public readonly struct GEOnGutEquipped : IGameEvent
     {

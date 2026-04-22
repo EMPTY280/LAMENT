@@ -17,3 +17,9 @@ MonoBehaviour:
     price: 100
   - gut: {fileID: 11400000, guid: 96c96836a2f51db49b108de0e5cf56ea, type: 2}
     price: 250
+  - gut: {fileID: 11400000, guid: 96c96836a2f51db49b108de0e5cf56ea, type: 2}
+    price: 250
+  - gut: {fileID: 11400000, guid: 96c96836a2f51db49b108de0e5cf56ea, type: 2}
+    price: 250
+  - gut: {fileID: 11400000, guid: 96c96836a2f51db49b108de0e5cf56ea, type: 2}
+    price: 250

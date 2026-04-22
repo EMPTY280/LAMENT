@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2ec2d62143207f40af6b18e501c2d3c, type: 3}
+  m_Name: Tmp_lung
+  m_EditorClassIdentifier: 
+  id: Tmp_lung
+  icon: {fileID: 21300000, guid: 589959e3013efdd4cb948aa97345b063, type: 3}
+  name: "\uC784\uC2DC \uAC04 \uBCC0\uD615"
+  desc: max HP+ 10, energyMulti*2.5
+  unlockMethod: 
+  effects:
+  - {fileID: 11400000, guid: 9d34e2cff13b7a447acab314c57467da, type: 2}
+  - {fileID: 11400000, guid: 9023f460bba4be641ad8602dbedee3c8, type: 2}
