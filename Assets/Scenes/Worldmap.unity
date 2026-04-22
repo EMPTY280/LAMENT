@@ -1218,6 +1218,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4574167386983865488, guid: f119d4f6d45f4c644a15d8f6a250d210, type: 3}
+      propertyPath: xLock.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574167386983865488, guid: f119d4f6d45f4c644a15d8f6a250d210, type: 3}
+      propertyPath: xLock.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574167386983865488, guid: f119d4f6d45f4c644a15d8f6a250d210, type: 3}
+      propertyPath: yLock.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574167386983865488, guid: f119d4f6d45f4c644a15d8f6a250d210, type: 3}
+      propertyPath: yLock.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6941559367789319773, guid: f119d4f6d45f4c644a15d8f6a250d210, type: 3}
       propertyPath: m_Name
       value: Main Camera
