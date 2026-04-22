@@ -28,7 +28,7 @@ namespace LAMENT
 
     public readonly struct GEOnEquipmentPreview : IGameEvent
     {
-        public EEquipSlotType Slot { get; }   // LeftArm / RightArm / Legs
+        public EEquipSlotType Slot { get; }
         public EquipmentData Current { get; }
         public EquipmentData Prev { get; }
         public EquipmentData Next { get; }
@@ -78,7 +78,7 @@ namespace LAMENT
     }
 
     /// <summary> 플레이어 스킬 사용 시작 </summary>
-    public readonly struct GEOnPlayerUsedEquiment: IGameEvent
+    public readonly struct GEOnPlayerUsedEquiment : IGameEvent
     {
         public EEquipSlotType SlotType { get; }
         public EquipmentData Equipment { get; }
@@ -93,7 +93,7 @@ namespace LAMENT
     }
 
     /// <summary> 플레이어 스킬 사용 종료 </summary>
-    public readonly struct GEOnPlayerSkillFinished: IGameEvent
+    public readonly struct GEOnPlayerSkillFinished : IGameEvent
     {
         public EquipSlot Slot { get; }
 
@@ -105,10 +105,10 @@ namespace LAMENT
 
     public readonly struct GEOnPlayerHealthChanged : IGameEvent
     {
-        public int Curr { get; } // 현재 체력
-        public int Max { get; } // 최대 체력
-        public int Delta { get; } // 변화량
-        public int Decay { get; } // 최대 체력 감소량
+        public int Curr { get; }
+        public int Max { get; }
+        public int Delta { get; }
+        public int Decay { get; }
 
         public GEOnPlayerHealthChanged(int curr, int max, int delta, int decay)
         {
@@ -135,7 +135,7 @@ namespace LAMENT
     public readonly struct GEOnPlayerResurrected : IGameEvent
     {
     }
-    
+
     /// <summary> 플레이어 사망 </summary>
     public readonly struct GEOnPlayerDied : IGameEvent
     {
@@ -150,13 +150,13 @@ namespace LAMENT
     /// <summary> 플레이어 게임 오버 </summary>
     public readonly struct GEOnPlayerGameOver : IGameEvent
     {
-        
     }
 
     public readonly struct GEOnMoneyChanged : IGameEvent
     {
-        public int Current {get;}
-        public int Delta {get;}
+        public int Current { get; }
+        public int Delta { get; }
+
         public GEOnMoneyChanged(int current, int delta)
         {
             Current = current;
@@ -178,8 +178,8 @@ namespace LAMENT
 
     public readonly struct GEOnGutShopPurchased : IGameEvent
     {
-        public GutData Gut{get;}
-        public int Price {get;}
+        public GutData Gut { get; }
+        public int Price { get; }
 
         public GEOnGutShopPurchased(GutData gut, int price)
         {
@@ -188,79 +188,99 @@ namespace LAMENT
         }
     }
 
+    /// <summary> 특정 장기 슬롯의 장착 상태가 변경되었을 때 </summary>
+    public readonly struct GEOnGutEquipped : IGameEvent
+    {
+        public EGutType GutType { get; }
+        public GutData Equipped { get; }
+        public GutData Replaced { get; }
+
+        public GEOnGutEquipped(EGutType gutType, GutData equipped, GutData replaced)
+        {
+            GutType = gutType;
+            Equipped = equipped;
+            Replaced = replaced;
+        }
+    }
+
+    /// <summary> 장기 전체 로드아웃이 변경되었을 때 </summary>
+    public readonly struct GEOnGutLoadoutChanged : IGameEvent
+    {
+    }
+
     public readonly struct GEOnQTEStarted : IGameEvent
-{
-    public EEquipSlotType SlotType { get; }
-    public EquipmentData Equipment { get; }
-    public Skill Skill { get; }
-    public EQTEDirection[] Sequence { get; }
-    public float TimeLimit { get; }
-    public string QteId { get; }
-
-    public GEOnQTEStarted(
-        EEquipSlotType slotType,
-        EquipmentData equipment,
-        Skill skill,
-        EQTEDirection[] sequence,
-        float timeLimit,
-        string qteId)
     {
-        SlotType = slotType;
-        Equipment = equipment;
-        Skill = skill;
-        Sequence = sequence;
-        TimeLimit = timeLimit;
-        QteId = qteId;
+        public EEquipSlotType SlotType { get; }
+        public EquipmentData Equipment { get; }
+        public Skill Skill { get; }
+        public EQTEDirection[] Sequence { get; }
+        public float TimeLimit { get; }
+        public string QteId { get; }
+
+        public GEOnQTEStarted(
+            EEquipSlotType slotType,
+            EquipmentData equipment,
+            Skill skill,
+            EQTEDirection[] sequence,
+            float timeLimit,
+            string qteId)
+        {
+            SlotType = slotType;
+            Equipment = equipment;
+            Skill = skill;
+            Sequence = sequence;
+            TimeLimit = timeLimit;
+            QteId = qteId;
+        }
     }
-}
 
-public readonly struct GEOnQTEProgress : IGameEvent
-{
-    public int CurrentIndex { get; }
-    public int TotalCount { get; }
-    public EQTEDirection LastInput { get; }
-
-    public GEOnQTEProgress(int currentIndex, int totalCount, EQTEDirection lastInput)
+    public readonly struct GEOnQTEProgress : IGameEvent
     {
-        CurrentIndex = currentIndex;
-        TotalCount = totalCount;
-        LastInput = lastInput;
+        public int CurrentIndex { get; }
+        public int TotalCount { get; }
+        public EQTEDirection LastInput { get; }
+
+        public GEOnQTEProgress(int currentIndex, int totalCount, EQTEDirection lastInput)
+        {
+            CurrentIndex = currentIndex;
+            TotalCount = totalCount;
+            LastInput = lastInput;
+        }
     }
-}
 
-public readonly struct GEOnQTESucceeded : IGameEvent
-{
-    public string QteId { get; }
-    public float DamageMultiplier { get; }
-    public bool PreventBurstConsume { get; }
-
-    public GEOnQTESucceeded(string qteId, float damageMultiplier, bool preventBurstConsume)
+    public readonly struct GEOnQTESucceeded : IGameEvent
     {
-        QteId = qteId;
-        DamageMultiplier = damageMultiplier;
-        PreventBurstConsume = preventBurstConsume;
+        public string QteId { get; }
+        public float DamageMultiplier { get; }
+        public bool PreventBurstConsume { get; }
+
+        public GEOnQTESucceeded(string qteId, float damageMultiplier, bool preventBurstConsume)
+        {
+            QteId = qteId;
+            DamageMultiplier = damageMultiplier;
+            PreventBurstConsume = preventBurstConsume;
+        }
     }
-}
 
-public readonly struct GEOnQTEFailed : IGameEvent
-{
-    public string QteId { get; }
-
-    public GEOnQTEFailed(string qteId)
+    public readonly struct GEOnQTEFailed : IGameEvent
     {
-        QteId = qteId;
+        public string QteId { get; }
+
+        public GEOnQTEFailed(string qteId)
+        {
+            QteId = qteId;
+        }
     }
-}
 
-public readonly struct GEOnQTEFinished : IGameEvent
-{
-    public string QteId { get; }
-    public bool IsSuccess { get; }
-
-    public GEOnQTEFinished(string qteId, bool isSuccess)
+    public readonly struct GEOnQTEFinished : IGameEvent
     {
-        QteId = qteId;
-        IsSuccess = isSuccess;
+        public string QteId { get; }
+        public bool IsSuccess { get; }
+
+        public GEOnQTEFinished(string qteId, bool isSuccess)
+        {
+            QteId = qteId;
+            IsSuccess = isSuccess;
+        }
     }
-}
 }

@@ -6,11 +6,10 @@ namespace LAMENT
 {
     public class Player : Entity
     {
-        // ===== 체력 =====
         [Header("최대 체력 감소")]
-        [SerializeField] private int hpDecay = 0; // 줄어든 체력
+        [SerializeField] private int hpDecay = 0;
 
-        [Header("장비 슬롯")] // =====
+        [Header("장비 슬롯")]
         [SerializeField] public EquipSlot leftArmSlot;
         [SerializeField] private EquipSlot rightArmSlot;
         [SerializeField] private EquipSlot legSlot;
@@ -19,21 +18,31 @@ namespace LAMENT
         public EquipSlot RightArmSlot => rightArmSlot;
         public EquipSlot LegSlot => legSlot;
 
-        private EquipSlot lastUsedEquipment; // 마지막으로 사용된 장비
+        private EquipSlot lastUsedEquipment;
 
         // ===== 위 게이지 =====
         private float energyMax = 100;
         private float energyCurr = 0;
         private float energyGainPerHit = 5;
 
-        // ===== 추가 능력치 =====
+        // ===== 장기 런타임 추가 능력치 =====
         private float energyMult = 1.0f;
         private float consumeChance = 1.0f;
 
+        // 장기 효과로 증가한 최대 체력 보정치
+        private float gutBonusMaxHp = 0f;
+
+        // 장기 보정 제외 기본 최대 체력
+        private float baseHpMaxWithoutGut = 1f;
+
+        private PlayerGutRuntime gutRuntime;
 
         protected override void Awake()
         {
             base.Awake();
+
+            baseHpMaxWithoutGut = hpMax;
+            gutRuntime = new PlayerGutRuntime(this);
 
             InitEquipments();
             InitEvents();
@@ -47,8 +56,10 @@ namespace LAMENT
 
         protected override void OnDestroy()
         {
-            base.Awake();
+            base.OnDestroy();
+
             GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
+            GameManager.Eventbus.Unsubscribe<GEOnGutLoadoutChanged>(OnGutLoadoutChanged);
         }
 
         protected override void Update()
@@ -65,7 +76,6 @@ namespace LAMENT
 
         #region 초기화
 
-        /// <summary> 초기 장착된 장비 준비 </summary>
         private void InitEquipments()
         {
             TryCreateEffector(leftArmSlot.Equipment, true);
@@ -73,16 +83,15 @@ namespace LAMENT
             TryCreateEffector(legSlot.Equipment);
         }
 
-        /// <summary> 이벤트 등록 </summary>
         private void InitEvents()
         {
             GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
+            GameManager.Eventbus.Subscribe<GEOnGutLoadoutChanged>(OnGutLoadoutChanged);
         }
 
-        /// <summary> 초기 상태 전파 </summary>
         private void PublishInitStates()
         {
-            GameManager.Eventbus.Publish(new GEOnPlayerHealthChanged((int)hpCurr, (int)hpMax, 0, 0));
+            GameManager.Eventbus.Publish(new GEOnPlayerHealthChanged((int)hpCurr, (int)hpMax, 0, hpDecay));
             GameManager.Eventbus.Publish(new GEOnPlayerEnergyChanged(energyCurr, energyMax));
 
             GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(
@@ -103,22 +112,56 @@ namespace LAMENT
 
         private void InitGuts()
         {
-            for (int i = 0; i < (int)EGutType._LENGTH; i++)
+            gutRuntime.Rebuild();
+        }
+
+        private void OnGutLoadoutChanged(GEOnGutLoadoutChanged e)
+        {
+            gutRuntime.Rebuild();
+        }
+
+        #endregion
+
+        #region 장기 런타임
+
+        public void ResetGutRuntimeAttributes()
+        {
+            energyMult = 1.0f;
+            consumeChance = 1.0f;
+            gutBonusMaxHp = 0f;
+
+            RefreshEffectiveMaxHp();
+        }
+
+        public void OnGutRuntimeRebuilt()
+        {
+            RefreshEffectiveMaxHp();
+
+            GameManager.Eventbus.Publish(new GEOnPlayerHealthChanged((int)hpCurr, (int)hpMax, 0, hpDecay));
+            GameManager.Eventbus.Publish(new GEOnPlayerEnergyChanged(energyCurr, energyMax));
+        }
+
+        private void RefreshEffectiveMaxHp()
+        {
+            float oldHpMax = hpMax;
+            float oldHpCurr = hpCurr;
+
+            hpMax = math.max(1.0f, baseHpMaxWithoutGut + gutBonusMaxHp);
+
+            if (oldHpMax <= 0f)
             {
-                GutData data = GameManager.Player.GetGutData((EGutType)i);
-                if (!data)
-                    continue;
-                
-                foreach (GutEffectData eff in data.Effects)
-                    eff.Apply(this);
+                hpCurr = math.min(hpCurr, hpMax);
+                return;
             }
+
+            float ratio = oldHpCurr / oldHpMax;
+            hpCurr = math.clamp(hpMax * ratio, 0, hpMax);
         }
 
         #endregion
 
         #region 스킬 및 장비
 
-        /// <summary> 스킬 사용 </summary>
         public bool TryUseEquipment(EquipSlot slot, Skill skill, Action cbOnSkillEnd = null, bool isBurst = false, QTEResultContext qteContext = default)
         {
             if (!slot.IsReady() && !isBurst)
@@ -129,27 +172,25 @@ namespace LAMENT
 
             lastUsedEquipment = slot;
             if (!TryStartSkill(skill, cbOnSkillEnd, qteContext.DamageMultiplier <= 0f ? 1f : qteContext.DamageMultiplier))
-                 return false;
+                return false;
 
             GameManager.Eventbus.Publish(new GEOnPlayerUsedEquiment(slot.Type, lastUsedEquipment.Equipment, skill));
 
-            // 폭파 스킬이었다면 파괴 판정
             if (isBurst)
             {
                 bool shouldConsume = !qteContext.PreventBurstConsume && BurstRoll();
                 if (shouldConsume)
                     BurstEquipment(slot);
             }
+
             return true;
         }
 
-        /// <summary> 장비 파괴 확률 판정 </summary>
         public bool BurstRoll()
         {
             return UnityEngine.Random.value < consumeChance;
         }
 
-        /// <summary> 장비 파괴 판정 </summary>
         private void BurstEquipment(EquipSlot slot)
         {
             if (slot == null || slot.Equipment == null)
@@ -166,14 +207,12 @@ namespace LAMENT
             else if (slot == legSlot)
                 slotType = EEquipSlotType.LEG;
 
-            // 장비 교환 이벤트
             GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(
                 null,
                 replaced,
                 slotType));
         }
 
-        /// <summary> 스킬 사용 종료 시 호출 </summary>
         public void FinishSkill()
         {
             TrySetCooldown();
@@ -195,7 +234,6 @@ namespace LAMENT
             return true;
         }
 
-        /// <summary> 스킬 이펙터 생성 시도 </summary>
         protected bool TryCreateEffector(EquipmentData e, bool isWeapon = false)
         {
             if (!e)
@@ -219,13 +257,13 @@ namespace LAMENT
             {
                 case EEquipSlotType.LEFT:
                     leftArmSlot.Equipment = e.Equipped;
-                break;
+                    break;
                 case EEquipSlotType.RIGHT:
                     rightArmSlot.Equipment = e.Equipped;
-                break;
+                    break;
                 case EEquipSlotType.LEG:
                     legSlot.Equipment = e.Equipped;
-                break;
+                    break;
             }
         }
 
@@ -233,8 +271,6 @@ namespace LAMENT
 
         #region 에너지
 
-        /// <summary> 위 게이지 획득 </summary>
-        /// <param name="isRelative"> true면 +-, false면 즉시 지정 </param>
         public void SetEnergy(float amount, bool isRelative)
         {
             if (isRelative)
@@ -250,13 +286,12 @@ namespace LAMENT
         public void ClearEnergy()
         {
             energyCurr = 0;
-
             GameManager.Eventbus.Publish(new GEOnPlayerEnergyChanged(energyCurr, energyMax));
         }
 
         #endregion
 
-        #region 체력 
+        #region 체력
 
         protected override void TakeDamage(DamageResponse rsp)
         {
@@ -290,17 +325,16 @@ namespace LAMENT
             GameManager.Eventbus.Publish(new GEOnPlayerHealthChanged((int)hpCurr, (int)hpMax, (int)(hpTo - hpFrom), hpDecay));
         }
 
-        /// <summary> 부활 시도 </summary>
         private bool TryResurrect()
         {
-            // 최대 체력이 0이 되면 부활 실패
-            if (hpMax - 1 <= 0)
+            if (baseHpMaxWithoutGut - 1 <= 0)
                 return false;
 
-            // 아니면 최대 체력 1 감소 후 부활
             isDead = false;
-            hpMax--;
+            baseHpMaxWithoutGut--;
             hpDecay++;
+
+            RefreshEffectiveMaxHp();
             SetHP(hpMax, false);
 
             GameManager.Eventbus.Publish(new GEOnPlayerResurrected());
@@ -310,7 +344,6 @@ namespace LAMENT
             return true;
         }
 
-        /// <summary> 체력 및 위 게이지 상태에 따라 감소된 최대 체력 복구 시도 </summary>
         private bool TryRestoreDecay()
         {
             if (energyCurr < energyMax)
@@ -320,8 +353,11 @@ namespace LAMENT
                 return false;
 
             ClearEnergy();
-            hpMax++;
+
+            baseHpMaxWithoutGut++;
             hpDecay--;
+
+            RefreshEffectiveMaxHp();
             SetHP(1, true);
 
             return true;
@@ -352,11 +388,10 @@ namespace LAMENT
 
         public void AddMaxHPAttribute(float v)
         {
-            hpMax = math.max(1.0f, hpMax + v);
-            hpCurr = hpMax;
+            gutBonusMaxHp += v;
+            RefreshEffectiveMaxHp();
         }
 
         #endregion
-
     }
 }
