@@ -32,9 +32,6 @@ namespace LAMENT
         [Header("money")]
         [SerializeField] private Text moneyTxt;
 
-        [Header("씬 이동")]
-        [SerializeField] private string returnSceneName = "Worldmap";
-
         private int currIndex = 0;
 
         private void Awake()
@@ -52,7 +49,7 @@ namespace LAMENT
 
         private void OnDisable()
         {
-            GameManager.Eventbus.Subscribe<GEOnMoneyChanged>(OnMoneyChanged);
+            GameManager.Eventbus.Unsubscribe<GEOnMoneyChanged>(OnMoneyChanged);
         }
 
         private void Update()
@@ -229,10 +226,7 @@ namespace LAMENT
 
         public void ReturnScene()
         {
-            GameManager.Instance.TryChangeScene(returnSceneName);
+            GameManager.Instance.TryCloseOverlayScene();
         }
-
     }
-
 }
-
