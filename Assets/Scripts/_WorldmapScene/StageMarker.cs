@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class StageMarker : MonoBehaviour
 {
     [Serializable]
-    private struct NeighborMarker
+    public struct NeighborMarker
     {
         public StageMarker marker;
         public GameManager.KeyMap.EKey dir;
@@ -20,6 +20,8 @@ public class StageMarker : MonoBehaviour
     [SerializeField] private NeighborMarker prevMarker;
     [SerializeField] private NeighborMarker[] nextMarkers;
     [SerializeField] private GameObject linePrefab;
+
+    public NeighborMarker[] NextMarkers => nextMarkers;
 
     [Header("언락 및 클리어")]
     [SerializeField] private bool isUnlocked = false;

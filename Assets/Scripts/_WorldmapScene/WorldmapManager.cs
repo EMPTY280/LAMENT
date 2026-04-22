@@ -43,11 +43,22 @@ namespace LAMENT
                 OnCoffinButtonClicked();
 
 #if true
+            void UpdateMarker(StageMarker m)
+            {
+                // 연결된 마커들을 모두 업데이트
+                foreach (StageMarker.NeighborMarker sm in m.NextMarkers)
+                    UpdateMarker(sm.marker);
+
+                // 그 다음 자신 업데이트
+                m.UpdateState();
+            }
+
             // TODO: 테스트
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 GameManager.GameUnlock.Unlock("Stage1");
-                currMarker.UpdateState();
+                GameManager.GameUnlock.Unlock("Stage2");
+                UpdateMarker(currMarker);
             }
 #endif
         }

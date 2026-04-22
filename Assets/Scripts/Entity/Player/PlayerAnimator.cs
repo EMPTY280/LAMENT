@@ -91,7 +91,7 @@ public class PlayerAnimator : MonoBehaviour
         float hSpeed = math.abs(moveComponent.HSpeed);
 
         bool isMidAir = !moveComponent.IsGrounded;
-        bool isIdle = hSpeed <= 0.1f;
+        bool isIdle = hSpeed <= 0.1f || isAttacking;
 
         if (isMidAir)
             UpdateLegMidAir();

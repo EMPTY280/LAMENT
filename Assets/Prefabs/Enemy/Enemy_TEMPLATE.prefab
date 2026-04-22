@@ -328,8 +328,11 @@ MonoBehaviour:
   moveComponent: {fileID: 7594527611442793911}
   effectorRoot: {fileID: 7555126590096585197}
   skills: []
-  dropTable: []
+  dropTable:
+  - {fileID: 384473854612198253, guid: 9f4d8946366a65843b505d9f2be68dd2, type: 3}
   target: {fileID: 0}
+  moneyPickupPrefab: {fileID: 0}
+  moneyDropAmount: 0
   detectionRadius: 8
   moveSpeed: 3
   terrainLayer:

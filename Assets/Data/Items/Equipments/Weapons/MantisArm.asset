@@ -10,26 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e56c537a93e65e4b926878ed4aba866, type: 3}
-  m_Name: BigFuckinArm 1
+  m_Name: MantisArm
   m_EditorClassIdentifier: 
   id: BIG_ARM
   itemName: 
-  icon: {fileID: -1698604083, guid: e9cc300beb364bd43ba6c585fa69a7a5, type: 3}
+  icon: {fileID: 21300000, guid: c2d6f08e781596d4fbabd79c1726eea0, type: 3}
   stackCountMax: 1
   weight: 1
   skillIcon: {fileID: 21300000, guid: b825a29120ad37443a642e11bf468e9e, type: 3}
   skills:
-  - {fileID: 11400000, guid: b1ccc47abea5d2f4f8f7f2f05aa9bd38, type: 2}
-  - {fileID: 11400000, guid: a306888b1da7362468a9d80beaa7770a, type: 2}
-  - {fileID: 11400000, guid: e8b8adff76d414e4aa5a40097f4f202e, type: 2}
+  - {fileID: 11400000, guid: fcb039d784b43574480d082cffcee4a5, type: 2}
   cooldown: 0.2
-  Slot: 1
+  Slot: 0
   burstSkill: {fileID: 11400000, guid: b1ccc47abea5d2f4f8f7f2f05aa9bd38, type: 2}
   burstSkillIcon: {fileID: 21300000, guid: fc2d5966583bbc44c8eda6592c691908, type: 3}
-  sprIdle: {fileID: 21300000, guid: 0dfe4543cc401ce4498cc3ffc313c2e6, type: 3}
+  sprIdle: {fileID: 21300000, guid: c2d6f08e781596d4fbabd79c1726eea0, type: 3}
   sprDelay:
-  - {fileID: 21300000, guid: 731f86236c409e045ac339914a18fe6a, type: 3}
+  - {fileID: 21300000, guid: ac0863a5d267f1d46b78a1c3005608d8, type: 3}
   sprAttack:
-  - {fileID: 21300000, guid: c27e7155b22622c49b337b5876036fc2, type: 3}
-  - {fileID: 21300000, guid: d0ecd3fda30684e4c869d620f737d9ea, type: 3}
-  - {fileID: 21300000, guid: 5dba87d97a3080c4a94394c6ca128cb5, type: 3}
+  - {fileID: 21300000, guid: 0479a149c7f39524c8e4870ebb051afb, type: 3}
+  - {fileID: 21300000, guid: fbac7b9823aac9e498dc08bc997fbf93, type: 3}
