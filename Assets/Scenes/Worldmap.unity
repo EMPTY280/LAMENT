@@ -1586,7 +1586,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7077994921773396093, guid: 4a840db03a6833649a0389a88084b70c, type: 3}
       propertyPath: clearID
-      value: Stage1
+      value: Stage4
       objectReference: {fileID: 0}
     - target: {fileID: 7077994921773396093, guid: 4a840db03a6833649a0389a88084b70c, type: 3}
       propertyPath: isUnlocked
@@ -1594,7 +1594,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7077994921773396093, guid: 4a840db03a6833649a0389a88084b70c, type: 3}
       propertyPath: targetSceneName
-      value: Stage_1
+      value: Stage_4
       objectReference: {fileID: 0}
     - target: {fileID: 7077994921773396093, guid: 4a840db03a6833649a0389a88084b70c, type: 3}
       propertyPath: nextMarkers.Array.size
