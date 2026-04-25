@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e56c537a93e65e4b926878ed4aba866, type: 3}
+  m_Name: ScorpionArm_Right
+  m_EditorClassIdentifier: 
+  id: BIG_ARM
+  itemName: 
+  icon: {fileID: 21300000, guid: 2720b3e5d48078d46b54f0bb4bbf107e, type: 3}
+  stackCountMax: 1
+  weight: 1
+  skillIcon: {fileID: 21300000, guid: b825a29120ad37443a642e11bf468e9e, type: 3}
+  skills:
+  - {fileID: 11400000, guid: 4e7a071a3ecb93f47b2b2f583137c368, type: 2}
+  cooldown: 0.4
+  Slot: 1
+  burstSkill: {fileID: 11400000, guid: b1ccc47abea5d2f4f8f7f2f05aa9bd38, type: 2}
+  burstSkillIcon: {fileID: 21300000, guid: fc2d5966583bbc44c8eda6592c691908, type: 3}
+  sprIdle: {fileID: 21300000, guid: 2720b3e5d48078d46b54f0bb4bbf107e, type: 3}
+  sprDelay:
+  - {fileID: 21300000, guid: 0cf854530c75f0a4ca38b29f9c0e14a6, type: 3}
+  - {fileID: 21300000, guid: 54c6c96d4e8f17043bd53e36bd5f104a, type: 3}
+  sprAttack:
+  - {fileID: 21300000, guid: a798b69d30f74c2439461f0ee2f5a3f5, type: 3}
+  - {fileID: 21300000, guid: bd22804e567b493409b4a28b1ca16d74, type: 3}

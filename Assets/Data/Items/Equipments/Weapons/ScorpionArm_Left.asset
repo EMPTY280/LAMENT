@@ -10,23 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e56c537a93e65e4b926878ed4aba866, type: 3}
-  m_Name: MantisArm
+  m_Name: ScorpionArm_Left
   m_EditorClassIdentifier: 
   id: BIG_ARM
   itemName: 
-  icon: {fileID: 21300000, guid: c2d6f08e781596d4fbabd79c1726eea0, type: 3}
+  icon: {fileID: 21300000, guid: 2720b3e5d48078d46b54f0bb4bbf107e, type: 3}
   stackCountMax: 1
   weight: 1
   skillIcon: {fileID: 21300000, guid: b825a29120ad37443a642e11bf468e9e, type: 3}
   skills:
-  - {fileID: 11400000, guid: fcb039d784b43574480d082cffcee4a5, type: 2}
-  cooldown: 0.2
+  - {fileID: 11400000, guid: 4e7a071a3ecb93f47b2b2f583137c368, type: 2}
+  cooldown: 0.4
   Slot: 0
   burstSkill: {fileID: 11400000, guid: b1ccc47abea5d2f4f8f7f2f05aa9bd38, type: 2}
   burstSkillIcon: {fileID: 21300000, guid: fc2d5966583bbc44c8eda6592c691908, type: 3}
-  sprIdle: {fileID: 21300000, guid: c2d6f08e781596d4fbabd79c1726eea0, type: 3}
+  sprIdle: {fileID: 21300000, guid: 2720b3e5d48078d46b54f0bb4bbf107e, type: 3}
   sprDelay:
-  - {fileID: 21300000, guid: ac0863a5d267f1d46b78a1c3005608d8, type: 3}
+  - {fileID: 21300000, guid: 0cf854530c75f0a4ca38b29f9c0e14a6, type: 3}
+  - {fileID: 21300000, guid: 54c6c96d4e8f17043bd53e36bd5f104a, type: 3}
   sprAttack:
-  - {fileID: 21300000, guid: 0479a149c7f39524c8e4870ebb051afb, type: 3}
-  - {fileID: 21300000, guid: fbac7b9823aac9e498dc08bc997fbf93, type: 3}
+  - {fileID: 21300000, guid: a798b69d30f74c2439461f0ee2f5a3f5, type: 3}
+  - {fileID: 21300000, guid: bd22804e567b493409b4a28b1ca16d74, type: 3}

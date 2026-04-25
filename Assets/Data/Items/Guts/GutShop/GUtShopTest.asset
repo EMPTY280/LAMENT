@@ -10,8 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3f563187cb8f7548b45bfc15883b58c, type: 3}
-  m_Name: GutShop_test
+  m_Name: GUtShopTest
   m_EditorClassIdentifier: 
   items:
+  - gut: {fileID: 11400000, guid: f026f07d7e2f1f74cbe853049bb6c420, type: 2}
+    price: 100
+  - gut: {fileID: 11400000, guid: 96c96836a2f51db49b108de0e5cf56ea, type: 2}
+    price: 250
+  - gut: {fileID: 11400000, guid: 96c96836a2f51db49b108de0e5cf56ea, type: 2}
+    price: 250
+  - gut: {fileID: 11400000, guid: 96c96836a2f51db49b108de0e5cf56ea, type: 2}
+    price: 250
   - gut: {fileID: 11400000, guid: 96c96836a2f51db49b108de0e5cf56ea, type: 2}
     price: 250
