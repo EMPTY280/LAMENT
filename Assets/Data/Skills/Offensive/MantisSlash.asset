@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   isUnstoppable: 0
-  soundId: SFX_MANTIS_SKILL
   duration: 0.25
   playerDelay: 0.1
   triggerName: Slash
@@ -23,4 +22,3 @@ MonoBehaviour:
   - 0
   - 0.2
   - 0.85
-  movement: 1
