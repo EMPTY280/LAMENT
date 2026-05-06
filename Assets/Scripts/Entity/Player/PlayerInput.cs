@@ -19,17 +19,8 @@ namespace LAMENT
         [Header("선입력")]
         [SerializeField]
         private float bufferDuration = 0.2f;
-
         private float bufferTime = 0;
         private EComboInputTypes inputBuffer = EComboInputTypes.NONE;
-
-        [Header("Sound")]
-        [SerializeField] private string footstepSoundId = "SFX_PLAYER_MOVE";
-        [SerializeField] private string jumpSoundId = "SFX_PLAYER_JUMP";
-        [SerializeField] private string landSoundId = "SFX_PLAYER_JUMP_DOWN";
-
-        private bool wasGrounded = false;
-        private bool wasMoving = false;
 
         private bool isLocked = false;
 
@@ -51,9 +42,6 @@ namespace LAMENT
             ClearCombo();
             BuildCombo();
 
-            if (player != null && player.MoveComponent != null)
-                wasGrounded = player.MoveComponent.IsGrounded;
-
             GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
         }
 
@@ -71,67 +59,10 @@ namespace LAMENT
             ProcessInput();
             GetMoveInput();
 
-            UpdateFootstepSound();
-            UpdateLandSound();
-
 #if UNITY_EDITOR
             DEBUG_PrintCombo();
             DEBUG_Input();
 #endif
-        }
-
-        private void UpdateFootstepSound()
-        {
-            if (player == null || player.MoveComponent == null)
-                return;
-
-            bool isMoving =
-                !isLocked &&
-                player.MoveComponent.IsGrounded &&
-                Mathf.Abs(player.MoveComponent.HSpeed) > 0.1f;
-
-            if (isMoving && !wasMoving)
-                PlaySFX(footstepSoundId);
-
-            if (!isMoving && wasMoving)
-                StopSFX(footstepSoundId);
-
-            wasMoving = isMoving;
-        }
-
-        private void UpdateLandSound()
-        {
-            if (player == null || player.MoveComponent == null)
-                return;
-
-            bool isGrounded = player.MoveComponent.IsGrounded;
-
-            if (!wasGrounded && isGrounded)
-                PlaySFX(landSoundId);
-
-            wasGrounded = isGrounded;
-        }
-
-        private void PlaySFX(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-                return;
-
-            if (!SoundManager.Instance)
-                return;
-
-            SoundManager.Instance.PlaySFX(id);
-        }
-
-        private void StopSFX(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-                return;
-
-            if (!SoundManager.Instance)
-                return;
-
-            SoundManager.Instance.StopSFX(id);
         }
 
         #region QTE
@@ -142,7 +73,6 @@ namespace LAMENT
                 return false;
 
             EQTEDirection dir;
-
             if (!TryGetQTEDirectionDown(out dir))
                 return true;
 
@@ -191,7 +121,6 @@ namespace LAMENT
         private bool TryBeginQTE(ComboNodeInput next, EComboInputTypes input)
         {
             Debug.Log($"[QTE][INPUT] TryBeginQTE - slot: skill:{next.Skill.name} burst:{next.IsBurst}");
-
             if (qteManager == null)
                 return false;
 
@@ -199,7 +128,6 @@ namespace LAMENT
                 return false;
 
             EEquipSlotType slotType;
-
             if (!TryGetSlotType(next.Equipment, out slotType))
                 return false;
 
@@ -215,8 +143,7 @@ namespace LAMENT
                 next.IsBurst,
                 isComboFinisher,
                 OnQTEFinished);
-
-            Debug.Log($"[QTE][INPUT] TryBegin result = {started}");
+                Debug.Log($"[QTE][INPUT] TryBegin result = {started}");
 
             if (!started)
                 return false;
@@ -226,7 +153,6 @@ namespace LAMENT
 
             currNode = next;
             inputQueue.AddFirst(input);
-
             Lock();
 
             return true;
@@ -235,7 +161,6 @@ namespace LAMENT
         private void OnQTEFinished(QTEResultContext context)
         {
             Debug.Log($"[QTE][INPUT] QTE Finished - success:{context.IsSuccess} mult:{context.DamageMultiplier}");
-
             if (pendingQteNode == null)
             {
                 Unlock();
@@ -352,13 +277,14 @@ namespace LAMENT
                 player.MoveComponent.SetMovement(
                     isLeftPressed ? MoveComponent.EDirection.LEFT : MoveComponent.EDirection.RIGHT);
 
-            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.JUMP)))
+            if (IsKeyPressed(GameManager.KeyMap.EKey.JUMP))
             {
-                if (player.MoveComponent.TryJump())
-                    PlaySFX(jumpSoundId);
+                if (player.MoveComponent.IsGrounded)
+                    player.MoveComponent.TryJump();
+                else if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.JUMP)))
+                    player.MoveComponent.TryJump();
             }
-
-            if (!IsKeyPressed(GameManager.KeyMap.EKey.JUMP))
+            else
                 (player.MoveComponent as PlayerMoveComponent).ForceEndJumping();
         }
 
@@ -422,7 +348,6 @@ namespace LAMENT
                 return;
 
             EComboInputTypes input = EComboInputTypes.NONE;
-
             if (Time.time <= bufferTime + bufferDuration &&
                 inputBuffer != EComboInputTypes.NONE)
                 input = inputBuffer;
@@ -476,12 +401,6 @@ namespace LAMENT
         {
             player.MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
             isLocked = true;
-
-            if (wasMoving)
-            {
-                StopSFX(footstepSoundId);
-                wasMoving = false;
-            }
         }
 
         private void Unlock()
@@ -517,7 +436,6 @@ namespace LAMENT
                     pointer = pointer.Previous;
                 }
             }
-
             str += " }";
             DEBUG_COMBO_TEXT.text = str;
         }

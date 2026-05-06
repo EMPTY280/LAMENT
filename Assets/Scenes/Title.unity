@@ -156,7 +156,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 5.299999}
+  m_AnchoredPosition: {x: 0, y: 5.3}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &203341227
@@ -427,80 +427,6 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 9}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &744286760
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 744286763}
-  - component: {fileID: 744286762}
-  - component: {fileID: 744286761}
-  m_Layer: 0
-  m_Name: SoundManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &744286761
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744286760}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae737d7dcde7c74409d0e27ebeaffe84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerAttackSoundId: SFX_PLAYER_ATTACK
-  playerHitSoundId: SFX_PLAYER_HIT
-  playerDeadSoundId: SFX_PLAYER_DIE
-  qteStartSoundId: SFX_QTE_START
-  qteSuccessSoundId: SFX_QTE_SUCCESS
-  qteFailSoundId: SFX_QTE_FAIL
-  purchaseSoundId: UI_PURCHASE
-  moneySoundId: UI_MONEY
---- !u!114 &744286762
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744286760}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afd96269b8d0fea4eb2c24a2cfd54a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneProfiles: {fileID: 11400000, guid: c6108f1a7bfedf148924656fa9972a1b, type: 2}
-  sfxPoolSize: 16
-  uiPoolSize: 6
-  ambientPoolSize: 4
-  masterVolume: 1
-  bgmVolume: 1
-  sfxVolume: 1
-  uiVolume: 1
-  ambientVolume: 1
---- !u!4 &744286763
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744286760}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -17.56336, y: 6.127874, z: -100.184395}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1450,4 +1376,3 @@ SceneRoots:
   - {fileID: 1942780095}
   - {fileID: 467229268}
   - {fileID: 874280204}
-  - {fileID: 744286763}

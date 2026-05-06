@@ -22,8 +22,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4e7a071a3ecb93f47b2b2f583137c368, type: 2}
   cooldown: 0.4
   Slot: 1
-  attackSoundId: SFX_SCORPION_ARM_ATTACK_01
-  burstSkill: {fileID: 11400000, guid: 4e7a071a3ecb93f47b2b2f583137c368, type: 2}
+  burstSkill: {fileID: 11400000, guid: b1ccc47abea5d2f4f8f7f2f05aa9bd38, type: 2}
   burstSkillIcon: {fileID: 21300000, guid: fc2d5966583bbc44c8eda6592c691908, type: 3}
   sprIdle: {fileID: 21300000, guid: 2720b3e5d48078d46b54f0bb4bbf107e, type: 3}
   sprDelay:

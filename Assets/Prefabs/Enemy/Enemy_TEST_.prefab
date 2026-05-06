@@ -149,7 +149,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3093140189885414188}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -331,7 +331,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 085eb2c02436160439588ddbef18a6ff, type: 2}
   dropTable:
   - {fileID: 7274617939394550516, guid: 80153aeab8ed3034585f3ef91952a93c, type: 3}
-  - {fileID: 7274617939394550516, guid: 986645508270a0644a91d7175bb0eb8c, type: 3}
   target: {fileID: 0}
   moneyPickupPrefab: {fileID: 0}
   moneyDropAmount: 0
