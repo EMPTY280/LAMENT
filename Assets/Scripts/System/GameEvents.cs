@@ -285,4 +285,32 @@ namespace LAMENT
             IsSuccess = isSuccess;
         }
     }
+
+    public readonly struct GEOnPlayerSkillSwing : IGameEvent
+    {
+        public EEquipSlotType SlotType { get; }
+        public EquipmentData Equipment { get; }
+        public Skill Skill { get; }
+
+        public GEOnPlayerSkillSwing(EEquipSlotType slotType, EquipmentData equipment, Skill skill)
+        {
+            SlotType = slotType;
+            Equipment = equipment;
+            Skill = skill;
+        }
+    }
+
+    public readonly struct GEOnPlayerHitTarget : IGameEvent
+    {
+        public EEquipSlotType SlotType { get; }
+        public EquipmentData Equipment { get; }
+        public Skill Skill { get; }
+
+        public GEOnPlayerHitTarget(EEquipSlotType slotType, EquipmentData equipment, Skill skill)
+        {
+            SlotType = slotType;
+            Equipment = equipment;
+            Skill = skill;
+        }
+    }
 }

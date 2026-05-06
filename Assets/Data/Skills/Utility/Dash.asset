@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e46e6ae05f9b2634e8cb3af8af0cee64, type: 3}
   m_Name: Dash
   m_EditorClassIdentifier: 
-  duration: 0.2
-  triggerName: 
+  damage: 0
   isUnstoppable: 0
+  soundId: SFX_PLAYER_DASH
+  duration: 0.2
+  playerDelay: 0.1
+  triggerName: 
   effector: {fileID: 0}
   timingList:
   - 0
