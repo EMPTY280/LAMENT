@@ -36,6 +36,8 @@ namespace LAMENT
         private float baseHpMaxWithoutGut = 1f;
 
         private PlayerGutRuntime gutRuntime;
+        private EquipSlot currentSoundSlot;
+        private Skill currentSoundSkill;
 
         protected override void Awake()
         {
@@ -174,6 +176,7 @@ namespace LAMENT
             if (!TryStartSkill(skill, cbOnSkillEnd, qteContext.DamageMultiplier <= 0f ? 1f : qteContext.DamageMultiplier))
                 return false;
 
+            PlaySkillSound(slot, skill, isBurst);
             GameManager.Eventbus.Publish(new GEOnPlayerUsedEquiment(slot.Type, lastUsedEquipment.Equipment, skill));
 
             if (isBurst)
@@ -184,6 +187,50 @@ namespace LAMENT
             }
 
             return true;
+        }
+
+       private void PlaySkillSound(EquipSlot slot, Skill skill, bool isBurst)
+        {
+            if (!SoundManager.Instance)
+                return;
+
+            if (slot == null)
+                return;
+
+            // Burst는 무조건 Skill.SoundId 사용
+            if (isBurst)
+            {
+                if (skill != null && !string.IsNullOrEmpty(skill.SoundId))
+                {
+                    SoundManager.Instance.PlaySFX(skill.SoundId);
+                    return;
+                }
+
+        #if UNITY_EDITOR
+                Debug.Log($"[SOUND] Burst Skill SoundId가 비어있음: {skill?.name}");
+        #endif
+                return;
+            }
+
+            // 다리/유틸리티 스킬은 Skill.SoundId 사용
+            if (slot == legSlot)
+            {
+                if (skill != null && !string.IsNullOrEmpty(skill.SoundId))
+                    SoundManager.Instance.PlaySFX(skill.SoundId);
+
+                return;
+            }
+
+            // 일반 공격은 장비 기본 공격음 사용
+            if (slot.Equipment != null && !string.IsNullOrEmpty(slot.Equipment.AttackSoundId))
+            {
+                SoundManager.Instance.PlaySFX(slot.Equipment.AttackSoundId);
+                return;
+            }
+
+            // 장비 공격음이 없으면 Skill.SoundId 예비 사용
+            if (skill != null && !string.IsNullOrEmpty(skill.SoundId))
+                SoundManager.Instance.PlaySFX(skill.SoundId);
         }
 
         public bool BurstRoll()
@@ -367,9 +414,34 @@ namespace LAMENT
 
         #region 공격
 
+        public void PublishCurrentSkillSwingSound()
+        {
+            if (currentSoundSlot == null)
+                return;
+
+            if (currentSoundSlot.Equipment == null)
+                return;
+
+            GameManager.Eventbus.Publish(new GEOnPlayerSkillSwing(
+                currentSoundSlot.Type,
+                currentSoundSlot.Equipment,
+                currentSoundSkill));
+        }
+
         protected override void OnHitTarget(IHittable target, Skill skill)
         {
             SetEnergy(energyGainPerHit * energyMult, true);
+
+            if (currentSoundSlot == null)
+                return;
+
+            if (currentSoundSlot.Equipment == null)
+                return;
+
+            GameManager.Eventbus.Publish(new GEOnPlayerHitTarget(
+                currentSoundSlot.Type,
+                currentSoundSlot.Equipment,
+                skill));
         }
 
         #endregion
