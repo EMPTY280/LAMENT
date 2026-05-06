@@ -411,5 +411,34 @@ namespace LAMENT
 
             bgmSource.volume = bgmVolume * masterVolume;
         }
+
+        public void StopSFX(string id)
+        {
+            StopSound(id, sfxSources);
+        }
+
+        public void StopUI(string id)
+        {
+            StopSound(id, uiSources);
+        }
+
+        public void StopAmbient(string id)
+        {
+            StopSound(id, ambientSources);
+        }
+
+        private void StopSound(string id, List<AudioSource> pool)
+        {
+            SoundData data;
+
+            if (!TryGetSound(id, out data))
+                return;
+
+            for (int i = 0; i < pool.Count; i++)
+            {
+                if (pool[i].isPlaying && pool[i].clip == data.Clip)
+                    pool[i].Stop();
+            }
+        }
     }
 }

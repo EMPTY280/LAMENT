@@ -20,6 +20,6 @@ MonoBehaviour:
   timeLimit: 1
   triggerWindow: 0.2
   slowScale: 0.88
-  successDamageMultiplier: 1.5
+  successDamageMultiplier: 2.48
   preventBurstConsumeOnSuccess: 1
   failOnWrongInput: 1

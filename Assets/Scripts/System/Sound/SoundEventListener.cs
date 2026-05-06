@@ -5,7 +5,6 @@ namespace LAMENT
     public class SoundEventListener : MonoBehaviour
     {
         [Header("Player")]
-        [SerializeField] private string playerAttackSoundId = "SFX_PLAYER_ATTACK";
         [SerializeField] private string playerHitSoundId = "SFX_PLAYER_HIT";
         [SerializeField] private string playerDeadSoundId = "SFX_PLAYER_DIE";
 
@@ -22,7 +21,6 @@ namespace LAMENT
 
         private void OnEnable()
         {
-            GameManager.Eventbus.Subscribe<GEOnPlayerUsedEquiment>(OnPlayerUsedEquipment);
             GameManager.Eventbus.Subscribe<GEOnPlayerHealthChanged>(OnPlayerHealthChanged);
             GameManager.Eventbus.Subscribe<GEOnPlayerGameOver>(OnPlayerGameOver);
 
@@ -36,7 +34,6 @@ namespace LAMENT
 
         private void OnDisable()
         {
-            GameManager.Eventbus.Unsubscribe<GEOnPlayerUsedEquiment>(OnPlayerUsedEquipment);
             GameManager.Eventbus.Unsubscribe<GEOnPlayerHealthChanged>(OnPlayerHealthChanged);
             GameManager.Eventbus.Unsubscribe<GEOnPlayerGameOver>(OnPlayerGameOver);
 
@@ -46,11 +43,6 @@ namespace LAMENT
 
             GameManager.Eventbus.Unsubscribe<GEOnGutPurchased>(OnGutPurchased);
             GameManager.Eventbus.Unsubscribe<GEOnMoneyChanged>(OnMoneyChanged);
-        }
-
-        private void OnPlayerUsedEquipment(GEOnPlayerUsedEquiment e)
-        {
-            PlaySFX(playerAttackSoundId);
         }
 
         private void OnPlayerHealthChanged(GEOnPlayerHealthChanged e)
@@ -100,6 +92,9 @@ namespace LAMENT
 
         private void PlaySFX(string id)
         {
+            if (string.IsNullOrEmpty(id))
+                return;
+
             if (!SoundManager.Instance)
                 return;
 
@@ -108,6 +103,9 @@ namespace LAMENT
 
         private void PlayUI(string id)
         {
+            if (string.IsNullOrEmpty(id))
+                return;
+
             if (!SoundManager.Instance)
                 return;
 
