@@ -643735,6 +643735,79 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50b85b0b7a0318540b28794480aeb54d, type: 3}
+--- !u!1 &659414202
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 659414203}
+  - component: {fileID: 659414205}
+  - component: {fileID: 659414204}
+  m_Layer: 0
+  m_Name: SoundManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &659414203
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 659414202}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1633902241}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &659414204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 659414202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afd96269b8d0fea4eb2c24a2cfd54a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneProfiles: {fileID: 11400000, guid: c6108f1a7bfedf148924656fa9972a1b, type: 2}
+  sfxPoolSize: 16
+  uiPoolSize: 6
+  ambientPoolSize: 4
+  masterVolume: 1
+  bgmVolume: 1
+  sfxVolume: 1
+  uiVolume: 1
+  ambientVolume: 1
+--- !u!114 &659414205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 659414202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae737d7dcde7c74409d0e27ebeaffe84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHitSoundId: SFX_PLAYER_HITTED
+  playerDeadSoundId: SFX_PLAYER_DIE
+  qteStartSoundId: UI_QTE
+  qteSuccessSoundId: SFX_QTE_SUCCESS
+  qteFailSoundId: SFX_QTE_FAIL
+  purchaseSoundId: UI_PURCHASE
+  moneySoundId: UI_MONEY
 --- !u!224 &660338470 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4120229370544939526, guid: 29429472db37f5645ace11b303fc1324, type: 3}
@@ -648845,6 +648918,7 @@ Transform:
   m_Children:
   - {fileID: 1531377490}
   - {fileID: 2005928365}
+  - {fileID: 659414203}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1649624078
@@ -650367,6 +650441,9 @@ MonoBehaviour:
   player: {fileID: 1817745045}
   qteManager: {fileID: 1817745054}
   bufferDuration: 0.1
+  footstepSoundId: SFX_PLAYER_MOVE
+  jumpSoundId: SFX_PLAYER_JUMP
+  landSoundId: SFX_PLAYER_JUMP_DOWN
   DEBUG_COMBO_TEXT: {fileID: 134217407}
 --- !u!114 &1817745047
 MonoBehaviour:
