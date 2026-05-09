@@ -271,18 +271,36 @@ namespace LAMENT
         /// <summary> 게임 컨텐츠의 잠금 해제 여부를 담당 </summary>
         public static class GameUnlock
         {
+            private const string PlayerPrefsPrefix = "GameUnlock.";
             private static HashSet<string> unlockSet = new();
 
             /// <summary> 그 ID의 언락 여부 반환 </summary>
             public static bool IsUnlocked(string id)
             {
-                return unlockSet.Contains(id);
+                if (string.IsNullOrEmpty(id))
+                    return false;
+
+                if (unlockSet.Contains(id))
+                    return true;
+
+                if (PlayerPrefs.GetInt(PlayerPrefsPrefix + id, 0) == 1)
+                {
+                    unlockSet.Add(id);
+                    return true;
+                }
+
+                return false;
             }
 
             /// <summary> 그 ID를 언락 </summary>
             public static void Unlock(string id)
             {
+                if (string.IsNullOrEmpty(id))
+                    return;
+
                 unlockSet.Add(id);
+                PlayerPrefs.SetInt(PlayerPrefsPrefix + id, 1);
+                PlayerPrefs.Save();
             }
         }
 
