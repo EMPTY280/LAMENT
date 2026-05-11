@@ -15,7 +15,7 @@ MonoBehaviour:
   id: BGM_TITLE
   clip: {fileID: 8300000, guid: 05c3ebb396bb76843b03482b25a393a9, type: 3}
   category: 0
-  volume: 1
+  volume: 0.25
   loop: 1
   overlapPolicy: 3
   overlapLimit: 3
