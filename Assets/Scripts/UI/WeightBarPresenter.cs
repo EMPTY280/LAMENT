@@ -4,13 +4,13 @@ using UnityEngine.UI;
 namespace LAMENT
 {
     /// <summary>
-    /// 장착된 3부위(왼/오/다리)의 무게 합계를 바 형태로 표시.
+    /// 인벤토리에 소지 중인 아이템의 총무게를 바 형태로 표시하고 이동 감속을 적용.
     /// 초록=정상, 노랑=느려짐, (선택) 빨강=과중
     /// </summary>
     public sealed class WeightBarPresenter : MonoBehaviour
     {
         [Header("Refs")]
-        [SerializeField] private EquipmentLoadoutService _loadout;
+        [SerializeField] private InventoryService _inventory;
         [SerializeField] private Player _player;
         [SerializeField] private Image _fill;
         [SerializeField] private Image _iconWeight;
@@ -25,6 +25,10 @@ namespace LAMENT
 
         [Range(0f, 2f)]
         [SerializeField] private float _overThreshold = 1.00f;
+
+        [Header("Movement Slow")]
+        [Range(0f, 1f)]
+        [SerializeField] private float _minMoveSpeedMultiplier = 0.5f;
 
         [Header("Colors")]
         [SerializeField] private Color _green = new Color(0.2f, 1f, 0.2f);
@@ -49,7 +53,13 @@ namespace LAMENT
             if (!_player)
                 _player = FindObjectOfType<Player>();
 
-            GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnEquipped);
+            if (!_inventory && _player)
+                _inventory = _player.GetComponent<InventoryService>();
+
+            if (!_inventory)
+                _inventory = FindObjectOfType<InventoryService>();
+
+            GameManager.Eventbus.Subscribe<GEOnInventorySlotChanged>(OnInventorySlotChanged);
             GameManager.Eventbus.Subscribe<GEOnOverlayStateChanged>(OnOverlayStateChanged);
 
             Refresh();
@@ -57,11 +67,11 @@ namespace LAMENT
 
         private void OnDestroy()
         {
-            GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnEquipped);
+            GameManager.Eventbus.Unsubscribe<GEOnInventorySlotChanged>(OnInventorySlotChanged);
             GameManager.Eventbus.Unsubscribe<GEOnOverlayStateChanged>(OnOverlayStateChanged);
         }
 
-        private void OnEquipped(GEOnEquipmentEquipped e)
+        private void OnInventorySlotChanged(GEOnInventorySlotChanged e)
         {
             Refresh();
         }
@@ -74,26 +84,37 @@ namespace LAMENT
 
         private void Refresh()
         {
-            if (_loadout == null || _fill == null)
+            if (_inventory == null)
                 return;
 
-            CurrentWeight = SumEquippedWeights(_loadout);
+            CurrentWeight = _inventory.TotalWeight;
             float ratio = Ratio01;
 
-            _fill.fillAmount = ratio;
-            _fill.color = CalcColor(ratio);
+            if (_fill)
+            {
+                _fill.fillAmount = ratio;
+                _fill.color = CalcColor(ratio);
+            }
+
+            ApplyMovementSlow(ratio);
 
             Debug.Log($"[WeightBar] weight={CurrentWeight:F1} / {Capacity:F1} ({ratio:P0})");
         }
 
-        private static float SumEquippedWeights(EquipmentLoadoutService loadout)
+        private void ApplyMovementSlow(float ratio)
         {
-            float W(ItemData item)
+            if (!_player || _player.MoveComponent == null)
+                return;
+
+            float multiplier = 1f;
+            if (ratio >= _slowThreshold)
             {
-                return item != null ? item.Weight : 0f;
+                float slowRange = Mathf.Max(0.0001f, _overThreshold - _slowThreshold);
+                float slowT = Mathf.Clamp01((ratio - _slowThreshold) / slowRange);
+                multiplier = Mathf.Lerp(1f, _minMoveSpeedMultiplier, slowT);
             }
 
-            return W(loadout.CurrentLeft) + W(loadout.CurrentRight) + W(loadout.CurrentLeg);
+            _player.MoveComponent.SetSpeedMultiplier(multiplier);
         }
 
         private Color CalcColor(float ratio)

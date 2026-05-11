@@ -14,12 +14,31 @@ namespace LAMENT
 
 
         public int SlotCount => _slotCount;
+        public float TotalWeight
+        {
+            get
+            {
+                EnsureSlots();
+
+                float total = 0f;
+
+                for (int i = 0; i < _slots.Length; i++)
+                {
+                    var st = _slots[i];
+                    if (st.IsEmpty)
+                        continue;
+
+                    total += st.Item.Weight * st.Count;
+                }
+
+                return total;
+            }
+        }
 
         private void Awake()
         {
             // 내부 배열 준비
-            if (_slots == null || _slots.Length != _slotCount)
-                _slots = new ItemStack[_slotCount];
+            EnsureSlots();
         }
 
         public int AddItem(ItemData item, int amount)
@@ -81,6 +100,12 @@ namespace LAMENT
         }
 
         private bool IsValidIndex(int index) => index >= 0 && index < _slots.Length;
+
+        private void EnsureSlots()
+        {
+            if (_slots == null || _slots.Length != _slotCount)
+                _slots = new ItemStack[_slotCount];
+        }
 
         private void PublishSlotChanged(int index)
         {

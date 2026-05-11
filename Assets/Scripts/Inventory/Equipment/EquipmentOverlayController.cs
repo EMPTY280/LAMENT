@@ -117,10 +117,6 @@ namespace LAMENT
 
             if (_inventory == null || _inventory.SlotCount <= 0) return;
 
-            var curLeft  = _loadout ? _loadout.CurrentLeft  : null;
-            var curRight = _loadout ? _loadout.CurrentRight : null;
-            var curLegs  = _loadout ? _loadout.CurrentLeg  : null;
-
             var leftSet  = new HashSet<EquipmentData>();
             var rightSet = new HashSet<EquipmentData>();
             var legsSet  = new HashSet<EquipmentData>();
@@ -132,10 +128,6 @@ namespace LAMENT
 
                 if (st.Item is EquipmentData eq)
                 {
-                    // 현재 장착품은 후보에서 제외
-                    if (eq == curLeft || eq == curRight || eq == curLegs)
-                        continue;
-
                     switch (eq.Slot)
                     {
                         case EEquipSlotType.LEFT:  leftSet.Add(eq);  break;
