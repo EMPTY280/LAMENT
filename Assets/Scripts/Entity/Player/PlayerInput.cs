@@ -32,6 +32,7 @@ namespace LAMENT
         private bool wasMoving = false;
 
         private bool isLocked = false;
+        private bool isOverlayLocked = false;
 
         private ComboNodeInput pendingQteNode = null;
         private EComboInputTypes pendingQteInput = EComboInputTypes.NONE;
@@ -55,15 +56,23 @@ namespace LAMENT
                 wasGrounded = player.MoveComponent.IsGrounded;
 
             GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
+            GameManager.Eventbus.Subscribe<GEOnOverlayStateChanged>(OnOverlayStateChanged);
         }
 
         private void OnDestroy()
         {
             GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
+            GameManager.Eventbus.Unsubscribe<GEOnOverlayStateChanged>(OnOverlayStateChanged);
         }
 
         private void Update()
         {
+            if (isOverlayLocked)
+            {
+                UpdateLandSound();
+                return;
+            }
+
             if (TryProcessQTEInput())
                 return;
 
@@ -138,6 +147,9 @@ namespace LAMENT
 
         private bool TryProcessQTEInput()
         {
+            if (isOverlayLocked)
+                return true;
+
             if (qteManager == null || !qteManager.IsRunning)
                 return false;
 
@@ -317,6 +329,9 @@ namespace LAMENT
 
         private void HandleComboBuffer()
         {
+            if (isOverlayLocked)
+                return;
+
             if (!isLocked)
                 return;
 
@@ -336,7 +351,7 @@ namespace LAMENT
                 return Input.GetKey(GameManager.KeyMap.GetKeyCode(type));
             }
 
-            if (isLocked)
+            if (isLocked || isOverlayLocked)
             {
                 ((PlayerMoveComponent)player.MoveComponent).ForceEndJumping();
                 ((PlayerMoveComponent)player.MoveComponent).ResetCoyoteTime();
@@ -418,6 +433,9 @@ namespace LAMENT
 
         private void ProcessInput()
         {
+            if (isOverlayLocked)
+                return;
+
             if (isLocked)
                 return;
 
@@ -487,6 +505,48 @@ namespace LAMENT
         private void Unlock()
         {
             isLocked = false;
+        }
+
+        private void OnOverlayStateChanged(GEOnOverlayStateChanged e)
+        {
+            isOverlayLocked = e.isOpened;
+
+            if (player == null || player.MoveComponent == null)
+                return;
+
+            if (isOverlayLocked)
+            {
+                player.MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
+                player.MoveComponent.SetHSpeed(0f);
+                player.MoveComponent.CanControl = false;
+            }
+            else
+            {
+                player.MoveComponent.CanControl = true;
+                player.MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
+                player.MoveComponent.SetHSpeed(0f);
+            }
+
+            if (isOverlayLocked)
+            {
+                EndComboSearch();
+                inputBuffer = EComboInputTypes.NONE;
+                bufferTime = 0f;
+                pendingQteNode = null;
+                pendingQteInput = EComboInputTypes.NONE;
+
+                if (player.MoveComponent is PlayerMoveComponent playerMove)
+                {
+                    playerMove.ForceEndJumping();
+                    playerMove.ResetCoyoteTime();
+                }
+
+                if (wasMoving)
+                {
+                    StopSFX(footstepSoundId);
+                    wasMoving = false;
+                }
+            }
         }
 
         public void OnPlayerEquipmentChanged(GEOnEquipmentEquipped e)

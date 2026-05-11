@@ -30,6 +30,10 @@ namespace LAMENT
         [Header("이동")]
         [SerializeField, Tooltip("최대 속도")]
         protected float speedMax = 3.0f;
+        private float speedMultiplier = 1f;
+
+        protected float CurrentSpeedMax => speedMax * speedMultiplier;
+
         [SerializeField, Tooltip("가속력")]
         protected float acceleration = 6.0f;
         [SerializeField, Tooltip("감속력")]
@@ -128,6 +132,8 @@ namespace LAMENT
         /// <summary> 수평 속도 연산 </summary>
         private void UpdateHSpeed(float dt)
         {
+            float maxSpeed = CurrentSpeedMax;
+
             // 속도 변화량
             float speedDelta = acceleration * dt;
             bool calcFriction = false;
@@ -136,14 +142,14 @@ namespace LAMENT
             switch (moveState)
             {
                 case EDirection.LEFT:
-                    if (-speedMax < hSpeed)
-                        hSpeed = Mathf.Max(-speedMax, hSpeed - speedDelta);
+                    if (-maxSpeed < hSpeed)
+                        hSpeed = Mathf.Max(-maxSpeed, hSpeed - speedDelta);
                     else
                         calcFriction = true;
                     break;
                 case EDirection.RIGHT:
-                    if (hSpeed < speedMax)
-                        hSpeed = Mathf.Min(speedMax, hSpeed + speedDelta);
+                    if (hSpeed < maxSpeed)
+                        hSpeed = Mathf.Min(maxSpeed, hSpeed + speedDelta);
                     else
                         calcFriction = true;
                     break;
@@ -154,6 +160,8 @@ namespace LAMENT
 
             if (calcFriction)
                 hSpeed = Mathf.Max(0, Mathf.Abs(hSpeed) - friction * dt) * Mathf.Sign(hSpeed);
+
+            hSpeed = Mathf.Clamp(hSpeed, -maxSpeed, maxSpeed);
 
             // 벽에 닿았다면 속도 0으로 초기화
             Vector2 center = transform.position;
@@ -222,6 +230,12 @@ namespace LAMENT
         public void SetHSpeed(float f)
         {
             hSpeed = f;
+        }
+
+        public void SetSpeedMultiplier(float multiplier)
+        {
+            speedMultiplier = Mathf.Max(0f, multiplier);
+            hSpeed = Mathf.Clamp(hSpeed, -CurrentSpeedMax, CurrentSpeedMax);
         }
 
         public void SetVSpeed(float f)

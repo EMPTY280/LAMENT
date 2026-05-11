@@ -34,6 +34,16 @@ namespace LAMENT
             }
         }
 
+        private void OnEnable()
+        {
+            GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnEquipmentEquipped);
+        }
+
+        private void OnDisable()
+        {
+            GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnEquipmentEquipped);
+        }
+
         /// <summary>해당 부위에 next 장착. prev는 인벤토리로, next는 인벤토리에서 1개 제거.</summary>
         public void Equip(EquipmentData next)
         {
@@ -74,6 +84,22 @@ namespace LAMENT
             }
 
             GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(next, prev, slot));
+        }
+
+        private void OnEquipmentEquipped(GEOnEquipmentEquipped e)
+        {
+            switch (e.SlotType)
+            {
+                case EEquipSlotType.LEFT:
+                    leftArm = e.Equipped;
+                    break;
+                case EEquipSlotType.RIGHT:
+                    rightArm = e.Equipped;
+                    break;
+                case EEquipSlotType.LEG:
+                    leg = e.Equipped;
+                    break;
+            }
         }
     }
 }
