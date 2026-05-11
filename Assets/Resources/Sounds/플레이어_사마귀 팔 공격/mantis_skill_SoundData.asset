@@ -15,7 +15,7 @@ MonoBehaviour:
   id: SFX_MANTIS_SKILL
   clip: {fileID: 8300000, guid: 1cf69f97379cf6b44890232d40fe8ee2, type: 3}
   category: 1
-  volume: 1
+  volume: 0.25
   loop: 0
   overlapPolicy: 3
   overlapLimit: 3

@@ -15,7 +15,7 @@ MonoBehaviour:
   id: SFX_SNAIL_SKILL
   clip: {fileID: 8300000, guid: 4a89e68441af3644ca3d6b4102b4a74f, type: 3}
   category: 1
-  volume: 1
+  volume: 0.4
   loop: 0
   overlapPolicy: 3
   overlapLimit: 3

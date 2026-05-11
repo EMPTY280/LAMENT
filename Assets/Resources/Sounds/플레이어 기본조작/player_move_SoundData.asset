@@ -15,7 +15,7 @@ MonoBehaviour:
   id: SFX_PLAYER_MOVE
   clip: {fileID: 8300000, guid: adbd4460da893d341b4660ce4fd313f3, type: 3}
   category: 1
-  volume: 0.186
+  volume: 0.15
   loop: 1
   overlapPolicy: 2
   overlapLimit: 3

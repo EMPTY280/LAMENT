@@ -15,7 +15,7 @@ MonoBehaviour:
   id: SFX_PLAYER_HITTED
   clip: {fileID: 8300000, guid: 5397d4d4a407e054f8d38cfaf371f9a3, type: 3}
   category: 1
-  volume: 1
+  volume: 0.45
   loop: 0
   overlapPolicy: 3
   overlapLimit: 3

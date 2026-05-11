@@ -15,7 +15,7 @@ MonoBehaviour:
   id: SFX_PLAYER_JUMP_DOWN
   clip: {fileID: 8300000, guid: 6d880223d14b9e141a7b009f99069530, type: 3}
   category: 1
-  volume: 0.182
+  volume: 0.09
   loop: 0
   overlapPolicy: 3
   overlapLimit: 3

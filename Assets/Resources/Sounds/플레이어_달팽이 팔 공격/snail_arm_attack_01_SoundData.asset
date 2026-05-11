@@ -15,7 +15,7 @@ MonoBehaviour:
   id: SFX_SNAIL_ARM_ATTACK_01
   clip: {fileID: 8300000, guid: 3c2efe9be096e284890a8cd1d028ff35, type: 3}
   category: 1
-  volume: 1
+  volume: 0.4
   loop: 0
   overlapPolicy: 3
   overlapLimit: 3

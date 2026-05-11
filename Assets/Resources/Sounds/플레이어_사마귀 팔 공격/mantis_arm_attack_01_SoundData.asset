@@ -15,7 +15,7 @@ MonoBehaviour:
   id: SFX_MANTIS_ARM_ATTACK_01
   clip: {fileID: 8300000, guid: 1435cdae6d46c6145a2df147f28cab51, type: 3}
   category: 1
-  volume: 1
+  volume: 0.25
   loop: 0
   overlapPolicy: 3
   overlapLimit: 3

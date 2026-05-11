@@ -15,7 +15,7 @@ MonoBehaviour:
   id: SFX_ATTACK_02
   clip: {fileID: 8300000, guid: 4e155138114957446bc124722e9ba37b, type: 3}
   category: 1
-  volume: 1
+  volume: 0.231
   loop: 0
   overlapPolicy: 3
   overlapLimit: 3
