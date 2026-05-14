@@ -82,6 +82,7 @@ namespace LAMENT
                         SceneManager.SetActiveScene(loadedScene);
 
                     isOverlayOpened = true;
+                    GameManager.Eventbus.Publish(new GEOnOverlayStateChanged(true));
 
                     Time.timeScale = 0f;
                     Time.fixedDeltaTime = pausedFixedDeltaTime;
@@ -117,6 +118,7 @@ namespace LAMENT
                 overlaySceneName = string.Empty;
                 overlayPrevSceneName = string.Empty;
                 isOverlayOpened = false;
+                GameManager.Eventbus.Publish(new GEOnOverlayStateChanged(false));
 
                 screenFade.TryStartFadein(duration * 0.5f);
             });
@@ -271,7 +273,6 @@ namespace LAMENT
         /// <summary> 게임 컨텐츠의 잠금 해제 여부를 담당 </summary>
         public static class GameUnlock
         {
-            private const string PlayerPrefsPrefix = "GameUnlock.";
             private static HashSet<string> unlockSet = new();
 
             /// <summary> 그 ID의 언락 여부 반환 </summary>
@@ -280,16 +281,15 @@ namespace LAMENT
                 if (string.IsNullOrEmpty(id))
                     return false;
 
-                if (unlockSet.Contains(id))
-                    return true;
+                return unlockSet.Contains(id);
+            }
 
-                if (PlayerPrefs.GetInt(PlayerPrefsPrefix + id, 0) == 1)
-                {
-                    unlockSet.Add(id);
-                    return true;
-                }
+            public static bool IsUnlockedOrDefault(string id, bool defaultValue)
+            {
+                if (string.IsNullOrEmpty(id))
+                    return defaultValue;
 
-                return false;
+                return defaultValue || unlockSet.Contains(id);
             }
 
             /// <summary> 그 ID를 언락 </summary>
@@ -299,8 +299,72 @@ namespace LAMENT
                     return;
 
                 unlockSet.Add(id);
-                PlayerPrefs.SetInt(PlayerPrefsPrefix + id, 1);
-                PlayerPrefs.Save();
+            }
+        }
+
+        #endregion
+
+        #region 실행 중 게임 데이터
+
+        /// <summary>
+        /// 앱 실행 중에만 유지되는 게임 진행 데이터.
+        /// 디스크에 저장하지 않으므로 게임을 껐다 켜면 Unity 기본값으로 다시 시작한다.
+        /// </summary>
+        public static class RunState
+        {
+            public struct PlayerSnapshot
+            {
+                public EquipmentData LeftEquipment;
+                public EquipmentData RightEquipment;
+                public EquipmentData LegEquipment;
+                public float HpCurr;
+                public float BaseHpMaxWithoutGut;
+                public int HpDecay;
+                public float EnergyCurr;
+            }
+
+            private static bool hasInventorySnapshot = false;
+            private static int inventorySlotCount = 0;
+            private static ItemStack[] inventorySlots;
+
+            private static bool hasPlayerSnapshot = false;
+            private static PlayerSnapshot playerSnapshot;
+
+            public static bool TryRestoreInventory(InventoryService inventory)
+            {
+                if (!hasInventorySnapshot || inventory == null)
+                    return false;
+
+                inventory.RestoreSlots(inventorySlotCount, inventorySlots);
+                return true;
+            }
+
+            public static void SaveInventory(InventoryService inventory)
+            {
+                if (inventory == null)
+                    return;
+
+                inventorySlotCount = inventory.SlotCount;
+                inventorySlots = inventory.CopySlots();
+                hasInventorySnapshot = true;
+            }
+
+            public static bool TryRestorePlayer(global::LAMENT.Player player)
+            {
+                if (!hasPlayerSnapshot || player == null)
+                    return false;
+
+                player.ApplyRunSnapshot(playerSnapshot);
+                return true;
+            }
+
+            public static void SavePlayer(global::LAMENT.Player player)
+            {
+                if (player == null)
+                    return;
+
+                playerSnapshot = player.CreateRunSnapshot();
+                hasPlayerSnapshot = true;
             }
         }
 

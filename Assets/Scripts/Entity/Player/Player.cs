@@ -28,6 +28,7 @@ namespace LAMENT
         // ===== 장기 런타임 추가 능력치 =====
         private float energyMult = 1.0f;
         private float consumeChance = 1.0f;
+        private float weightCapacityBonus = 0f;
 
         // 장기 효과로 증가한 최대 체력 보정치
         private float gutBonusMaxHp = 0f;
@@ -39,12 +40,15 @@ namespace LAMENT
         private EquipSlot currentSoundSlot;
         private Skill currentSoundSkill;
 
+        public float WeightCapacityBonus => weightCapacityBonus;
+
         protected override void Awake()
         {
             base.Awake();
 
             baseHpMaxWithoutGut = hpMax;
             gutRuntime = new PlayerGutRuntime(this);
+            GameManager.RunState.TryRestorePlayer(this);
 
             InitEquipments();
             InitEvents();
@@ -62,6 +66,7 @@ namespace LAMENT
 
             GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
             GameManager.Eventbus.Unsubscribe<GEOnGutLoadoutChanged>(OnGutLoadoutChanged);
+            GameManager.RunState.SavePlayer(this);
         }
 
         protected override void Update()
@@ -110,6 +115,8 @@ namespace LAMENT
                 legSlot.Equipment,
                 null,
                 EEquipSlotType.LEG));
+
+            GameManager.RunState.SavePlayer(this);
         }
 
         private void InitGuts()
@@ -130,6 +137,7 @@ namespace LAMENT
         {
             energyMult = 1.0f;
             consumeChance = 1.0f;
+            weightCapacityBonus = 0f;
             gutBonusMaxHp = 0f;
 
             RefreshEffectiveMaxHp();
@@ -141,6 +149,8 @@ namespace LAMENT
 
             GameManager.Eventbus.Publish(new GEOnPlayerHealthChanged((int)hpCurr, (int)hpMax, 0, hpDecay));
             GameManager.Eventbus.Publish(new GEOnPlayerEnergyChanged(energyCurr, energyMax));
+            GameManager.Eventbus.Publish(new GEOnPlayerWeightCapacityChanged(weightCapacityBonus));
+            GameManager.RunState.SavePlayer(this);
         }
 
         private void RefreshEffectiveMaxHp()
@@ -312,6 +322,8 @@ namespace LAMENT
                     legSlot.Equipment = e.Equipped;
                     break;
             }
+
+            GameManager.RunState.SavePlayer(this);
         }
 
         #endregion
@@ -328,12 +340,14 @@ namespace LAMENT
             GameManager.Eventbus.Publish(new GEOnPlayerEnergyChanged(energyCurr, energyMax));
 
             TryRestoreDecay();
+            GameManager.RunState.SavePlayer(this);
         }
 
         public void ClearEnergy()
         {
             energyCurr = 0;
             GameManager.Eventbus.Publish(new GEOnPlayerEnergyChanged(energyCurr, energyMax));
+            GameManager.RunState.SavePlayer(this);
         }
 
         #endregion
@@ -351,6 +365,7 @@ namespace LAMENT
             }
 
             GameManager.Eventbus.Publish(new GEOnPlayerHealthChanged((int)hpCurr, (int)hpMax, -1, hpDecay));
+            GameManager.RunState.SavePlayer(this);
         }
 
         protected override void OnDied()
@@ -370,6 +385,7 @@ namespace LAMENT
             float hpTo = hpCurr;
 
             GameManager.Eventbus.Publish(new GEOnPlayerHealthChanged((int)hpCurr, (int)hpMax, (int)(hpTo - hpFrom), hpDecay));
+            GameManager.RunState.SavePlayer(this);
         }
 
         private bool TryResurrect()
@@ -408,6 +424,40 @@ namespace LAMENT
             SetHP(1, true);
 
             return true;
+        }
+
+        #endregion
+
+        #region 실행 중 데이터 저장
+
+        public GameManager.RunState.PlayerSnapshot CreateRunSnapshot()
+        {
+            return new GameManager.RunState.PlayerSnapshot
+            {
+                LeftEquipment = leftArmSlot != null ? leftArmSlot.Equipment : null,
+                RightEquipment = rightArmSlot != null ? rightArmSlot.Equipment : null,
+                LegEquipment = legSlot != null ? legSlot.Equipment : null,
+                HpCurr = hpCurr,
+                BaseHpMaxWithoutGut = baseHpMaxWithoutGut,
+                HpDecay = hpDecay,
+                EnergyCurr = energyCurr
+            };
+        }
+
+        public void ApplyRunSnapshot(GameManager.RunState.PlayerSnapshot snapshot)
+        {
+            if (leftArmSlot != null)
+                leftArmSlot.Equipment = snapshot.LeftEquipment;
+            if (rightArmSlot != null)
+                rightArmSlot.Equipment = snapshot.RightEquipment;
+            if (legSlot != null)
+                legSlot.Equipment = snapshot.LegEquipment;
+
+            baseHpMaxWithoutGut = math.max(1.0f, snapshot.BaseHpMaxWithoutGut);
+            hpDecay = math.max(0, snapshot.HpDecay);
+            hpMax = math.max(1.0f, baseHpMaxWithoutGut + gutBonusMaxHp);
+            hpCurr = math.clamp(snapshot.HpCurr, 0, hpMax);
+            energyCurr = math.clamp(snapshot.EnergyCurr, 0, energyMax);
         }
 
         #endregion
@@ -456,6 +506,11 @@ namespace LAMENT
         public void AddConsumeChanceAttribute(float v)
         {
             consumeChance += v;
+        }
+
+        public void AddWeightCapacityAttribute(float v)
+        {
+            weightCapacityBonus += v;
         }
 
         public void AddMaxHPAttribute(float v)

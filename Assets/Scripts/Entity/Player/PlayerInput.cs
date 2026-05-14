@@ -28,14 +28,10 @@ namespace LAMENT
         [SerializeField] private string jumpSoundId = "SFX_PLAYER_JUMP";
         [SerializeField] private string landSoundId = "SFX_PLAYER_JUMP_DOWN";
 
-        private bool wasGrounded = false;
-        private bool wasMoving = false;
-
-        private bool isLocked = false;
-        private bool isOverlayLocked = false;
-
-        private ComboNodeInput pendingQteNode = null;
-        private EComboInputTypes pendingQteInput = EComboInputTypes.NONE;
+        private PlayerInputSoundController soundController;
+        private PlayerMovementInputHandler movementInput;
+        private PlayerInputLockState lockState;
+        private PlayerQTEInputHandler qteInput;
 
 #if UNITY_EDITOR
         [Header("DEBUG")]
@@ -49,11 +45,19 @@ namespace LAMENT
             currNode = root;
             inputQueue = new LinkedList<EComboInputTypes>();
 
+            soundController = new PlayerInputSoundController(player, footstepSoundId, jumpSoundId, landSoundId);
+            movementInput = new PlayerMovementInputHandler(player, soundController);
+            lockState = new PlayerInputLockState(player, soundController);
+            qteInput = new PlayerQTEInputHandler(
+                player,
+                qteManager,
+                OnQTEStarted,
+                lockState.LockSkill,
+                lockState.UnlockSkill,
+                RebuildCombo);
+
             ClearCombo();
             BuildCombo();
-
-            if (player != null && player.MoveComponent != null)
-                wasGrounded = player.MoveComponent.IsGrounded;
 
             GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnPlayerEquipmentChanged);
             GameManager.Eventbus.Subscribe<GEOnOverlayStateChanged>(OnOverlayStateChanged);
@@ -67,21 +71,21 @@ namespace LAMENT
 
         private void Update()
         {
-            if (isOverlayLocked)
+            if (lockState.IsOverlayLocked)
             {
-                UpdateLandSound();
+                soundController.UpdateLandSound();
                 return;
             }
 
-            if (TryProcessQTEInput())
+            if (qteInput.TryProcessQTEInput(lockState.IsOverlayLocked))
                 return;
 
             HandleComboBuffer();
             ProcessInput();
-            GetMoveInput();
+            movementInput.UpdateMovement(lockState.IsInputLocked);
 
-            UpdateFootstepSound();
-            UpdateLandSound();
+            soundController.UpdateFootstepSound(lockState.IsInputLocked);
+            soundController.UpdateLandSound();
 
 #if UNITY_EDITOR
             DEBUG_PrintCombo();
@@ -89,216 +93,10 @@ namespace LAMENT
 #endif
         }
 
-        private void UpdateFootstepSound()
-        {
-            if (player == null || player.MoveComponent == null)
-                return;
-
-            bool isMoving =
-                !isLocked &&
-                player.MoveComponent.IsGrounded &&
-                Mathf.Abs(player.MoveComponent.HSpeed) > 0.1f;
-
-            if (isMoving && !wasMoving)
-                PlaySFX(footstepSoundId);
-
-            if (!isMoving && wasMoving)
-                StopSFX(footstepSoundId);
-
-            wasMoving = isMoving;
-        }
-
-        private void UpdateLandSound()
-        {
-            if (player == null || player.MoveComponent == null)
-                return;
-
-            bool isGrounded = player.MoveComponent.IsGrounded;
-
-            if (!wasGrounded && isGrounded)
-                PlaySFX(landSoundId);
-
-            wasGrounded = isGrounded;
-        }
-
-        private void PlaySFX(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-                return;
-
-            if (!SoundManager.Instance)
-                return;
-
-            SoundManager.Instance.PlaySFX(id);
-        }
-
-        private void StopSFX(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-                return;
-
-            if (!SoundManager.Instance)
-                return;
-
-            SoundManager.Instance.StopSFX(id);
-        }
-
-        #region QTE
-
-        private bool TryProcessQTEInput()
-        {
-            if (isOverlayLocked)
-                return true;
-
-            if (qteManager == null || !qteManager.IsRunning)
-                return false;
-
-            EQTEDirection dir;
-
-            if (!TryGetQTEDirectionDown(out dir))
-                return true;
-
-            qteManager.TryConsumeDirection(dir);
-            return true;
-        }
-
-        private bool TryGetQTEDirectionDown(out EQTEDirection dir)
-        {
-            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.UP)))
-            {
-                dir = EQTEDirection.Up;
-                return true;
-            }
-
-            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.DOWN)))
-            {
-                dir = EQTEDirection.Down;
-                return true;
-            }
-
-            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.LEFT)))
-            {
-                dir = EQTEDirection.Left;
-                return true;
-            }
-
-            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.RIGHT)))
-            {
-                dir = EQTEDirection.Right;
-                return true;
-            }
-
-            dir = EQTEDirection.Up;
-            return false;
-        }
-
         public void NotifyDashExecuted()
         {
-            if (qteManager == null)
-                return;
-
-            qteManager.NotifyDashExecuted();
+            qteInput.NotifyDashExecuted();
         }
-
-        private bool TryBeginQTE(ComboNodeInput next, EComboInputTypes input)
-        {
-            Debug.Log($"[QTE][INPUT] TryBeginQTE - slot: skill:{next.Skill.name} burst:{next.IsBurst}");
-
-            if (qteManager == null)
-                return false;
-
-            if (next == null || next.Equipment == null || next.Equipment.Equipment == null || next.Skill == null)
-                return false;
-
-            EEquipSlotType slotType;
-
-            if (!TryGetSlotType(next.Equipment, out slotType))
-                return false;
-
-            if (slotType != EEquipSlotType.LEFT && slotType != EEquipSlotType.RIGHT)
-                return false;
-
-            bool isComboFinisher = next.Children == null || next.Children.Count == 0;
-
-            bool started = qteManager.TryBegin(
-                slotType,
-                next.Equipment.Equipment,
-                next.Skill,
-                next.IsBurst,
-                isComboFinisher,
-                OnQTEFinished);
-
-            Debug.Log($"[QTE][INPUT] TryBegin result = {started}");
-
-            if (!started)
-                return false;
-
-            pendingQteNode = next;
-            pendingQteInput = input;
-
-            currNode = next;
-            inputQueue.AddFirst(input);
-
-            Lock();
-
-            return true;
-        }
-
-        private void OnQTEFinished(QTEResultContext context)
-        {
-            Debug.Log($"[QTE][INPUT] QTE Finished - success:{context.IsSuccess} mult:{context.DamageMultiplier}");
-
-            if (pendingQteNode == null)
-            {
-                Unlock();
-                return;
-            }
-
-            bool used = player.TryUseEquipment(
-                pendingQteNode.Equipment,
-                pendingQteNode.Skill,
-                Unlock,
-                pendingQteNode.IsBurst,
-                context);
-
-            if (!used)
-                Unlock();
-
-            if (pendingQteNode.IsBurst)
-            {
-                ClearCombo();
-                BuildCombo();
-            }
-
-            pendingQteNode = null;
-            pendingQteInput = EComboInputTypes.NONE;
-        }
-
-        private bool TryGetSlotType(EquipSlot slot, out EEquipSlotType slotType)
-        {
-            if (slot == player.LeftArmSlot)
-            {
-                slotType = EEquipSlotType.LEFT;
-                return true;
-            }
-
-            if (slot == player.RightArmSlot)
-            {
-                slotType = EEquipSlotType.RIGHT;
-                return true;
-            }
-
-            if (slot == player.LegSlot)
-            {
-                slotType = EEquipSlotType.LEG;
-                return true;
-            }
-
-            slotType = EEquipSlotType.LEG;
-            return false;
-        }
-
-        #endregion
 
         #region 콤보
 
@@ -329,10 +127,10 @@ namespace LAMENT
 
         private void HandleComboBuffer()
         {
-            if (isOverlayLocked)
+            if (lockState.IsOverlayLocked)
                 return;
 
-            if (!isLocked)
+            if (!lockState.IsSkillLocked)
                 return;
 
             EComboInputTypes input = GetComboKey();
@@ -342,39 +140,6 @@ namespace LAMENT
 
             inputBuffer = input;
             bufferTime = Time.time;
-        }
-
-        private void GetMoveInput()
-        {
-            bool IsKeyPressed(GameManager.KeyMap.EKey type)
-            {
-                return Input.GetKey(GameManager.KeyMap.GetKeyCode(type));
-            }
-
-            if (isLocked || isOverlayLocked)
-            {
-                ((PlayerMoveComponent)player.MoveComponent).ForceEndJumping();
-                ((PlayerMoveComponent)player.MoveComponent).ResetCoyoteTime();
-                return;
-            }
-
-            bool isLeftPressed = IsKeyPressed(GameManager.KeyMap.EKey.MOVE_LEFT);
-            bool isRightPressed = IsKeyPressed(GameManager.KeyMap.EKey.MOVE_RIGHT);
-
-            if (isLeftPressed == isRightPressed)
-                player.MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
-            else
-                player.MoveComponent.SetMovement(
-                    isLeftPressed ? MoveComponent.EDirection.LEFT : MoveComponent.EDirection.RIGHT);
-
-            if (Input.GetKeyDown(GameManager.KeyMap.GetKeyCode(GameManager.KeyMap.EKey.JUMP)))
-            {
-                if (player.MoveComponent.TryJump())
-                    PlaySFX(jumpSoundId);
-            }
-
-            if (!IsKeyPressed(GameManager.KeyMap.EKey.JUMP))
-                (player.MoveComponent as PlayerMoveComponent).ForceEndJumping();
         }
 
         #endregion
@@ -427,16 +192,22 @@ namespace LAMENT
             BuildFromSlot(EComboInputTypes.UTILITY, player.LegSlot);
         }
 
+        private void RebuildCombo()
+        {
+            ClearCombo();
+            BuildCombo();
+        }
+
         #endregion
 
         #region 입력 처리
 
         private void ProcessInput()
         {
-            if (isOverlayLocked)
+            if (lockState.IsOverlayLocked)
                 return;
 
-            if (isLocked)
+            if (lockState.IsSkillLocked)
                 return;
 
             EComboInputTypes input = EComboInputTypes.NONE;
@@ -458,20 +229,17 @@ namespace LAMENT
 
                 if (next != null)
                 {
-                    if (TryBeginQTE(next, input))
+                    if (qteInput.TryBeginQTE(next, input))
                         return;
 
-                    if (player.TryUseEquipment(next.Equipment, next.Skill, Unlock, next.IsBurst, QTEResultContext.None))
+                    if (player.TryUseEquipment(next.Equipment, next.Skill, lockState.UnlockSkill, next.IsBurst, QTEResultContext.None))
                     {
                         currNode = next;
                         inputQueue.AddFirst(input);
-                        Lock();
+                        lockState.LockSkill();
 
                         if (next.IsBurst)
-                        {
-                            ClearCombo();
-                            BuildCombo();
-                        }
+                            RebuildCombo();
                     }
                 }
                 else
@@ -482,77 +250,36 @@ namespace LAMENT
             }
         }
 
+        private void OnQTEStarted(ComboNodeInput next, EComboInputTypes input)
+        {
+            currNode = next;
+            inputQueue.AddFirst(input);
+        }
+
         private void EndComboSearch()
         {
             inputQueue.Clear();
             currNode = root;
         }
 
+        private void ClearCombatState()
+        {
+            EndComboSearch();
+            inputBuffer = EComboInputTypes.NONE;
+            bufferTime = 0f;
+            qteInput.ClearPending();
+        }
+
         #endregion
-
-        private void Lock()
-        {
-            player.MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
-            isLocked = true;
-
-            if (wasMoving)
-            {
-                StopSFX(footstepSoundId);
-                wasMoving = false;
-            }
-        }
-
-        private void Unlock()
-        {
-            isLocked = false;
-        }
 
         private void OnOverlayStateChanged(GEOnOverlayStateChanged e)
         {
-            isOverlayLocked = e.isOpened;
-
-            if (player == null || player.MoveComponent == null)
-                return;
-
-            if (isOverlayLocked)
-            {
-                player.MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
-                player.MoveComponent.SetHSpeed(0f);
-                player.MoveComponent.CanControl = false;
-            }
-            else
-            {
-                player.MoveComponent.CanControl = true;
-                player.MoveComponent.SetMovement(MoveComponent.EDirection.STOP);
-                player.MoveComponent.SetHSpeed(0f);
-            }
-
-            if (isOverlayLocked)
-            {
-                EndComboSearch();
-                inputBuffer = EComboInputTypes.NONE;
-                bufferTime = 0f;
-                pendingQteNode = null;
-                pendingQteInput = EComboInputTypes.NONE;
-
-                if (player.MoveComponent is PlayerMoveComponent playerMove)
-                {
-                    playerMove.ForceEndJumping();
-                    playerMove.ResetCoyoteTime();
-                }
-
-                if (wasMoving)
-                {
-                    StopSFX(footstepSoundId);
-                    wasMoving = false;
-                }
-            }
+            lockState.ApplyOverlayState(e, ClearCombatState);
         }
 
         public void OnPlayerEquipmentChanged(GEOnEquipmentEquipped e)
         {
-            ClearCombo();
-            BuildCombo();
+            RebuildCombo();
         }
 
 #if UNITY_EDITOR

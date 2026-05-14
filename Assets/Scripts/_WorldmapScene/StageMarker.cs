@@ -26,6 +26,7 @@ public class StageMarker : MonoBehaviour
     [Header("언락 및 클리어")]
     [SerializeField] private bool isUnlocked = false;
     [SerializeField] private string clearID = "";
+    [SerializeField] private string unlockID = "";
     public bool IsUnlocked => isUnlocked;
 
 
@@ -109,7 +110,7 @@ public class StageMarker : MonoBehaviour
 
     public void UpdateState()
     {
-        if (isUnlocked)
+        if (GameManager.GameUnlock.IsUnlockedOrDefault(GetUnlockKey(), isUnlocked))
             SetAsUnlocked();
         if (clearID != "" && GameManager.GameUnlock.IsUnlocked(clearID))
             SetAsCleared();
@@ -141,6 +142,18 @@ public class StageMarker : MonoBehaviour
     {
         image.color = Color.white;
         isUnlocked = true;
+
+        string key = GetUnlockKey();
+        if (!string.IsNullOrEmpty(key))
+            GameManager.GameUnlock.Unlock(key);
+    }
+
+    private string GetUnlockKey()
+    {
+        if (!string.IsNullOrEmpty(unlockID))
+            return unlockID;
+
+        return targetSceneName;
     }
 
     public void SetAsCleared()

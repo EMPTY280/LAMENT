@@ -41,7 +41,7 @@ namespace LAMENT
         {
             get
             {
-                int bonus = 0;
+                float bonus = _player ? _player.WeightCapacityBonus : 0f;
                 return Mathf.Max(1f, _capacity + bonus);
             }
         }
@@ -61,6 +61,7 @@ namespace LAMENT
 
             GameManager.Eventbus.Subscribe<GEOnInventorySlotChanged>(OnInventorySlotChanged);
             GameManager.Eventbus.Subscribe<GEOnOverlayStateChanged>(OnOverlayStateChanged);
+            GameManager.Eventbus.Subscribe<GEOnPlayerWeightCapacityChanged>(OnPlayerWeightCapacityChanged);
 
             Refresh();
         }
@@ -69,6 +70,7 @@ namespace LAMENT
         {
             GameManager.Eventbus.Unsubscribe<GEOnInventorySlotChanged>(OnInventorySlotChanged);
             GameManager.Eventbus.Unsubscribe<GEOnOverlayStateChanged>(OnOverlayStateChanged);
+            GameManager.Eventbus.Unsubscribe<GEOnPlayerWeightCapacityChanged>(OnPlayerWeightCapacityChanged);
         }
 
         private void OnInventorySlotChanged(GEOnInventorySlotChanged e)
@@ -80,6 +82,11 @@ namespace LAMENT
         {
             if (e.isOpened)
                 Refresh();
+        }
+
+        private void OnPlayerWeightCapacityChanged(GEOnPlayerWeightCapacityChanged e)
+        {
+            Refresh();
         }
 
         private void Refresh()

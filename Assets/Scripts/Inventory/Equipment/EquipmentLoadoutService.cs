@@ -9,17 +9,14 @@ namespace LAMENT
     {
         [Header("Refs")]
         [SerializeField] private InventoryService _inventoryProvider; // InventoryService drag
+        [SerializeField] private Player _playerProvider;
 
         private InventoryService _inventory;
+        private Player _player;
 
-        private EquipmentData rightArm;
-        private EquipmentData leftArm;
-        private EquipmentData leg;
-
-        public EquipmentData CurrentRight => rightArm;
-        public EquipmentData CurrentLeft => leftArm;
-        public EquipmentData CurrentLeg => leg;
-
+        public EquipmentData CurrentRight => GetEquipped(EEquipSlotType.RIGHT);
+        public EquipmentData CurrentLeft => GetEquipped(EEquipSlotType.LEFT);
+        public EquipmentData CurrentLeg => GetEquipped(EEquipSlotType.LEG);
 
         private void Awake()
         {
@@ -27,21 +24,17 @@ namespace LAMENT
                       ?? GetComponent<InventoryService>()
                       ?? GetComponentInParent<InventoryService>()
                       ?? GetComponentInChildren<InventoryService>();
+            _player = _playerProvider
+                   ?? GetComponent<Player>()
+                   ?? GetComponentInParent<Player>()
+                   ?? GetComponentInChildren<Player>()
+                   ?? FindObjectOfType<Player>();
+
             if (_inventory == null)
             {
                 enabled = false;
                 Debug.LogError("[EquipmentLoadoutService] IInventoryService 미연결");
             }
-        }
-
-        private void OnEnable()
-        {
-            GameManager.Eventbus.Subscribe<GEOnEquipmentEquipped>(OnEquipmentEquipped);
-        }
-
-        private void OnDisable()
-        {
-            GameManager.Eventbus.Unsubscribe<GEOnEquipmentEquipped>(OnEquipmentEquipped);
         }
 
         /// <summary>해당 부위에 next 장착. prev는 인벤토리로, next는 인벤토리에서 1개 제거.</summary>
@@ -50,13 +43,7 @@ namespace LAMENT
             if (next == null) return;
 
             var slot = next.Slot;
-            var prev = slot switch
-            {
-                EEquipSlotType.LEFT  => leftArm,
-                EEquipSlotType.RIGHT => rightArm,
-                EEquipSlotType.LEG     => leg,
-                _ => null
-            };
+            var prev = GetEquipped(slot);
 
             bool RemoveOne(InventoryService inv, ItemData item)
             {
@@ -75,31 +62,25 @@ namespace LAMENT
             // 이전 장비 반환
             if (prev != null) _inventory.AddItem(prev, 1);
 
-            // 현재 장착 갱신
-            switch (slot)
-            {
-                case EEquipSlotType.LEFT:  leftArm  = next; break;
-                case EEquipSlotType.RIGHT: rightArm = next; break;
-                case EEquipSlotType.LEG: leg = next; break;
-            }
-
             GameManager.Eventbus.Publish(new GEOnEquipmentEquipped(next, prev, slot));
         }
 
-        private void OnEquipmentEquipped(GEOnEquipmentEquipped e)
+        private EquipmentData GetEquipped(EEquipSlotType slot)
         {
-            switch (e.SlotType)
+            if (_player == null)
+                return null;
+
+            switch (slot)
             {
                 case EEquipSlotType.LEFT:
-                    leftArm = e.Equipped;
-                    break;
+                    return _player.LeftArmSlot.Equipment;
                 case EEquipSlotType.RIGHT:
-                    rightArm = e.Equipped;
-                    break;
+                    return _player.RightArmSlot.Equipment;
                 case EEquipSlotType.LEG:
-                    leg = e.Equipped;
-                    break;
+                    return _player.LegSlot.Equipment;
             }
+
+            return null;
         }
     }
 }

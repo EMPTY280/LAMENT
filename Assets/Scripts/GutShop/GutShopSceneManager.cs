@@ -36,7 +36,6 @@ namespace LAMENT
 
         private void Awake()
         {
-            GameManager.Money.Set(9999);
             InitSlots();
             RefreshMoney();
             SetFocus(currIndex);

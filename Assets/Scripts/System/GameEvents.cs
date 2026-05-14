@@ -131,6 +131,16 @@ namespace LAMENT
         }
     }
 
+    public readonly struct GEOnPlayerWeightCapacityChanged : IGameEvent
+    {
+        public float Bonus { get; }
+
+        public GEOnPlayerWeightCapacityChanged(float bonus)
+        {
+            Bonus = bonus;
+        }
+    }
+
     /// <summary> 플레이어 부활 </summary>
     public readonly struct GEOnPlayerResurrected : IGameEvent
     {

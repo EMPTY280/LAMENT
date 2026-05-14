@@ -10,12 +10,12 @@ namespace LAMENT
 
         public override void Apply(Player player)
         {
-            Debug.Log("무게 보너스 미구현: API만 임시 구현됨");
+            player.AddWeightCapacityAttribute(bonus);
         }
 
         public override void Remove(Player player)
         {
-            Debug.Log("무게 보너스 미구현: API만 임시 구현됨");
+            player.AddWeightCapacityAttribute(-bonus);
         }
     }
 }

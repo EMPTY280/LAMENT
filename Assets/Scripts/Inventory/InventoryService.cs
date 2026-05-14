@@ -39,6 +39,9 @@ namespace LAMENT
         {
             // 내부 배열 준비
             EnsureSlots();
+
+            if (!GameManager.RunState.TryRestoreInventory(this))
+                GameManager.RunState.SaveInventory(this);
         }
 
         public int AddItem(ItemData item, int amount)
@@ -76,6 +79,7 @@ namespace LAMENT
 
             var added = amount - remaining;
             GameManager.Eventbus.Publish(new GEOnInventoryItemAdded(item.ID, amount, added));
+            GameManager.RunState.SaveInventory(this);
             return added;
         }
 
@@ -91,12 +95,40 @@ namespace LAMENT
 
             _slots[index] = st;
             PublishSlotChanged(index);
+            GameManager.RunState.SaveInventory(this);
             return true;
         }
 
         public ItemStack GetSlot(int index)
         {
             return IsValidIndex(index) ? _slots[index] : default;
+        }
+
+        public ItemStack[] CopySlots()
+        {
+            EnsureSlots();
+
+            ItemStack[] copy = new ItemStack[_slots.Length];
+            for (int i = 0; i < _slots.Length; i++)
+                copy[i] = _slots[i];
+
+            return copy;
+        }
+
+        public void RestoreSlots(int slotCount, ItemStack[] slots)
+        {
+            _slotCount = Mathf.Max(0, slotCount);
+            _slots = new ItemStack[_slotCount];
+
+            if (slots == null)
+                return;
+
+            int copyCount = Mathf.Min(_slots.Length, slots.Length);
+            for (int i = 0; i < copyCount; i++)
+            {
+                _slots[i] = slots[i];
+                PublishSlotChanged(i);
+            }
         }
 
         private bool IsValidIndex(int index) => index >= 0 && index < _slots.Length;
