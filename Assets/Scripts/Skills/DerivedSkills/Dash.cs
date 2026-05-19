@@ -16,6 +16,7 @@ namespace LAMENT
         {
             if (IsTiming(0))
             {
+                owner.MoveComponent.SetHSpeedLimitOverride(speed);
                 owner.MoveComponent.SetHSpeed(GetSpeedByDirection(owner.MoveComponent));
 
                 isDashing = true;
@@ -26,10 +27,14 @@ namespace LAMENT
             {
                 isDashing = false;
                 owner.MoveComponent.SetGravityEnabled(true);
+                owner.MoveComponent.ClearHSpeedLimitOverride();
             }
 
             if (isDashing)
+            {
+                owner.MoveComponent.SetHSpeed(GetSpeedByDirection(owner.MoveComponent));
                 owner.MoveComponent.SetVSpeed(0);
+            }
         }
 
         private float GetSpeedByDirection(MoveComponent mc)

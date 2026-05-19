@@ -3,10 +3,12 @@ using UnityEngine;
 namespace LAMENT
 {
     [CreateAssetMenu(fileName = "Vertical Strike", menuName = "ScriptableObjects/Skills/Offensive/Vertical Strike")]
-    public class VerticalStrike : Skill
+    public class VerticalStrike : OffensiveSkill
     {
         [SerializeField] private float jumpPower = 15f;
         [SerializeField] private bool flipSpriteY = true;
+
+        public override EOffensiveSkillType OffensiveType => EOffensiveSkillType.Vertical;
 
         public override string Comment =>
             "0번 타이밍: 전진 시작\n" +

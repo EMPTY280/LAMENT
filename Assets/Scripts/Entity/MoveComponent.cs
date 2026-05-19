@@ -33,6 +33,8 @@ namespace LAMENT
         private float speedMultiplier = 1f;
 
         protected float CurrentSpeedMax => speedMax * speedMultiplier;
+        private float hSpeedLimitOverride = 0f;
+        private float CurrentHSpeedLimit => Mathf.Max(CurrentSpeedMax, hSpeedLimitOverride);
 
         [SerializeField, Tooltip("가속력")]
         protected float acceleration = 6.0f;
@@ -132,7 +134,7 @@ namespace LAMENT
         /// <summary> 수평 속도 연산 </summary>
         private void UpdateHSpeed(float dt)
         {
-            float maxSpeed = CurrentSpeedMax;
+            float maxSpeed = CurrentHSpeedLimit;
 
             // 속도 변화량
             float speedDelta = acceleration * dt;
@@ -232,10 +234,21 @@ namespace LAMENT
             hSpeed = f;
         }
 
+        public void SetHSpeedLimitOverride(float speed)
+        {
+            hSpeedLimitOverride = Mathf.Max(0f, speed);
+        }
+
+        public void ClearHSpeedLimitOverride()
+        {
+            hSpeedLimitOverride = 0f;
+            hSpeed = Mathf.Clamp(hSpeed, -CurrentSpeedMax, CurrentSpeedMax);
+        }
+
         public void SetSpeedMultiplier(float multiplier)
         {
             speedMultiplier = Mathf.Max(0f, multiplier);
-            hSpeed = Mathf.Clamp(hSpeed, -CurrentSpeedMax, CurrentSpeedMax);
+            hSpeed = Mathf.Clamp(hSpeed, -CurrentHSpeedLimit, CurrentHSpeedLimit);
         }
 
         public void SetVSpeed(float f)

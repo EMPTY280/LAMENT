@@ -65,7 +65,11 @@ namespace LAMENT
         {
             // TODO: 아이템 풀링 고려
             if (0 < dropTable.Length)
-                Instantiate(dropTable[Random.Range(0, dropTable.Length - 1)], transform.position, Quaternion.identity);
+            {
+                GameObject dropPrefab = dropTable[Random.Range(0, dropTable.Length)];
+                if (dropPrefab)
+                    Instantiate(dropPrefab, transform.position, Quaternion.identity);
+            }
             
             DropMoney();
             //DropItme();

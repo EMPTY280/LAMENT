@@ -4,9 +4,11 @@ using UnityEngine;
 namespace LAMENT
 {
     [CreateAssetMenu(fileName = "Slash", menuName = "ScriptableObjects/Skills/Offensive/Slash")]
-    public class Slash : Skill
+    public class Slash : OffensiveSkill
     {
         [SerializeField] private bool movement = true;
+
+        public override EOffensiveSkillType OffensiveType => EOffensiveSkillType.Slash;
 
         public override string Comment =>
             "0번 타이밍: 전진 시작\n" +
