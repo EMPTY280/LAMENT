@@ -2046,6 +2046,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 640521942747643225, guid: 50b85b0b7a0318540b28794480aeb54d, type: 3}
+      propertyPath: hpMax
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 640521942747643225, guid: 50b85b0b7a0318540b28794480aeb54d, type: 3}
+      propertyPath: hpCurr
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 3093140189885414188, guid: 50b85b0b7a0318540b28794480aeb54d, type: 3}
       propertyPath: m_Name
       value: Enemy_TEMPLATE
@@ -234516,6 +234524,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 640521942747643225, guid: 40032a69f1ddcfa4195ab261c458f8b1, type: 3}
+      propertyPath: hpMax
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 640521942747643225, guid: 40032a69f1ddcfa4195ab261c458f8b1, type: 3}
+      propertyPath: hpCurr
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3093140189885414188, guid: 40032a69f1ddcfa4195ab261c458f8b1, type: 3}
       propertyPath: m_Name
       value: Enemy_TEST_ (1)
@@ -237269,6 +237285,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 640521942747643225, guid: 50b85b0b7a0318540b28794480aeb54d, type: 3}
+      propertyPath: hpMax
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 640521942747643225, guid: 50b85b0b7a0318540b28794480aeb54d, type: 3}
+      propertyPath: hpCurr
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 1037724355118900726, guid: 50b85b0b7a0318540b28794480aeb54d, type: 3}
       propertyPath: m_SortingOrder
       value: 3
@@ -251908,6 +251932,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 640521942747643225, guid: 40032a69f1ddcfa4195ab261c458f8b1, type: 3}
+      propertyPath: hpMax
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 640521942747643225, guid: 40032a69f1ddcfa4195ab261c458f8b1, type: 3}
+      propertyPath: hpCurr
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3093140189885414188, guid: 40032a69f1ddcfa4195ab261c458f8b1, type: 3}
       propertyPath: m_Name
       value: Enemy_TEST_

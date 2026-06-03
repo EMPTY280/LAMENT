@@ -323,8 +323,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea56cac998a9e51459d2e0014836bfc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hpMax: 1
-  hpCurr: 1
+  hpMax: 3
+  hpCurr: 3
   moveComponent: {fileID: 7594527611442793911}
   effectorRoot: {fileID: 7555126590096585197}
   skills:
