@@ -2,17 +2,6 @@ using UnityEngine;
 
 namespace LAMENT
 {
-    // ============================================================
-    // ThornsHazard
-    //
-    // 가시 타일맵에 붙이는 데미지 트리거
-    // 닿는 순간 즉시 1회 데미지 → 무적시간 → 이후 틱 데미지
-    //
-    // 사용법:
-    //   1. thorns 타일맵 오브젝트에 이 스크립트 추가
-    //   2. Tilemap Collider 2D Is Trigger 체크
-    //   3. Inspector에서 값 설정
-    // ============================================================
 
     public class ThornsHazard : MonoBehaviour
     {
